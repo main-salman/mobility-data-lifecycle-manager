@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+ENV/
+.env/
+.venv/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Credentials and secrets
+.env
+*.pem
+
+# Node/npm
+node_modules/
+
+# VSCode
+.vscode/
+
+# OS generated
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Test output
+htmlcov/
+coverage.xml
+*.cover
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Misc
+*.bak
+*.swp
+*.swo 

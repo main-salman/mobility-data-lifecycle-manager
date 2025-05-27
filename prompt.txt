@@ -1,0 +1,70 @@
+This script sync mobility data from an S3 bucket in a partner account to my S3 account. These two scripts only syncs data for Toronto and Logan and for specific dates. I need to create an automated way of doing this for a variable number of cities and do so on a daily basis, and instead of downloading 1 week of data, it should download 1 day of data. The whole process should happen entirely within my AWS account automatically. This data download process from vendor S3 bucket to our S3 bucket process can take many minutes or hours.
+Requirements:
+- user should be able to configure a list of cities easily in the AWS account - may be using dynamodb, or any other recommended option
+- the system should download the mobility data for the list of cities for the previous day
+- the data should be stored in the S3_BUCKET=veraset-data-qoli-dev - THIS BUCKET ALREADY EXISTS - doesn't need to be created
+- the city folder should be using the name format country / state-province / city / and then date for the folder
+- data older than 7 days should be automatically deleted (create S3 lifecycle rules to implement this)
+
+Ask me 20 questions about what type of system to create, and make suggestions on which specific AWS services can be used to automate.
+
+
+
+
+Based on your attached `get_toronto_mobility.py` and the requirements in `prompt.txt`, here are 20 questions to clarify your needs, along with suggestions for AWS services and architecture:
+
+### 20 Questions
+
+1. **How many cities do you expect to support at peak?**  
+
+2. **How will the list of cities be managed?**  
+
+3. **What information do you need for each city?**  
+   (e.g., country, state/province, city name, latitude, longitude, radius, etc.)
+
+4. **Is the Veraset API key the same for all cities, or can it vary?**  
+   (Affects how secrets are managed.)
+
+5. **Do you want to support cities in different countries and time zones?**  
+   (Affects how "previous day" is calculated.)
+
+6. **What is the expected data volume per city per day?**  
+
+7. **How critical is it that the data sync completes every day?**  
+   (Affects error handling, retries, and monitoring.)
+
+8. **Should the system re-try failed downloads automatically?**  
+   (If so, how many times and with what delay?)
+
+9. **Do you want to be notified (e.g., via email or Slack) if a sync fails?**  
+   (SNS or other notification integration.)
+
+10. **Should the system support backfilling data for missed days?**  
+    (Or only run for the previous day.)
+
+11. **Is there a maximum allowed runtime for the sync job?**  
+
+12. **Do you want to log all sync activity for auditing?**  
+
+13. **Should the system be able to run in multiple environments (dev, test, prod)?**  
+    (Affects configuration and resource separation.)
+
+14. **How should API keys and secrets be managed?**  
+
+15. **Do you want to support different destination S3 buckets per environment or city?**
+
+16. **Should the system be able to run on-demand (manual trigger) as well as scheduled?**
+
+17. **What is your preferred programming language for AWS automation (Python, Node.js, etc.)?**
+
+18. **Do you need fine-grained access control for who can update the city list or trigger jobs?**  
+    (IAM roles and policies.)
+
+19. **Should the system be cost-optimized for infrequent use, or is performance more important?**
+
+20. **Do you have any compliance or data residency requirements for where the data is stored or processed?**
+
+
+
+1. 1000 2. manually using any recommended services where I can store names of thousands of cities 3. user should only need to specify city, state/province, and country name 4. yes 5. time zone should be based on local time for each city 6. 2-10 gb per day per city 7. errors should result in notifications to salman.naqvi@gmail.com 8. try 3 times - remember that download this data in some cases can take a while 9. sns, salman.naqvi@gmail.com, notifiction emails should also be configurable in dynamodb 10. yes, missed days should be backfilled 11. jobs can take hours - make recommendations based on that 12. no 13. no 14. AWS Secrets Manager 15. the city folder should be using the name format country / state-province / city / and then date for the folder for each day 16. yes, manual trigger should be possible 17. you make a recommendation 18. no 19. cost-optimized 20. no 
+

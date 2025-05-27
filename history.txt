@@ -1,0 +1,80 @@
+---
+2024-06-09: Decided on a simple architecture for Veraset mobility data sync:
+- Single Amazon Linux 2 EC2 instance (t3.medium), accessed via salman-dev.pem
+- Python 3.9+ environment with Flask, boto3, python-dotenv, requests, gunicorn, awscli
+- Flask web UI (password-protected, credentials from .env), only accessible via SSH tunnel
+- DynamoDB table 'mobility_cities' with fields: city_id (UUID), country, state_province, city, latitude, longitude, notification_email
+- AWS Secrets Manager for Veraset API key
+- AWS SNS for error notifications (per-city email from DynamoDB)
+- S3 lifecycle rule for 7-day retention (set up in AWS Console)
+- Sync script can be triggered by cron (daily) or via Flask UI (manual/backfill)
+- Flask UI supports CRUD for cities and manual sync for any date/city
+
+2024-06-09: Started implementation:
+- Scaffolding Flask app with password protection (from .env)
+- CRUD for cities (country, state_province, city, latitude, longitude, notification_email)
+- Manual sync trigger for any city/date (backfill)
+- Sync logic as a Python module
+- Will provide DynamoDB table creation script as a file
+
+2024-06-09: Added dynamodb_create_table.py for DynamoDB table creation
+2024-06-09: Created flask_app.py with password-protected UI, CRUD for cities, and manual sync trigger
+2024-06-09: Created sync_logic.py for Veraset API, S3 sync, and SNS notification logic
+2024-06-09: Integrated sync logic into Flask app's manual sync route
+2024-06-09: All code is modular and ready for deployment on EC2
+
+[2024-06-09] Updated run_local.sh to robustly kill all previous flask_app.py processes, wait for port 5000 to be free, check Flask startup, and print troubleshooting info if Flask fails to start. This addresses issues with port conflicts and 403 errors due to Flask not running.
+
+[2024-06-09] Changed Flask app and run_local.sh to use port 5050 instead of 5000 to avoid conflict with macOS AirPlay Receiver, which was causing 403 errors.
+
+[2024-06-09] Added countries_states.json (extracted from countriesData.ts) for use in Flask app forms (country/state dropdowns and map-based lat/lon selection).
+
+[2024-06-09] Added /countries_states.json and /geocode_city endpoints to Flask app for frontend country/state dropdowns and geocoding support (Nominatim).
+
+[2024-06-09] Removed all DynamoDB integration from Flask app; now uses local cities.json for city management. Will proceed to update Terraform and other scripts.
+
+[2024-06-09] Deleted dynamodb_create_table.py and manage_cities.py since all city management is now handled via the web UI and no DynamoDB is used.
+
+[2024-06-09] Removed call to dynamodb_create_table.py from run_local.sh since DynamoDB is no longer used and the file was deleted.
+
+[2024-06-09] Added auto-populate latitude/longitude button to Add/Edit City forms (calls /geocode_city). Updated Sync form to allow picking a date range with calendar inputs.
+
+[2024-06-09] Added threaded sync with graphical progress bar and polling using Flask threading and a /sync_progress/<sync_id> endpoint.
+
+[2024-06-09] Added detailed logging to app.log and a /view_logs route for viewing logs in the web UI with AJAX refresh.
+
+[2024-06-09] Removed all secret manager usage from app and Terraform. App now loads veraset_api_key directly from .env using os.environ.
+
+[2024-06-09] Updated S3 lifecycle rule to apply to all objects under 'data/' prefix. Removed all DynamoDB, SQS, and SNS usage from mobility_worker.py and orchestrator.py; now use local jobs.json for job tracking.
+
+[2024-06-09] Removed all remaining AWS Secrets Manager usage and references from sync_logic.py, main.tf, and setup_ec2.sh. API key is now loaded only from .env.
+
+[2024-06-09] Removed redundant date folder from S3 destination path in sync_logic.py and mobility_worker.py. Now, the destination path is data/{country}/{state_province}/{city_name}/ (or data/{country}/{city_name}/ if no state), preventing double date folders in S3.
+
+[2024-06-09] Added sync time configuration to .env and the main page. Users can now view and update the daily sync time (hour and minute) from the main page, which updates both the .env file and the crontab entry for daily_sync.py.
+
+[2024-06-09] Updated UI: all pages, including the login page and main page, now wrap content in a centered .container div for consistent centering and padding.
+
+Updated flask_app.py:
+- Changed Add City and Edit City forms to use <select> dropdowns for country and state/province.
+- Dropdowns are dynamically populated from countries_states.json using JavaScript.
+- State/province dropdown updates based on selected country.
+- Edit form pre-selects the current values.
+- This improves data consistency and user experience.
+
+[2024-06-09] Created daily_sync.py: loads all cities from cities.json and calls sync_city_for_date for each city for the previous day. Works in both local and EC2 environments and is triggered by the cron job at SYNC_TIME.
+
+[2024-06-09] Veraset job status is now polled every 1 minute for up to 100 minutes, and the current status is shown live on the /sync/ page during syncs.
+
+[2024-06-09] Added /sync_jobs page to view all sync progress, and enabled viewing any sync's progress by visiting /sync/<sync_id>.
+
+[2024-06-09] Added a link to /sync_jobs on the main page for easy access to sync jobs progress.
+
+[2024-06-09] /sync_jobs now shows syncs in reverse chronological order and hides any syncs older than 30 days.
+
+[2024-06-09] Fixed AttributeError in threaded_sync: convert date string to datetime object before passing to build_sync_payload.
+
+[2024-06-09] Removed the local wait_for_job_completion from flask_app.py so only the sync_logic.py version is used.
+
+[2024-06-09] The sync progress page now shows city, country, state/province, and date range of the request above the progress bar.
+--- 
