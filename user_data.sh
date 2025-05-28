@@ -35,6 +35,10 @@ echo "[user_data] AWS CLI version:"
 aws --version
 
 sudo rm -f /home/ec2-user/mobility-data-lifecycle-manager/.env
+# Fetch .env as ec2-user so it is always owned by ec2-user
+sudo -u ec2-user bash -c 'export PATH=$PATH:/usr/local/bin; aws secretsmanager get-secret-value --secret-id mobility-data-lifecycle-env2 --region us-east-1 --query SecretString --output text > /home/ec2-user/mobility-data-lifecycle-manager/.env'
+sudo chown ec2-user:ec2-user /home/ec2-user/mobility-data-lifecycle-manager/.env
+sudo chmod 600 /home/ec2-user/mobility-data-lifecycle-manager/.env
 # All project setup as ec2-user in /home/ec2-user using a temporary script to avoid quoting issues
 cat > /home/ec2-user/ec2_setup.sh <<'EOF'
 cd /home/ec2-user
@@ -54,10 +58,6 @@ echo "[user_data] Installing Python requirements..."
 source venv/bin/activate
 pip install --upgrade pip
 pip install flask boto3 python-dotenv requests
-
-echo "[user_data] Fetching .env from AWS Secrets Manager..."
-aws secretsmanager get-secret-value --secret-id mobility-data-lifecycle-env2 --region us-east-1 --query SecretString --output text > .env
-chmod 600 .env
 
 echo "[user_data] Parsing SYNC_TIME and setting up cron..."
 SYNC_TIME=$(grep '^SYNC_TIME' .env | cut -d'=' -f2 | tr -d "'\"")
@@ -163,4 +163,5 @@ fi
 # Ensure passwordless sudo for crontab for ec2-user
 echo "ec2-user ALL=(ALL) NOPASSWD: /usr/bin/crontab" | sudo tee /etc/sudoers.d/mobility-flask-crontab > /dev/null
 
+echo "[user_data] .env already fetched and permissions set."
 echo "[user_data] Setup complete."

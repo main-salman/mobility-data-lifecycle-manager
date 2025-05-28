@@ -193,6 +193,12 @@ def set_sync_time(hour, minute):
     time_str = f"{int(hour):02d}:{int(minute):02d}"
     set_key('.env', SYNC_TIME_ENV_KEY, time_str)
     os.environ[SYNC_TIME_ENV_KEY] = time_str
+    # Fix permissions after update
+    try:
+        os.system('chown ec2-user:ec2-user /home/ec2-user/mobility-data-lifecycle-manager/.env')
+        os.system('chmod 600 /home/ec2-user/mobility-data-lifecycle-manager/.env')
+    except Exception as e:
+        print(f"Warning: Could not fix .env permissions: {e}")
     update_crontab_for_sync_time(time_str)
 
 def update_crontab_for_sync_time(time_str):
