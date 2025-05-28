@@ -34,49 +34,56 @@ export PATH=$PATH:/usr/local/bin
 echo "[user_data] AWS CLI version:"
 aws --version
 
-# All project setup as ec2-user in /home/ec2-user
-sudo -u ec2-user bash -c 
-  cd /home/ec2-user
-  export PATH=$PATH:/usr/local/bin
-  echo "[user_data] Cloning or updating repo..."
-  if [ ! -d "mobility-data-lifecycle-manager" ]; then
-    git clone https://github.com/main-salman/mobility-data-lifecycle-manager.git
-  fi
-  cd mobility-data-lifecycle-manager
+sudo rm -f /home/ec2-user/mobility-data-lifecycle-manager/.env
+# All project setup as ec2-user in /home/ec2-user using a temporary script to avoid quoting issues
+cat > /home/ec2-user/ec2_setup.sh <<'EOF'
+cd /home/ec2-user
+export PATH=$PATH:/usr/local/bin
+echo "[user_data] Cloning or updating repo..."
+if [ ! -d "mobility-data-lifecycle-manager" ]; then
+  git clone https://github.com/main-salman/mobility-data-lifecycle-manager.git
+fi
+cd mobility-data-lifecycle-manager
 
-  echo "[user_data] Setting up Python virtual environment..."
-  if [ ! -d venv ]; then
-    python3 -m venv venv
-  fi
+echo "[user_data] Setting up Python virtual environment..."
+if [ ! -d venv ]; then
+  python3 -m venv venv
+fi
 
-  echo "[user_data] Installing Python requirements..."
-  source venv/bin/activate
-  pip install --upgrade pip
-  pip install flask boto3 python-dotenv requests
+echo "[user_data] Installing Python requirements..."
+source venv/bin/activate
+pip install --upgrade pip
+pip install flask boto3 python-dotenv requests
 
-  echo "[user_data] Fetching .env from AWS Secrets Manager..."
-  aws secretsmanager get-secret-value --secret-id mobility-data-lifecycle-env2 --region us-east-1 --query SecretString --output text > .env
+echo "[user_data] Fetching .env from AWS Secrets Manager..."
+aws secretsmanager get-secret-value --secret-id mobility-data-lifecycle-env2 --region us-east-1 --query SecretString --output text > .env
+chmod 600 .env
 
-  echo "[user_data] Parsing SYNC_TIME and setting up cron..."
-  SYNC_TIME=$(grep '^SYNC_TIME' .env | cut -d'=' -f2 | tr -d "'\"")
-  SYNC_HOUR=$(echo $SYNC_TIME | cut -d: -f1)
-  SYNC_MIN=$(echo $SYNC_TIME | cut -d: -f2)
-  CRON_JOB="$SYNC_MIN $SYNC_HOUR * * * cd /home/ec2-user/mobility-data-lifecycle-manager && source venv/bin/activate && python daily_sync.py >> /home/ec2-user/mobility-data-lifecycle-manager/app.log 2>&1"
-  crontab -l | grep -v "daily_sync.py" > /tmp/cron.tmp || true
-  if ! grep -Fxq "$CRON_JOB" /tmp/cron.tmp; then
-    echo "$CRON_JOB" >> /tmp/cron.tmp
-  fi
-  crontab /tmp/cron.tmp
-  rm -f /tmp/cron.tmp
+echo "[user_data] Parsing SYNC_TIME and setting up cron..."
+SYNC_TIME=$(grep '^SYNC_TIME' .env | cut -d'=' -f2 | tr -d "'\"")
+SYNC_HOUR=$(echo $SYNC_TIME | cut -d: -f1)
+SYNC_MIN=$(echo $SYNC_TIME | cut -d: -f2)
+CRON_JOB="$SYNC_MIN $SYNC_HOUR * * * cd /home/ec2-user/mobility-data-lifecycle-manager && source venv/bin/activate && source .env && python daily_sync.py >> /home/ec2-user/mobility-data-lifecycle-manager/app.log 2>&1"
+(crontab -l 2>/dev/null | grep -v "daily_sync.py" || true) > /tmp/cron.tmp
+if ! grep -Fxq "$CRON_JOB" /tmp/cron.tmp; then
+  echo "$CRON_JOB" >> /tmp/cron.tmp
+fi
+crontab /tmp/cron.tmp
+rm -f /tmp/cron.tmp
 
-  echo "[user_data] Starting Flask app..."
-  nohup python3 flask_app.py > flask_app.log 2>&1 &
+echo "[user_data] Starting Flask app..."
+nohup python3 flask_app.py > flask_app.log 2>&1 &
+EOF
 
+sudo chown -R ec2-user:ec2-user /home/ec2-user/mobility-data-lifecycle-manager
+sudo chown ec2-user:ec2-user /home/ec2-user/ec2_setup.sh
+sudo chmod +x /home/ec2-user/ec2_setup.sh
+sudo -u ec2-user bash /home/ec2-user/ec2_setup.sh
+sudo rm -f /home/ec2-user/ec2_setup.sh
 
 # --- HTTPS/NGINX/LETSENCRYPT SETUP ---
 APP_DOMAIN="$${APP_DOMAIN:-mobility.qolimpact.click}"
 LETSENCRYPT_EMAIL="$${LETSENCRYPT_EMAIL:-salman.naqvi@gmail.com}"
-
 echo "[user_data] Installing and configuring Nginx and Certbot..."
 sudo amazon-linux-extras install -y nginx1 epel
 sudo yum install -y nginx
@@ -152,5 +159,8 @@ echo "[user_data] Setting up certbot auto-renewal..."
 if ! sudo crontab -l | grep -q 'certbot renew'; then
   echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" | sudo crontab -
 fi
+
+# Ensure passwordless sudo for crontab for ec2-user
+echo "ec2-user ALL=(ALL) NOPASSWD: /usr/bin/crontab" | sudo tee /etc/sudoers.d/mobility-flask-crontab > /dev/null
 
 echo "[user_data] Setup complete."

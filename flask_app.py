@@ -201,13 +201,13 @@ def update_crontab_for_sync_time(time_str):
     cron_line = f"{int(minute)} {int(hour)} * * * cd /home/ec2-user/mobility-data-lifecycle-manager && source venv/bin/activate && python daily_sync.py >> /home/ec2-user/mobility-data-lifecycle-manager/app.log 2>&1"
     # Remove any existing daily_sync.py cron jobs, then add the new one
     try:
-        crontab = subprocess.check_output(['crontab', '-l'], text=True)
+        crontab = subprocess.check_output(['sudo', 'crontab', '-u', 'ec2-user', '-l'], text=True)
         lines = [l for l in crontab.splitlines() if 'daily_sync.py' not in l]
     except subprocess.CalledProcessError:
         lines = []
     lines.append(cron_line.strip())
     new_crontab = '\n'.join(lines) + '\n'
-    subprocess.run(['crontab', '-'], input=new_crontab, text=True, check=True)
+    subprocess.run(['sudo', 'crontab', '-u', 'ec2-user', '-'], input=new_crontab, text=True, check=True)
 
 def get_dynamodb():
     return boto3.resource('dynamodb', region_name=REGION)
