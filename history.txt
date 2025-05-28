@@ -117,4 +117,6 @@ Updated flask_app.py:
 [2024-06-10] Changed cron job to append daily_sync.py output to app.log so logs are combined and visible in the Flask /view_logs route. Updated user_data.sh and live EC2 instance.
 
 [2024-06-10] Fixed update_crontab_for_sync_time in flask_app.py to use absolute path and log to app.log, matching user_data.sh and manual cron setup. Now, updating sync time from the GUI always sets the correct cron job.
+
+[Fix][2024-06-09] user_data.sh: Added 'export PATH=$PATH:/usr/local/bin' for ec2-user block to ensure aws CLI is found. Fixed echo syntax error by removing parentheses in network retry loop.
 --- 

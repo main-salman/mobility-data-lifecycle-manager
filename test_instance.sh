@@ -114,4 +114,14 @@ ssh -i $KEY_FILE -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
 
 echo ""
 echo "To SSH into the instance for further troubleshooting, run:"
-echo "ssh -i $KEY_FILE ec2-user@$INSTANCE_IP" 
+echo "ssh -i $KEY_FILE ec2-user@$INSTANCE_IP"
+
+# New diagnostics
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== find project directory anywhere ===="; sudo find / -name "mobility-data-lifecycle-manager" 2>/dev/null'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== find venv anywhere ===="; sudo find / -name "venv" 2>/dev/null'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== grep for errors, git, venv, clone in cloud-init-output.log ===="; sudo grep -i -E "error|fail|git|venv|clone" /var/log/cloud-init-output.log || echo "No matches"'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== first 60 lines of user-data.txt ===="; sudo head -n 60 /var/lib/cloud/instance/user-data.txt'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== last 60 lines of user-data.txt ===="; sudo tail -n 60 /var/lib/cloud/instance/user-data.txt'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'if [ -f /var/log/user_data.log ]; then echo "==== all echo lines from user_data.log ===="; sudo grep "\[user_data\]" /var/log/user_data.log; else echo "user_data.log not found"; fi'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== first 60 lines of user-data.txt (direct) ===="; sudo cat /var/lib/cloud/instance/user-data.txt | head -n 60'
+ssh -i $KEY_FILE ec2-user@$INSTANCE_IP 'echo "==== last 60 lines of user-data.txt (direct) ===="; sudo cat /var/lib/cloud/instance/user-data.txt | tail -n 60' 
