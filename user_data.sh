@@ -29,11 +29,13 @@ sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --u
 rm -rf awscliv2.zip aws
 cd ~
 
+export PATH=$PATH:/usr/local/bin
+
 echo "[user_data] AWS CLI version:"
 aws --version
 
 # All project setup as ec2-user in /home/ec2-user
-sudo -u ec2-user bash -c '
+sudo -u ec2-user bash -c 
   cd /home/ec2-user
   export PATH=$PATH:/usr/local/bin
   echo "[user_data] Cloning or updating repo..."
@@ -69,7 +71,7 @@ sudo -u ec2-user bash -c '
 
   echo "[user_data] Starting Flask app..."
   nohup python3 flask_app.py > flask_app.log 2>&1 &
-'
+
 
 # --- HTTPS/NGINX/LETSENCRYPT SETUP ---
 APP_DOMAIN="$${APP_DOMAIN:-mobility.qolimpact.click}"
@@ -95,7 +97,7 @@ echo "[user_data] Starting nginx..."
 sudo systemctl start nginx
 for i in {1..10}; do
   sudo systemctl is-active --quiet nginx && break
-  echo "[user_data] Waiting for nginx to become active... ($i/10)"
+  echo "[user_data] Waiting for nginx to become active... $i/10"
   sleep 2
 done
 
@@ -121,7 +123,7 @@ sudo systemctl restart nginx
 echo "[user_data] Obtaining SSL certificate..."
 if [ ! -f "/etc/letsencrypt/live/$APP_DOMAIN/fullchain.pem" ]; then
   sudo systemctl stop nginx
-  sudo certbot certonly --standalone --non-interactive --agree-tos --email $LETSENCRYPT_EMAIL -d $APP_DOMAIN
+  sudo certbot certonly --staging --standalone --non-interactive --agree-tos --email $LETSENCRYPT_EMAIL -d $APP_DOMAIN
   sudo systemctl start nginx
 fi
 
