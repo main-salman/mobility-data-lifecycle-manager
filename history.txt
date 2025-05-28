@@ -84,7 +84,7 @@ Updated flask_app.py:
 
 [2024-06-09] Removed all SQS queue and S3 bucket creation resources and references from main.tf. Now uses a variable for the existing S3 bucket. Cleaned up user_data.sh and Terraform config for a minimal Flask deployment.
 
-# 2024-06-09: Updated user_data.sh to fix permissions and ensure all pip installs and Flask app startup are run as ec2-user, not root. This should resolve venv and Flask import issues on EC2.
+# 2024-06-09: Updated user_data.sh to install nginx/certbot using amazon-linux-extras, write both HTTP and HTTPS configs, obtain SSL cert with certbot standalone, and reload nginx. All steps are idempotent and use passed domain/email variables.
 
 # 2024-06-09: Restored full user_data.sh for Flask app deployment after confirming user data execution works with new AMI and no launch template. The script now:
 # - Installs system dependencies
@@ -93,4 +93,28 @@ Updated flask_app.py:
 # - Fetches .env from AWS Secrets Manager
 # - Sets up cron for daily sync
 # - Starts the Flask app in the background
+
+# 2024-06-09: Renamed the Secrets Manager secret to 'mobility-data-lifecycle-env2' and set recovery_window_in_days=30 in main.tf to prevent deletion conflicts. Updated all references accordingly.
+
+# 2024-06-09: Added HTTPS support using Nginx and Let's Encrypt. Domain and email are now configurable via Terraform variables (app_domain, letsencrypt_email) and terraform.tfvars. All steps (Nginx, Certbot, auto-renewal, reverse proxy) are automated in user_data.sh.
+
+# 2024-06-09: Added a Route53 record for the app domain, pointing to the EC2 public IP. The hosted zone ID is now configurable via terraform.tfvars. Outputs the DNS record as well.
+
+[2024-06-10] Updated user_data.sh to:
+- Remove awscli v1 if present
+- Install latest AWS CLI v2 using official AWS instructions (curl, unzip, install)
+- Confirm aws version
+- Ensure awscli v2 is available before any aws commands are used
+- Ensured idempotency and correct PATH for ec2-user
+
+[2024-06-10] Fixed cron job for daily_sync.py:
+- Now uses absolute path: /home/ec2-user/mobility-data-lifecycle-manager
+- Activates venv before running script
+- Logs output and errors to daily_sync_cron.log
+- Updated user_data.sh to ensure idempotency and correct cron setup
+- Applied fix to live EC2 instance
+
+[2024-06-10] Changed cron job to append daily_sync.py output to app.log so logs are combined and visible in the Flask /view_logs route. Updated user_data.sh and live EC2 instance.
+
+[2024-06-10] Fixed update_crontab_for_sync_time in flask_app.py to use absolute path and log to app.log, matching user_data.sh and manual cron setup. Now, updating sync time from the GUI always sets the correct cron job.
 --- 

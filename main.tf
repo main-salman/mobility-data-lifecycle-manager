@@ -32,6 +32,23 @@ variable "max_instances" {
   default     = 10
 }
 
+variable "app_domain" {
+  description = "Domain name for the Flask app (used for HTTPS cert)"
+  type        = string
+  default     = "mobility.qolimpact.click"
+}
+
+variable "letsencrypt_email" {
+  description = "Email for Let's Encrypt certificate registration"
+  type        = string
+  default     = "salman.naqvi@gmail.com"
+}
+
+variable "route53_zone_id" {
+  description = "Route53 Hosted Zone ID for the domain (e.g., Z123456ABCDEFG)"
+  type        = string
+}
+
 # Data sources
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -173,8 +190,9 @@ resource "aws_iam_instance_profile" "ec2_mobility_profile" {
 
 # --- Secrets Manager for .env ---
 resource "aws_secretsmanager_secret" "env_secret" {
-  name        = "mobility-data-lifecycle-env"
-  description = ".env file for mobility-data-lifecycle-manager"
+  name                    = "mobility-data-lifecycle-env2"
+  description             = ".env file for mobility-data-lifecycle-manager"
+  recovery_window_in_days = 30
 }
 
 resource "aws_secretsmanager_secret_version" "env_secret_version" {
@@ -206,8 +224,10 @@ resource "aws_instance" "mobility_manager" {
   vpc_security_group_ids = [aws_security_group.mobility_workers.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_mobility_profile.name
   user_data              = base64encode(templatefile("${path.module}/user_data.sh", {
-    AWS_ENV_SECRET_NAME = aws_secretsmanager_secret.env_secret.name
-    AWS_REGION         = var.aws_region
+    AWS_ENV_SECRET_NAME = aws_secretsmanager_secret.env_secret.name,
+    AWS_REGION = var.aws_region,
+    APP_DOMAIN = var.app_domain,
+    LETSENCRYPT_EMAIL = var.letsencrypt_email
   }))
   key_name               = "salman-dev" # Use the salman-dev key pair for SSH access
   tags = {
@@ -291,4 +311,22 @@ resource "aws_cloudwatch_metric_alarm" "backup_job_failed" {
   dimensions = {
     BackupVaultName = aws_backup_vault.mobility_backup_vault.name
   }
+}
+
+output "app_url" {
+  description = "HTTPS URL for the Flask app"
+  value       = "https://${var.app_domain}"
+}
+
+resource "aws_route53_record" "app" {
+  zone_id = var.route53_zone_id
+  name    = var.app_domain
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.mobility_manager.public_ip]
+}
+
+output "app_dns_record" {
+  description = "Route53 record for the app domain"
+  value       = aws_route53_record.app.fqdn
 }

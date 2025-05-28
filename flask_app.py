@@ -198,7 +198,7 @@ def set_sync_time(hour, minute):
 def update_crontab_for_sync_time(time_str):
     import subprocess
     hour, minute = time_str.split(':')
-    cron_line = f"{int(minute)} {int(hour)} * * * cd $(pwd) && source venv/bin/activate && python daily_sync.py\n"
+    cron_line = f"{int(minute)} {int(hour)} * * * cd /home/ec2-user/mobility-data-lifecycle-manager && source venv/bin/activate && python daily_sync.py >> /home/ec2-user/mobility-data-lifecycle-manager/app.log 2>&1"
     # Remove any existing daily_sync.py cron jobs, then add the new one
     try:
         crontab = subprocess.check_output(['crontab', '-l'], text=True)
