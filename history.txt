@@ -77,4 +77,20 @@ Updated flask_app.py:
 [2024-06-09] Removed the local wait_for_job_completion from flask_app.py so only the sync_logic.py version is used.
 
 [2024-06-09] The sync progress page now shows city, country, state/province, and date range of the request above the progress bar.
+
+[2024-06-09] AWS deployment readiness: user_data.sh now fetches .env from AWS Secrets Manager, main.tf provisions the secret and IAM permissions, and passes secret info to user_data. Ready for Terraform apply. Secret content to be updated by user.
+
+[2024-06-09] Removed all DynamoDB table references from main.tf and fixed user_data.sh for Terraform templatefile compatibility (no bash parameter expansion, all variables passed from Terraform).
+
+[2024-06-09] Removed all SQS queue and S3 bucket creation resources and references from main.tf. Now uses a variable for the existing S3 bucket. Cleaned up user_data.sh and Terraform config for a minimal Flask deployment.
+
+# 2024-06-09: Updated user_data.sh to fix permissions and ensure all pip installs and Flask app startup are run as ec2-user, not root. This should resolve venv and Flask import issues on EC2.
+
+# 2024-06-09: Restored full user_data.sh for Flask app deployment after confirming user data execution works with new AMI and no launch template. The script now:
+# - Installs system dependencies
+# - Clones or updates the repo
+# - Sets up Python venv and installs requirements
+# - Fetches .env from AWS Secrets Manager
+# - Sets up cron for daily sync
+# - Starts the Flask app in the background
 --- 
