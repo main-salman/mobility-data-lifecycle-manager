@@ -102,7 +102,3 @@ This will sync all cities for the previous day at 2am UTC.
 - **DynamoDB table issues?**
   - Re-run `python dynamodb_create_table.py` if needed
 
----
-
-## Contact
-For help, contact: salman.naqvi@gmail.com
