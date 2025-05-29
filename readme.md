@@ -3,18 +3,27 @@
 ## Overview
 This system automates the daily download and sync of Veraset mobility data for a configurable list of cities, using a simple password-protected Flask web UI on a single EC2 instance.
 
+
+<img width="641" alt="image" src="https://github.com/user-attachments/assets/28d3d5bf-39b8-4d91-b633-29620a4a1d3d" />
+
+<img width="520" alt="image" src="https://github.com/user-attachments/assets/0646bbcf-c593-4856-8bd7-d2f74fcd8145" />
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/7ced6a39-f9c3-49ac-9973-abc4a6c3677a" />
+
+<img width="839" alt="image" src="https://github.com/user-attachments/assets/b7a83cf4-7342-4cf0-a210-735178843f72" />
+
+
 ---
 
 ## Prerequisites
 - Amazon Linux 2 EC2 instance (t3.medium or larger recommended)
-- SSH access with your `salman-dev.pem` key
+- SSH access with your `MY-AWS-KEY.pem` key
 - AWS account with permissions for DynamoDB, S3, SNS, and Secrets Manager
 - The following files uploaded to your EC2 instance:
   - `setup_ec2.sh`
   - `flask_app.py`
   - `sync_logic.py`
-  - `dynamodb_create_table.py`
-  - `.env` (with admin_user and admin_password)
+  - `.env` (see example)
 
 ---
 
@@ -22,7 +31,7 @@ This system automates the daily download and sync of Veraset mobility data for a
 
 ### 1. SSH into your EC2 instance
 ```
-ssh -i salman-dev.pem ec2-user@<EC2_PUBLIC_IP>
+ssh -i MY-AWS-KEY.pem ec2-user@<EC2_PUBLIC_IP>
 ```
 
 ### 2. Upload all project files
