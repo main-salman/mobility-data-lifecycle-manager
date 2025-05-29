@@ -22,8 +22,8 @@ def main():
     if not cities:
         print("No cities to sync.")
         return
-    # Use yesterday in UTC
-    date = (datetime.utcnow() - timedelta(days=1)).strftime('%Y-%m-%d')
+    # Use 7 days prior in UTC
+    date = (datetime.utcnow() - timedelta(days=7)).strftime('%Y-%m-%d')
     print(f"Syncing all cities for {date}")
     for city in cities:
         print(f"Syncing {city['city']} ({city['country']})...")

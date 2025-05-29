@@ -338,13 +338,26 @@ def index():
     if not is_logged_in():
         return redirect(url_for('login'))
     sync_hour, sync_minute = get_sync_time()
-    if request.method == 'POST' and 'sync_time' in request.form:
-        new_time = request.form['sync_time']
-        if ':' in new_time:
-            hour, minute = new_time.split(':')
-            set_sync_time(hour, minute)
-            flash(f"Sync time updated to {hour}:{minute} (24h)")
-        return redirect(url_for('index'))
+    if request.method == 'POST':
+        if 'disable_sync' in request.form:
+            # Remove the cron job for daily_sync.py
+            import subprocess
+            try:
+                crontab = subprocess.check_output(['sudo', 'crontab', '-u', 'ec2-user', '-l'], text=True)
+                lines = [l for l in crontab.splitlines() if 'daily_sync.py' not in l]
+            except subprocess.CalledProcessError:
+                lines = []
+            new_crontab = '\n'.join(lines) + '\n'
+            subprocess.run(['sudo', 'crontab', '-u', 'ec2-user', '-'], input=new_crontab, text=True, check=True)
+            flash("Daily sync has been disabled (cron job removed).")
+            return redirect(url_for('index'))
+        if 'sync_time' in request.form:
+            new_time = request.form['sync_time']
+            if ':' in new_time:
+                hour, minute = new_time.split(':')
+                set_sync_time(hour, minute)
+                flash(f"Sync time updated to {hour}:{minute} (24h)")
+            return redirect(url_for('index'))
     cities = load_cities()
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
@@ -354,7 +367,11 @@ def index():
                 <input type="time" name="sync_time" value="{{'%02d:%02d' % (sync_hour, sync_minute)}}">
             </label>
             <input type="submit" value="Update Sync Time">
+            <button type="submit" name="disable_sync" value="1" style="background:#ccc;color:#222;">Disable Daily Sync</button>
         </form>
+        <div style="margin-bottom:1em;color:#555;font-size:0.98em;">
+            <b>Note:</b> Each daily sync downloads data for <b>one day, 7 days prior</b> to the current UTC date.
+        </div>
         <table border=1 cellpadding=5>
             <tr><th>Country</th><th>State/Province</th><th>City</th><th>Latitude</th><th>Longitude</th><th>Email</th><th>Actions</th></tr>
             {% for city in cities %}
