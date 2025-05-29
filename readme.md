@@ -102,3 +102,48 @@ This will sync all cities for the previous day at 2am UTC.
 - **DynamoDB table issues?**
   - Re-run `python dynamodb_create_table.py` if needed
 
+## Updating the App After a GitHub Repo Update
+
+To update the app on your EC2 instance after changes are pushed to the GitHub repository:
+
+1. **SSH into your EC2 instance:**
+   ```sh
+   ssh -i salman-dev.pem ec2-user@<EC2_PUBLIC_IP>
+   ```
+
+2. **Navigate to the project directory:**
+   ```sh
+   cd ~/mobility-data-lifecycle-manager
+   ```
+
+3. **Pull the latest changes from GitHub:**
+   ```sh
+   git pull origin main
+   ```
+
+4. **(Optional) Update Python dependencies:**
+   If `requirements.txt` has changed:
+   ```sh
+   source venv/bin/activate
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   deactivate
+   ```
+
+5. **Restart the Flask app:**
+   If running with a process manager (e.g., systemd, supervisor, or gunicorn), restart the service. If running manually, stop and re-run the app:
+   ```sh
+   # If running in the background, find and kill the process:
+   pkill -f flask_app.py
+   # Then restart:
+   source venv/bin/activate
+   python flask_app.py &
+   ```
+
+6. **Check the logs:**
+   ```sh
+   tail -f app.log
+   ```
+
+**Note:** If you have made changes to user_data.sh or deployment scripts, you may need to re-run those steps or re-provision the instance.
+
