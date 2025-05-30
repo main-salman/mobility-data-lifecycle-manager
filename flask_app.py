@@ -239,6 +239,7 @@ def threaded_sync(city, dates, sync_id):
     total = len(dates)
     errors = []
     logging.info(f"Starting sync for {city['city']} ({city['country']}) for {total} days: {dates[0]} to {dates[-1]}")
+    quota_error_flag = False
     for i, date in enumerate(dates):
         logging.info(f"Syncing {city['city']} on {date}")
         error_msg = None
@@ -249,11 +250,32 @@ def threaded_sync(city, dates, sync_id):
             else:
                 data_sync_progress[sync_id]['veraset_status'] = f"Polling Veraset job status... (attempt {attempt+1})"
         try:
-            # Use the new callback and polling interval
             from datetime import datetime as dt
             date_obj = dt.strptime(date, "%Y-%m-%d")
             payload = build_sync_payload(city, date_obj, date_obj)
             response = make_api_request("movement/job/pings", data=payload)
+            # Check for quota exceeded error
+            if response and isinstance(response, dict):
+                error_message = response.get('error_message') or response.get('error', '')
+                if error_message and 'Monthly Job Quota exceeded' in error_message:
+                    logging.error("Monthly Job Quota exceeded. Please contact support for inquiry.")
+                    error_msg = "Monthly Job Quota exceeded. Please contact support for inquiry."
+                    quota_error_flag = True
+                    # Add to errors and update progress immediately
+                    errors.append(f"{date}: {error_msg}")
+                    data_sync_progress[sync_id].update({
+                        'current': i + 1,
+                        'total': total,
+                        'date': date,
+                        'status': 'quota_exceeded',
+                        'done': i + 1 == total,
+                        'errors': errors.copy()
+                    })
+                    # Show in GUI via flash if possible
+                    from flask import has_request_context, flash
+                    if has_request_context():
+                        flash("Monthly Job Quota exceeded. Please contact support for inquiry.", 'error')
+                    break
             if not response or 'error' in response:
                 status = 'failed'
                 error_msg = response.get('error', 'No response from API')
@@ -265,7 +287,6 @@ def threaded_sync(city, dates, sync_id):
                     error_msg = f"No job_id received from Veraset API"
                     logging.error(f"Sync failed for {city['city']} on {date}: {error_msg}")
                 else:
-                    # Poll for up to 100 minutes, every 1 minute
                     data_sync_progress[sync_id]['veraset_status'] = 'Polling Veraset job status...'
                     status_result = wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_callback=status_callback)
                     if not status_result or 'error' in status_result:
@@ -273,7 +294,6 @@ def threaded_sync(city, dates, sync_id):
                         error_msg = status_result.get('error', 'Unknown error during job status polling')
                         logging.error(f"Sync failed for {city['city']} on {date}: {error_msg}")
                     else:
-                        # S3 sync step
                         sync_result = sync_city_for_date(city, date)
                         if not sync_result.get('success'):
                             status = 'failed'
@@ -284,7 +304,6 @@ def threaded_sync(city, dates, sync_id):
                             logging.info(f"Sync result for {city['city']} on {date}: success")
                             data_sync_progress[sync_id]['status'] = 's3_syncing'
                             data_sync_progress[sync_id]['s3_sync'] = f"S3 sync complete for {date}."
-            # Wait a moment so UI can show the S3 sync status
             time.sleep(0.5)
         except Exception as e:
             status = 'error'
@@ -296,10 +315,15 @@ def threaded_sync(city, dates, sync_id):
             'current': i + 1,
             'total': total,
             'date': date,
-            'status': status,
+            'status': status if error_msg else 'success',
             'done': i + 1 == total,
             'errors': errors.copy()
         })
+    # After loop, ensure quota error is present if detected
+    if quota_error_flag and not any('Monthly Job Quota exceeded' in e for e in errors):
+        errors.append("Monthly Job Quota exceeded. Please contact support for inquiry.")
+        data_sync_progress[sync_id]['errors'] = errors.copy()
+        data_sync_progress[sync_id]['status'] = 'quota_exceeded'
     data_sync_progress[sync_id]['done'] = True
     logging.info(f"Sync complete for {city['city']} ({city['country']})")
 
@@ -588,6 +612,7 @@ def sync_city(city_id):
     city = next((c for c in cities if c['city_id'] == city_id), None)
     if not city:
         return 'City not found', 404
+    error_message = None
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
@@ -608,10 +633,22 @@ def sync_city(city_id):
             'state_province': city.get('state_province', ''),
             'date_range': f"{start_date} to {end_date}"
         }
-        threading.Thread(target=threaded_sync, args=(city, dates, sync_id), daemon=True).start()
+        # Run sync in thread and check for quota error
+        def sync_and_check():
+            threaded_sync(city, dates, sync_id)
+            # After sync, check for quota error in progress
+            prog = data_sync_progress.get(sync_id, {})
+            for err in prog.get('errors', []):
+                if 'Monthly Job Quota exceeded' in err:
+                    nonlocal error_message
+                    error_message = 'Monthly Job Quota exceeded. Please contact support for inquiry.'
+        threading.Thread(target=sync_and_check, daemon=True).start()
         return render_template_string(APPLE_STYLE + '''
             <div class="container">
             <h2>Sync Progress for {{city['city']}}</h2>
+            {% if error_message %}
+            <div style="color:#c00;font-weight:bold;margin-bottom:1em;">{{ error_message }}</div>
+            {% endif %}
             <div><b>City:</b> {{city['city']}}<br>
             <b>Country:</b> {{city['country']}}<br>
             <b>State/Province:</b> {{city.get('state_province', '')}}<br>
@@ -635,6 +672,22 @@ def sync_city(city_id):
                 } else {
                   document.getElementById('veraset_status').textContent = '';
                 }
+                // Always update quota error at top if present
+                let quotaError = data.errors && data.errors.some(e => e.includes('Monthly Job Quota exceeded'));
+                let quotaDiv = document.getElementById('quota_error');
+                if (quotaDiv) {
+                  quotaDiv.remove(); // Always remove before possibly adding
+                }
+                if (quotaError) {
+                  quotaDiv = document.createElement('div');
+                  quotaDiv.id = 'quota_error';
+                  quotaDiv.style = 'color:#c00;font-weight:bold;margin-bottom:1em;';
+                  quotaDiv.textContent = 'Monthly Job Quota exceeded. Please contact support for inquiry.';
+                  let container = document.querySelector('.container');
+                  if (container) {
+                    container.insertBefore(quotaDiv, container.children[1]);
+                  }
+                }
                 if (data.errors && data.errors.length > 0) {
                   document.getElementById('errors').innerHTML = '<b>Errors:</b><br>' + data.errors.map(e => `<div>${e}</div>`).join('');
                 } else {
@@ -647,10 +700,10 @@ def sync_city(city_id):
                 }
               });
             }
-            poll();
+            document.addEventListener('DOMContentLoaded', poll);
             </script>
             </div>
-        ''', city=city, sync_id=sync_id)
+        ''', city=city, sync_id=sync_id, error_message=error_message)
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>Sync City: {{city['city']}}</h2>
@@ -710,7 +763,7 @@ def view_logs():
         <h2>Application Logs (last 1000 lines)</h2>
         <button id="pauseBtn" onclick="togglePause()">Pause</button>
         <button onclick="refreshLogs()">Refresh</button>
-        <pre id="logbox" style="background:#222;color:#eee;padding:1em;max-height:500px;overflow:auto;font-size:13px;">{{logs}}</pre>
+        <pre id="logbox" style="background:#111;color:#eee;padding:1em;max-height:1000px;max-width:1400px;overflow:auto;font-size:13px;">{{logs}}</pre>
         <a href="{{ url_for('index') }}">Back</a>
         <script>
         let paused = false;
@@ -753,18 +806,19 @@ def build_sync_payload(city, from_date, to_date):
     }
 
 def make_api_request(endpoint, method="POST", data=None):
+    logging.debug(f"[DEBUG] VERASET_API_KEY: {VERASET_API_KEY}")
     url = f"{API_ENDPOINT}/v1/{endpoint}"
     headers = {
         "Content-Type": "application/json",
         "X-API-Key": VERASET_API_KEY
     }
-    print(f"[DEBUG] Request URL: {url}")
-    print(f"[DEBUG] Request Headers: {headers}")
-    print(f"[DEBUG] Request Data: {json.dumps(data, indent=2)}")
+    logging.debug(f"[DEBUG] Request URL: {url}")
+    logging.debug(f"[DEBUG] Request Headers: {headers}")
+    logging.debug(f"[DEBUG] Request Data: {json.dumps(data, indent=2)}")
     try:
         resp = requests.request(method, url, headers=headers, json=data)
-        print(f"[DEBUG] Response Status: {resp.status_code}")
-        print(f"[DEBUG] Response Text: {resp.text}")
+        logging.debug(f"[DEBUG] Response Status: {resp.status_code}")
+        logging.debug(f"[DEBUG] Response Text: {resp.text}")
         resp.raise_for_status()
         try:
             return resp.json()
@@ -772,8 +826,8 @@ def make_api_request(endpoint, method="POST", data=None):
             logging.error(f"Non-JSON response: {resp.text}")
             return None
     except requests.exceptions.RequestException as e:
-        print(f"[ERROR] API request error: {e}")
-        print(f"[ERROR] Response Text: {getattr(resp, 'text', '')}")
+        logging.error(f"[ERROR] API request error: {e}")
+        logging.error(f"[ERROR] Response Text: {getattr(resp, 'text', '')}")
         raise
 
 def get_job_status(job_id):
@@ -793,14 +847,16 @@ def sync_jobs():
         except Exception:
             job_date = now  # If missing or invalid, treat as now
         if (now - job_date).days <= 30:
-            jobs.append({'sync_id': k, 'job_date': job_date, **v})
+            # Check for quota error
+            quota_error = any('Monthly Job Quota exceeded' in e for e in v.get('errors', []))
+            jobs.append({'sync_id': k, 'job_date': job_date, 'quota_error': quota_error, **v})
     # Sort by job_date descending
     jobs.sort(key=lambda j: j['job_date'], reverse=True)
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>All Sync Jobs Progress (Last 30 Days)</h2>
         <table border=1 cellpadding=5>
-            <tr><th>Sync ID</th><th>Date</th><th>Status</th><th>Current</th><th>Total</th><th>Veraset Status</th><th>Done</th><th>Errors</th><th>View</th></tr>
+            <tr><th>Sync ID</th><th>Date</th><th>Status</th><th>Current</th><th>Total</th><th>Veraset Status</th><th>Done</th><th>Errors</th><th>Quota Exceeded</th><th>View</th></tr>
             {% for job in jobs %}
             <tr>
                 <td style="font-size:0.9em">{{job.sync_id}}</td>
@@ -811,6 +867,7 @@ def sync_jobs():
                 <td>{{job.get('veraset_status','')}}</td>
                 <td>{{'Yes' if job.done else 'No'}}</td>
                 <td style="color:#c00">{{job.errors|join(', ')}}</td>
+                <td>{% if job.quota_error %}<span style="color:#c00;font-weight:bold;">Quota Exceeded</span>{% else %}-{% endif %}</td>
                 <td><a href="{{ url_for('sync_progress_page', sync_id=job.sync_id) }}">View</a></td>
             </tr>
             {% endfor %}
@@ -825,10 +882,15 @@ def sync_progress_page(sync_id):
     prog = data_sync_progress.get(sync_id)
     if not prog:
         return render_template_string(APPLE_STYLE + '''<div class="container"><h2>Sync Not Found</h2><a href="{{ url_for('sync_jobs') }}">Back to Sync Jobs</a></div>''')
+    # Check for quota error in errors
+    quota_error = any('Monthly Job Quota exceeded' in e for e in prog.get('errors', []))
     # Reuse the progress bar UI
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>Sync Progress (ID: {{sync_id}})</h2>
+        {% if quota_error %}
+        <div style="color:#c00;font-weight:bold;margin-bottom:1em;">Monthly Job Quota exceeded. Please contact support for inquiry.</div>
+        {% endif %}
         <div><b>City:</b> {{prog.city}}<br>
         <b>Country:</b> {{prog.country}}<br>
         <b>State/Province:</b> {{prog.state_province}}<br>
@@ -852,6 +914,22 @@ def sync_progress_page(sync_id):
             } else {
               document.getElementById('veraset_status').textContent = '';
             }
+            // Always update quota error at top if present
+            let quotaError = data.errors && data.errors.some(e => e.includes('Monthly Job Quota exceeded'));
+            let quotaDiv = document.getElementById('quota_error');
+            if (quotaDiv) {
+              quotaDiv.remove(); // Always remove before possibly adding
+            }
+            if (quotaError) {
+              quotaDiv = document.createElement('div');
+              quotaDiv.id = 'quota_error';
+              quotaDiv.style = 'color:#c00;font-weight:bold;margin-bottom:1em;';
+              quotaDiv.textContent = 'Monthly Job Quota exceeded. Please contact support for inquiry.';
+              let container = document.querySelector('.container');
+              if (container) {
+                container.insertBefore(quotaDiv, container.children[1]);
+              }
+            }
             if (data.errors && data.errors.length > 0) {
               document.getElementById('errors').innerHTML = '<b>Errors:</b><br>' + data.errors.map(e => `<div>${e}</div>`).join('');
             } else {
@@ -864,10 +942,11 @@ def sync_progress_page(sync_id):
             }
           });
         }
-        poll();
+        document.addEventListener('DOMContentLoaded', poll);
         </script>
         </div>
-    ''', sync_id=sync_id, prog=prog)
+    ''', sync_id=sync_id, prog=prog, quota_error=quota_error)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 
+
