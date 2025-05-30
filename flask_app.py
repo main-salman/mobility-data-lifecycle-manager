@@ -758,8 +758,13 @@ def make_api_request(endpoint, method="POST", data=None):
         "Content-Type": "application/json",
         "X-API-Key": VERASET_API_KEY
     }
+    print(f"[DEBUG] Request URL: {url}")
+    print(f"[DEBUG] Request Headers: {headers}")
+    print(f"[DEBUG] Request Data: {json.dumps(data, indent=2)}")
     try:
         resp = requests.request(method, url, headers=headers, json=data)
+        print(f"[DEBUG] Response Status: {resp.status_code}")
+        print(f"[DEBUG] Response Text: {resp.text}")
         resp.raise_for_status()
         try:
             return resp.json()
@@ -767,7 +772,8 @@ def make_api_request(endpoint, method="POST", data=None):
             logging.error(f"Non-JSON response: {resp.text}")
             return None
     except requests.exceptions.RequestException as e:
-        logging.error(f"API request error: {e}")
+        print(f"[ERROR] API request error: {e}")
+        print(f"[ERROR] Response Text: {getattr(resp, 'text', '')}")
         raise
 
 def get_job_status(job_id):
