@@ -134,16 +134,15 @@ def create_job_message(city: Dict[str, Any], process_date: str) -> Dict[str, Any
     Create a job message for SQS
     """
     job_id = str(uuid.uuid4())
-    
     return {
         'job_id': job_id,
         'city_id': city['city_id'],
-        'city_name': city['city_name'],
+        'city_name': city.get('city_name', city.get('city', '')),
         'country': city['country'],
         'state_province': city.get('state_province', ''),
         'latitude': city['latitude'],
         'longitude': city['longitude'],
-        'radius_meters': city.get('radius_meters', 50000),
+        'radius_meters': float(city.get('radius_meters', 50000)),
         'process_date': process_date,
         'created_at': datetime.utcnow().isoformat(),
         'retry_count': 0

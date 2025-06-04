@@ -6,7 +6,8 @@
     "city": "Pickering",
     "latitude": "43.8357650",
     "longitude": "-79.0905760",
-    "notification_email": "salman.naqvi@gmail.com"
+    "notification_email": "salman.naqvi@gmail.com",
+    "radius_meters": "10000"
   },
   {
     "city_id": "f6f45cfd-d6bc-48eb-aed0-8bdec765e86f",
@@ -15,7 +16,8 @@
     "city": "Vancouver",
     "latitude": "49.2608724",
     "longitude": "-123.1139520",
-    "notification_email": "salman.naqvi@gmail.com"
+    "notification_email": "salman.naqvi@gmail.com",
+    "radius_meters": "20000"
   },
   {
     "city_id": "15118260-6baa-492b-af2d-07e6eac1c067",
@@ -24,7 +26,8 @@
     "city": "hamilton",
     "latitude": "43.2560802",
     "longitude": "-79.8728583",
-    "notification_email": "salman.naqvi@gmail.com"
+    "notification_email": "salman.naqvi@gmail.com",
+    "radius_meters": "25000"
   },
   {
     "city_id": "4739bae9-b4cc-4010-b0a4-465e40af9324",
@@ -33,6 +36,17 @@
     "city": "kingston",
     "latitude": "44.3054151",
     "longitude": "-76.4283781",
-    "notification_email": "salman.naqvi@gmail.com"
+    "notification_email": "salman.naqvi@gmail.com",
+    "radius_meters": "15000"
+  },
+  {
+    "city_id": "94afdb7d-beb6-4e80-ba51-20c1f7630959",
+    "country": "Pakistan",
+    "state_province": "Punjab",
+    "city": "Lahore",
+    "latitude": "31.5656822",
+    "longitude": "74.3141829",
+    "notification_email": "salman.naqvi@gmail.com",
+    "radius_meters": "40000"
   }
 ]

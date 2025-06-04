@@ -13,7 +13,7 @@ import uuid
 from flask import Flask, render_template_string, request, redirect, url_for, session, flash, send_from_directory, jsonify
 import boto3
 from dotenv import load_dotenv, set_key
-from sync_logic import sync_city_for_date, wait_for_job_completion
+from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket
 import requests
 import json
 import threading
@@ -62,8 +62,8 @@ body {
   padding: 0;
 }
 .container {
-  max-width: 700px;
-  margin: 40px auto;
+  max-width: 1200px;
+  margin: 40px 0 20px 10vw;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.07);
@@ -143,9 +143,15 @@ pre#logbox {
   border-radius: 12px;
   padding: 1.2em;
   font-size: 14px;
-  max-height: 500px;
+  max-height: 1000px;
+  width: 100%;
+  min-width: 1800px;
+  max-width: 2800px;
   overflow: auto;
   margin-bottom: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 #progress-bar {
   width: 100%;
@@ -396,24 +402,38 @@ def index():
         <div style="margin-bottom:1em;color:#555;font-size:0.98em;">
             <b>Note:</b> Each daily sync downloads data for <b>one day, 7 days prior</b> to the current UTC date.
         </div>
-        <table border=1 cellpadding=5>
-            <tr><th>Country</th><th>State/Province</th><th>City</th><th>Latitude</th><th>Longitude</th><th>Email</th><th>Actions</th></tr>
-            {% for city in cities %}
-            <tr>
-                <td>{{city['country']}}</td>
-                <td>{{city.get('state_province','')}}</td>
-                <td>{{city['city']}}</td>
-                <td>{{city['latitude']}}</td>
-                <td>{{city['longitude']}}</td>
-                <td>{{city.get('notification_email','')}}</td>
-                <td>
-                    <a href="{{ url_for('edit_city', city_id=city['city_id']) }}">Edit</a> |
-                    <a href="{{ url_for('delete_city', city_id=city['city_id']) }}" onclick="return confirm('Delete this city?')">Delete</a> |
-                    <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">Sync</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        <form action="{{ url_for('sync_all') }}" method="post" style="margin-bottom:1em;display:flex;align-items:center;gap:10px;">
+            <label>Start Date: <input name="start_date" type="date" required></label>
+            <label>End Date: <input name="end_date" type="date" required></label>
+            <label>Schema Type:
+                <select name="schema_type">
+                    <option value="FULL" selected>FULL</option>
+                    <option value="TRIPS">TRIPS</option>
+                </select>
+            </label>
+            <button type="submit">Sync All Cities</button>
+        </form>
+        <div style="overflow-x:auto;">
+          <table border=1 cellpadding=5>
+              <tr><th>Country</th><th>State/Province</th><th>City</th><th>Latitude</th><th>Longitude</th><th>Email</th><th>Radius (m)</th><th>Actions</th></tr>
+              {% for city in cities %}
+              <tr>
+                  <td>{{city['country']}}</td>
+                  <td>{{city.get('state_province','')}}</td>
+                  <td>{{city['city']}}</td>
+                  <td>{{city['latitude']}}</td>
+                  <td>{{city['longitude']}}</td>
+                  <td>{{city.get('notification_email','')}}</td>
+                  <td>{{city.get('radius_meters', 50000)}}</td>
+                  <td>
+                      <a href="{{ url_for('edit_city', city_id=city['city_id']) }}">Edit</a> |
+                      <a href="{{ url_for('delete_city', city_id=city['city_id']) }}" onclick="return confirm('Delete this city?')">Delete</a> |
+                      <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">Sync</a>
+                  </td>
+              </tr>
+              {% endfor %}
+          </table>
+        </div>
         <br><a href="{{ url_for('add_city') }}">Add City</a>
         <br><a href="{{ url_for('view_logs') }}">View Logs</a>
         <br><a href="{{ url_for('sync_jobs') }}">View Sync Jobs Progress</a>
@@ -434,7 +454,8 @@ def add_city():
             'city': request.form['city'],
             'latitude': request.form['latitude'],
             'longitude': request.form['longitude'],
-            'notification_email': request.form['notification_email']
+            'notification_email': request.form['notification_email'],
+            'radius_meters': request.form.get('radius_meters', 50000)
         }
         logging.info(f"Adding city: {data}")
         cities.append(data)
@@ -451,6 +472,7 @@ def add_city():
             Longitude: <input name="longitude" id="longitude"><br>
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email"><br>
+            Radius Meters: <input name="radius_meters" type="number"><br>
             <input type="submit" value="Add">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
@@ -513,7 +535,7 @@ def edit_city(city_id):
         logging.warning(f"Edit city: city_id {city_id} not found.")
         return 'City not found', 404
     if request.method == 'POST':
-        for field in ['country', 'state_province', 'city', 'latitude', 'longitude', 'notification_email']:
+        for field in ['country', 'state_province', 'city', 'latitude', 'longitude', 'notification_email', 'radius_meters']:
             city[field] = request.form.get(field, '')
         logging.info(f"Editing city: {city}")
         save_cities(cities)
@@ -529,6 +551,7 @@ def edit_city(city_id):
             Longitude: <input name="longitude" id="longitude" value="{{city['longitude']}}"><br>
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email" value="{{city['notification_email']}}"><br>
+            Radius Meters: <input name="radius_meters" type="number" value="{{city['radius_meters']}}"><br>
             <input type="submit" value="Save">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
@@ -631,7 +654,8 @@ def sync_city(city_id):
             'city': city['city'],
             'country': city['country'],
             'state_province': city.get('state_province', ''),
-            'date_range': f"{start_date} to {end_date}"
+            'date_range': f"{start_date} to {end_date}",
+            'radius_meters': city['radius_meters']
         }
         # Run sync in thread and check for quota error
         def sync_and_check():
@@ -801,7 +825,7 @@ def build_sync_payload(city, from_date, to_date):
             "poi_id": f"{city['city'].lower()}_center",
             "latitude": float(city['latitude']),
             "longitude": float(city['longitude']),
-            "distance_in_meters": 50000
+            "distance_in_meters": city['radius_meters']
         }]
     }
 
@@ -881,7 +905,9 @@ def sync_progress_page(sync_id):
     # Show the progress page for a given sync_id (GET)
     prog = data_sync_progress.get(sync_id)
     if not prog:
-        return render_template_string(APPLE_STYLE + '''<div class="container"><h2>Sync Not Found</h2><a href="{{ url_for('sync_jobs') }}">Back to Sync Jobs</a></div>''')
+        return render_template_string(APPLE_STYLE + """
+            <div class='container'><h2>Sync Not Found</h2><a href='{{ url_for('index') }}'>Back</a></div>
+        """)
     # Check for quota error in errors
     quota_error = any('Monthly Job Quota exceeded' in e for e in prog.get('errors', []))
     # Reuse the progress bar UI
@@ -946,6 +972,139 @@ def sync_progress_page(sync_id):
         </script>
         </div>
     ''', sync_id=sync_id, prog=prog, quota_error=quota_error)
+
+@app.route('/sync_all', methods=['GET', 'POST'])
+def sync_all():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    error_message = None
+    if request.method == 'POST':
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        schema_type = request.form.get('schema_type', 'FULL')
+        cities = load_cities()
+        sync_id = str(uuidlib.uuid4())
+        data_sync_progress[sync_id] = {
+            'current': 0,
+            'total': len(cities),
+            'date': '',
+            'status': 'pending',
+            'done': False,
+            'city': 'ALL',
+            'country': '',
+            'state_province': '',
+            'date_range': f"{start_date} to {end_date}",
+            'errors': []
+        }
+        def sync_all_thread():
+            errors = []
+            geo_radius = []
+            for city in cities:
+                geo_radius.append({
+                    "poi_id": f"{city['city'].lower()}_center",
+                    "latitude": float(city['latitude']),
+                    "longitude": float(city['longitude']),
+                    "distance_in_meters": float(city.get('radius_meters', 50000))
+                })
+            payload = {
+                "date_range": {
+                    "from_date": start_date,
+                    "to_date": end_date
+                },
+                "schema_type": schema_type,
+                "geo_radius": geo_radius
+            }
+            api_key = os.environ.get('VERASET_API_KEY')
+            logging.info(f"[Sync All] Starting sync for ALL cities from {start_date} to {end_date}")
+            logging.debug(f"[Sync All] VERASET_API_KEY: {api_key}")
+            logging.debug(f"[Sync All] Payload: {payload}")
+            data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
+            data_sync_progress[sync_id]['status'] = f"syncing all cities"
+            try:
+                from sync_logic import make_api_request, wait_for_job_completion, sync_data_to_bucket
+                response = make_api_request("movement/job/pings", data=payload)
+                if not response or 'error' in response:
+                    logging.error(f"[Sync All] Error: {response.get('error', 'No response from API') if response else 'No response from API'}")
+                    errors.append(f"API error: {response.get('error', 'No response from API') if response else 'No response from API'}")
+                else:
+                    job_id = response.get("data", {}).get("job_id")
+                    if not job_id:
+                        logging.error(f"[Sync All] No job_id received from Veraset API: {response}")
+                        errors.append(f"No job_id received from Veraset API: {response}")
+                    else:
+                        data_sync_progress[sync_id]['status'] = 'Polling Veraset job status...'
+                        status_result = wait_for_job_completion(job_id, max_attempts=100, poll_interval=60)
+                        if not status_result or 'error' in status_result:
+                            logging.error(f"[Sync All] Error during job status polling: {status_result.get('error', 'Unknown error') if status_result else 'Unknown error'}")
+                            errors.append(f"Job status polling error: {status_result.get('error', 'Unknown error') if status_result else 'Unknown error'}")
+                        else:
+                            # S3 sync step
+                            sync_result = sync_data_to_bucket({"city": "all_cities", "country": "all", "latitude": 0, "longitude": 0}, start_date, status_result.get('s3_location'))
+                            if not sync_result.get('success'):
+                                logging.error(f"[Sync All] S3 sync error: {sync_result.get('error', 'Unknown error during S3 sync')}")
+                                errors.append(f"S3 sync error: {sync_result.get('error', 'Unknown error during S3 sync')}")
+                            else:
+                                logging.info(f"[Sync All] Success: S3 sync complete for all cities from {start_date} to {end_date}")
+                                data_sync_progress[sync_id]['s3_sync'] = f"S3 sync complete for all cities."
+            except Exception as e:
+                logging.error(f"[Sync All] Exception: {str(e)}")
+                errors.append(f"Exception: {str(e)}")
+            data_sync_progress[sync_id]['current'] = len(cities)
+            data_sync_progress[sync_id]['errors'] = errors.copy()
+            data_sync_progress[sync_id]['done'] = True
+            data_sync_progress[sync_id]['status'] = 'done'
+        threading.Thread(target=sync_all_thread, daemon=True).start()
+        return redirect(url_for('sync_all_progress', sync_id=sync_id))
+    # GET: show form
+    return render_template_string(APPLE_STYLE + '''
+        <div class="container">
+        <h2>Sync All Cities</h2>
+        <form method="post">
+            Start Date: <input name="start_date" type="date" required><br>
+            End Date: <input name="end_date" type="date" required><br>
+            <input type="submit" value="Sync All Cities">
+        </form>
+        <a href="{{ url_for('index') }}">Back</a>
+        </div>
+    ''')
+
+@app.route('/sync_all_progress/<sync_id>')
+def sync_all_progress(sync_id):
+    prog = data_sync_progress.get(sync_id)
+    if not prog:
+        return render_template_string(APPLE_STYLE + """
+            <div class='container'><h2>Sync Not Found</h2><a href='{{ url_for('index') }}'>Back</a></div>
+        """)
+    return render_template_string(APPLE_STYLE + '''
+        <div class="container">
+        <h2>Sync Progress: All Cities</h2>
+        <div><b>Date Range:</b> {{prog.date_range}}</div>
+        <div id="progress-bar" style="width: 100%; background: #eee; border: 1px solid #ccc; height: 30px; margin-top: 1em;">
+          <div id="bar" style="height: 100%; width: 0; background: #4caf50; text-align: center; color: white;"></div>
+        </div>
+        <div id="status"></div>
+        <div id="errors" style="color: #c00; margin-top: 1em;"></div>
+        <a href="{{ url_for('index') }}">Back</a>
+        <script>
+        function poll() {
+          fetch('/sync_progress/{{sync_id}}').then(r => r.json()).then(data => {
+            let percent = Math.round(100 * data.current / data.total);
+            document.getElementById('bar').style.width = percent + '%';
+            document.getElementById('bar').textContent = percent + '%';
+            document.getElementById('status').textContent = `Syncing city: ${data.date} (${data.current}/${data.total}) Status: ${data.status}`;
+            if (data.errors && data.errors.length > 0) {
+              document.getElementById('errors').innerHTML = '<b>Errors:</b><br>' + data.errors.map(e => `<div>${e}</div>`).join('');
+            } else {
+              document.getElementById('errors').innerHTML = '';
+            }
+            if (!data.done) setTimeout(poll, 1000);
+            else document.getElementById('status').textContent += ' (Done)';
+          });
+        }
+        document.addEventListener('DOMContentLoaded', poll);
+        </script>
+        </div>
+    ''', prog=prog, sync_id=sync_id)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 

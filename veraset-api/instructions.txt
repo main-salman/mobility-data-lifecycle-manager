@@ -1,0 +1,19 @@
+feature to add: change radius per city
+
+
+
+The returned data is partitioned by UTC date, and there is a column for the poi_id so you know which data was for which AOI. So rather than three calls that are each for a day like this 
+
+ @media only screen and (max-width:480px) {.full-width-mobile {width:100% !important;padding:0;min-width:100% !important;}}             "date_range": {        "to_date": "2025-02-06",        "from_date": "2025-02-06"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL"                              
+ 
+ 
+ You can run multiple days per call  @media only screen and (max-width:480px) {.full-width-mobile {width:100% !important;padding:0;min-width:100% !important;}}             "date_range": {        "to_date": "2025-02-01",        "from_date": "2025-02-07"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL",                              
+ 
+ 
+ Additionally, the geo_radius is an array that allows up to 200 locations per call in the trial. 
+
+ 
+ 
+ 
+ 
+ For trips, set "schema_type": "TRIPS" You can call up to 7 days per request in the eval, and that is typically expanded under license for 31 days. When sending requests, send as many POI's that you what to review that have an overlapping time frame. If you had 150 polygons/AOI, for data from 2025/02/01- 2025/02/05. You can have one request for the dates of 2025/02/01- 2025/02/05 and the geometry/geo_radius/geo_json are all arrays that allow up to 200 polygons in the trial.The returned data is partitioned by UTC date, and there is a column for the poi_id so you know which data was for which AOI. So rather than three calls that are each for a day like this "date_range": {        "to_date": "2025-02-06",        "from_date": "2025-02-06"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL"You can run multiple days per call "date_range": {        "to_date": "2025-02-01",        "from_date": "2025-02-07"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL",

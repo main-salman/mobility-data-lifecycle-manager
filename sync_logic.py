@@ -27,18 +27,28 @@ def send_sns_notification(email, subject, message):
         print(f"SNS notification to {email}: {subject}\n{message}")
 
 # Helper to build payload as in scripts
-def build_sync_payload(city, date):
+def build_sync_payload(city, from_date, to_date):
+    # Accepts from_date and to_date as string (YYYY-MM-DD) or datetime
+    if hasattr(from_date, 'strftime'):
+        from_date_str = from_date.strftime('%Y-%m-%d')
+    else:
+        from_date_str = str(from_date)
+    if hasattr(to_date, 'strftime'):
+        to_date_str = to_date.strftime('%Y-%m-%d')
+    else:
+        to_date_str = str(to_date)
+    radius = float(city.get('radius_meters', 50000))
     return {
         "date_range": {
-            "from_date": date,
-            "to_date": date
+            "from_date": from_date_str,
+            "to_date": to_date_str
         },
         "schema_type": "FULL",
         "geo_radius": [{
             "poi_id": f"{city['city'].lower()}_center",
             "latitude": float(city['latitude']),
             "longitude": float(city['longitude']),
-            "distance_in_meters": 50000
+            "distance_in_meters": radius
         }]
     }
 
@@ -133,9 +143,11 @@ def sync_data_to_bucket(city, date, s3_location):
     except subprocess.CalledProcessError as e:
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
-def sync_city_for_date(city, date):
+def sync_city_for_date(city, from_date, to_date=None):
     try:
-        payload = build_sync_payload(city, date)
+        if to_date is None:
+            to_date = from_date
+        payload = build_sync_payload(city, from_date, to_date)
         response = make_api_request("movement/job/pings", data=payload)
         if not response or 'error' in response:
             return {"success": False, "error": response.get('error', 'No response from API')}
@@ -147,7 +159,7 @@ def sync_city_for_date(city, date):
         if not status or 'error' in status:
             return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
         # S3 sync step
-        sync_result = sync_data_to_bucket(city, date, status.get('s3_location'))
+        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'))
         if not sync_result.get('success'):
             return {"success": False, "error": sync_result.get('error', 'Unknown error during S3 sync')}
         return {"success": True, "s3_location": status.get('s3_location'), "dest_prefix": sync_result.get('dest_prefix')}
