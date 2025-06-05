@@ -121,4 +121,6 @@ Updated flask_app.py:
 [Fix][2024-06-09] user_data.sh: Added 'export PATH=$PATH:/usr/local/bin' for ec2-user block to ensure aws CLI is found. Fixed echo syntax error by removing parentheses in network retry loop.
 
 [Feature][2024-06-09] flask_app.py: Updated GUI to note that daily sync downloads data for one day, 7 days prior. Added a button to disable daily sync, which removes the cron job for daily_sync.py for ec2-user.
+
+[2024-06-10] Added map-based AOI selection to Add/Edit City forms: users can now choose between a radius or a freeform polygon (GeoJSON) as the AOI for each city. Only one AOI type is saved per city in cities.json. Updated backend sync logic to use geo_radius or geo_json in Veraset API payloads based on AOI type. Batch syncs (/sync_all) now support both AOI types. UI uses Leaflet and Leaflet Draw for interactive map and polygon drawing.
 --- 

@@ -134,7 +134,7 @@ def create_job_message(city: Dict[str, Any], process_date: str) -> Dict[str, Any
     Create a job message for SQS
     """
     job_id = str(uuid.uuid4())
-    return {
+    job = {
         'job_id': job_id,
         'city_id': city['city_id'],
         'city_name': city.get('city_name', city.get('city', '')),
@@ -142,11 +142,15 @@ def create_job_message(city: Dict[str, Any], process_date: str) -> Dict[str, Any
         'state_province': city.get('state_province', ''),
         'latitude': city['latitude'],
         'longitude': city['longitude'],
-        'radius_meters': float(city.get('radius_meters', 50000)),
         'process_date': process_date,
         'created_at': datetime.utcnow().isoformat(),
         'retry_count': 0
     }
+    if 'radius_meters' in city:
+        job['radius_meters'] = float(city['radius_meters'])
+    elif 'polygon_geojson' in city:
+        job['polygon_geojson'] = city['polygon_geojson']
+    return job
 
 def load_cities() -> List[Dict[str, Any]]:
     # Implement load_cities() as needed

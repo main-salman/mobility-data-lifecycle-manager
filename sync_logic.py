@@ -4,6 +4,7 @@ import json
 import boto3
 import requests
 from datetime import datetime
+import logging
 
 REGION = 'us-west-2'
 SECRETS_NAME = 'veraset_api_key'  # Change if needed
@@ -37,20 +38,27 @@ def build_sync_payload(city, from_date, to_date):
         to_date_str = to_date.strftime('%Y-%m-%d')
     else:
         to_date_str = str(to_date)
-    radius = float(city.get('radius_meters', 50000))
-    return {
+    payload = {
         "date_range": {
             "from_date": from_date_str,
             "to_date": to_date_str
         },
-        "schema_type": "FULL",
-        "geo_radius": [{
+        "schema_type": "FULL"
+    }
+    if 'radius_meters' in city:
+        payload["geo_radius"] = [{
             "poi_id": f"{city['city'].lower()}_center",
             "latitude": float(city['latitude']),
             "longitude": float(city['longitude']),
-            "distance_in_meters": radius
+            "distance_in_meters": float(city['radius_meters'])
         }]
-    }
+    elif 'polygon_geojson' in city:
+        # The API expects geo_json to be an array of objects with poi_id and geo_json
+        payload["geo_json"] = [{
+            "poi_id": f"{city['city'].lower()}_polygon",
+            "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
+        }]
+    return payload
 
 def make_api_request(endpoint, method="POST", data=None):
     url = f"{API_ENDPOINT}/v1/{endpoint}"
@@ -58,15 +66,20 @@ def make_api_request(endpoint, method="POST", data=None):
         "Content-Type": "application/json",
         "X-API-Key": VERASET_API_KEY
     }
+    if method == "POST":
+        logging.info(f"[API POST] Endpoint: {url}")
+        logging.info(f"[API POST] Headers: {headers}")
+        logging.info(f"[API POST] Payload: {json.dumps(data, indent=2)}")
     try:
         resp = requests.request(method, url, headers=headers, json=data)
+        logging.info(f"[API POST] Response Status: {resp.status_code}")
+        logging.info(f"[API POST] Response Text: {resp.text}")
         resp.raise_for_status()
         try:
             return resp.json()
         except Exception:
             return {"error": f"Non-JSON response: {resp.text}"}
     except requests.exceptions.HTTPError as e:
-        # Try to get error details from response
         try:
             error_detail = resp.json()
         except Exception:

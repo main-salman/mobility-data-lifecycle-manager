@@ -13,7 +13,7 @@ import uuid
 from flask import Flask, render_template_string, request, redirect, url_for, session, flash, send_from_directory, jsonify
 import boto3
 from dotenv import load_dotenv, set_key
-from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket
+from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket, build_sync_payload, make_api_request
 import requests
 import json
 import threading
@@ -455,8 +455,21 @@ def add_city():
             'latitude': request.form['latitude'],
             'longitude': request.form['longitude'],
             'notification_email': request.form['notification_email'],
-            'radius_meters': request.form.get('radius_meters', 50000)
         }
+        aoi_type = request.form.get('aoi_type')
+        if aoi_type == 'radius':
+            data['radius_meters'] = float(request.form['radius_meters'])
+        elif aoi_type == 'polygon':
+            import json as _json
+            data['polygon_geojson'] = _json.loads(request.form['polygon_geojson'])
+        else:
+            flash('You must define an AOI (radius or polygon).')
+            return redirect(url_for('add_city'))
+        # Remove the other AOI type if present
+        if aoi_type == 'radius':
+            data.pop('polygon_geojson', None)
+        if aoi_type == 'polygon':
+            data.pop('radius_meters', None)
         logging.info(f"Adding city: {data}")
         cities.append(data)
         save_cities(cities)
@@ -464,7 +477,7 @@ def add_city():
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>Add City</h2>
-        <form method="post" id="cityForm">
+        <form method="post" id="cityForm" onsubmit="return prepareAOI()">
             Country: <select name="country" id="country" required></select><br>
             State/Province: <select name="state_province" id="state_province"></select><br>
             City: <input name="city" id="city"><br>
@@ -472,10 +485,26 @@ def add_city():
             Longitude: <input name="longitude" id="longitude"><br>
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email"><br>
-            Radius Meters: <input name="radius_meters" type="number"><br>
+            <div style="margin:1em 0;">
+                <b>Area of Interest (AOI):</b><br>
+                <label><input type="radio" name="aoi_type" value="radius" checked onchange="toggleAOI()"> Radius</label>
+                <label><input type="radio" name="aoi_type" value="polygon" onchange="toggleAOI()"> Polygon</label>
+            </div>
+            <div id="radiusControls">
+                Radius Meters: <input name="radius_meters" id="radius_meters" type="number" value="10000" min="1" step="1" onchange="updateRadius()"><br>
+            </div>
+            <div id="polygonControls" style="display:none;">
+                <span>Draw a polygon on the map below.</span>
+                <input type="hidden" name="polygon_geojson" id="polygon_geojson">
+            </div>
+            <div id="map" style="height:400px;margin:1em 0;"></div>
             <input type="submit" value="Add">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+        <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
         <script>
         let countriesData = [];
         function populateCountries() {
@@ -515,11 +544,114 @@ def add_city():
                     if (data.lat && data.lon) {
                         document.getElementById('latitude').value = data.lat;
                         document.getElementById('longitude').value = data.lon;
+                        setMapCenter(parseFloat(data.lat), parseFloat(data.lon));
                     } else {
                         alert('Could not find coordinates.');
                     }
                 });
         }
+        // --- Leaflet Map and AOI Logic ---
+        let map, marker, circle, drawnItems, drawControl;
+        let currentAOI = 'radius';
+        function setMapCenter(lat, lon) {
+            if (map) {
+                map.setView([lat, lon], 12);
+                if (marker) marker.setLatLng([lat, lon]);
+                if (circle && currentAOI === 'radius') circle.setLatLng([lat, lon]);
+            }
+        }
+        function toggleAOI() {
+            const aoiType = document.querySelector('input[name="aoi_type"]:checked').value;
+            currentAOI = aoiType;
+            document.getElementById('radiusControls').style.display = aoiType === 'radius' ? '' : 'none';
+            document.getElementById('polygonControls').style.display = aoiType === 'polygon' ? '' : 'none';
+            if (aoiType === 'radius') {
+                if (drawnItems) drawnItems.clearLayers();
+                if (circle) circle.addTo(map);
+                if (marker) marker.addTo(map);
+            } else {
+                if (circle) map.removeLayer(circle);
+                if (marker) map.removeLayer(marker);
+            }
+        }
+        function updateRadius() {
+            if (!circle) return;
+            const r = parseFloat(document.getElementById('radius_meters').value);
+            circle.setRadius(r);
+        }
+        function prepareAOI() {
+            const aoiType = document.querySelector('input[name="aoi_type"]:checked').value;
+            if (aoiType === 'polygon') {
+                if (!drawnItems || drawnItems.getLayers().length === 0) {
+                    alert('Please draw a polygon on the map.');
+                    return false;
+                }
+                const geojson = drawnItems.getLayers()[0].toGeoJSON();
+                document.getElementById('polygon_geojson').value = JSON.stringify(geojson);
+            }
+            if (aoiType === 'radius') {
+                if (!circle) {
+                    alert('Please set a radius on the map.');
+                    return false;
+                }
+                document.getElementById('radius_meters').value = circle.getRadius();
+            }
+            return true;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map
+            const lat = parseFloat(document.getElementById('latitude').value) || 43.7;
+            const lon = parseFloat(document.getElementById('longitude').value) || -79.4;
+            map = L.map('map').setView([lat, lon], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+            marker = L.marker([lat, lon], {draggable:true}).addTo(map);
+            marker.on('dragend', function(e) {
+                const pos = marker.getLatLng();
+                document.getElementById('latitude').value = pos.lat;
+                document.getElementById('longitude').value = pos.lng;
+                if (circle) circle.setLatLng(pos);
+            });
+            circle = L.circle([lat, lon], {radius: parseFloat(document.getElementById('radius_meters').value) || 10000, color:'#3388ff'}).addTo(map);
+            circle.on('edit', function(e) {
+                document.getElementById('radius_meters').value = circle.getRadius();
+            });
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('latitude').value = e.latlng.lat;
+                document.getElementById('longitude').value = e.latlng.lng;
+                if (circle) circle.setLatLng(e.latlng);
+            });
+            // Leaflet Draw for polygon
+            drawnItems = new L.FeatureGroup();
+            map.addLayer(drawnItems);
+            drawControl = new L.Control.Draw({
+                draw: {
+                    polygon: true,
+                    polyline: false,
+                    rectangle: false,
+                    circle: false,
+                    marker: false,
+                    circlemarker: false
+                },
+                edit: {
+                    featureGroup: drawnItems,
+                    remove: true
+                }
+            });
+            map.addControl(drawControl);
+            map.on(L.Draw.Event.CREATED, function (e) {
+                drawnItems.clearLayers();
+                drawnItems.addLayer(e.layer);
+            });
+            map.on(L.Draw.Event.DELETED, function (e) {
+                // nothing needed
+            });
+            // AOI toggle
+            document.querySelectorAll('input[name="aoi_type"]').forEach(r => r.addEventListener('change', toggleAOI));
+        });
         </script>
         </div>
     ''')
@@ -535,15 +667,30 @@ def edit_city(city_id):
         logging.warning(f"Edit city: city_id {city_id} not found.")
         return 'City not found', 404
     if request.method == 'POST':
-        for field in ['country', 'state_province', 'city', 'latitude', 'longitude', 'notification_email', 'radius_meters']:
+        for field in ['country', 'state_province', 'city', 'latitude', 'longitude', 'notification_email']:
             city[field] = request.form.get(field, '')
+        aoi_type = request.form.get('aoi_type')
+        if aoi_type == 'radius':
+            city['radius_meters'] = float(request.form['radius_meters'])
+            city.pop('polygon_geojson', None)
+        elif aoi_type == 'polygon':
+            import json as _json
+            city['polygon_geojson'] = _json.loads(request.form['polygon_geojson'])
+            city.pop('radius_meters', None)
+        else:
+            flash('You must define an AOI (radius or polygon).')
+            return redirect(url_for('edit_city', city_id=city_id))
         logging.info(f"Editing city: {city}")
         save_cities(cities)
         return redirect(url_for('index'))
+    # Determine AOI type for UI
+    aoi_type = 'polygon' if 'polygon_geojson' in city else 'radius'
+    radius_val = city.get('radius_meters', 10000)
+    polygon_geojson = city.get('polygon_geojson', None)
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>Edit City</h2>
-        <form method="post" id="cityForm">
+        <form method="post" id="cityForm" onsubmit="return prepareAOI()">
             Country: <select name="country" id="country" required></select><br>
             State/Province: <select name="state_province" id="state_province"></select><br>
             City: <input name="city" id="city" value="{{city['city']}}"><br>
@@ -551,10 +698,26 @@ def edit_city(city_id):
             Longitude: <input name="longitude" id="longitude" value="{{city['longitude']}}"><br>
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email" value="{{city['notification_email']}}"><br>
-            Radius Meters: <input name="radius_meters" type="number" value="{{city['radius_meters']}}"><br>
+            <div style="margin:1em 0;">
+                <b>Area of Interest (AOI):</b><br>
+                <label><input type="radio" name="aoi_type" value="radius" {% if aoi_type == 'radius' %}checked{% endif %} onchange="toggleAOI()"> Radius</label>
+                <label><input type="radio" name="aoi_type" value="polygon" {% if aoi_type == 'polygon' %}checked{% endif %} onchange="toggleAOI()"> Polygon</label>
+            </div>
+            <div id="radiusControls" style="display:{% if aoi_type == 'radius' %}block{% else %}none{% endif %};">
+                Radius Meters: <input name="radius_meters" id="radius_meters" type="number" value="{{radius_val}}" min="1" step="1" onchange="updateRadius()"><br>
+            </div>
+            <div id="polygonControls" style="display:{% if aoi_type == 'polygon' %}block{% else %}none{% endif %};">
+                <span>Draw a polygon on the map below.</span>
+                <input type="hidden" name="polygon_geojson" id="polygon_geojson">
+            </div>
+            <div id="map" style="height:400px;margin:1em 0;"></div>
             <input type="submit" value="Save">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+        <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
         <script>
         let countriesData = [];
         function populateCountries(selectedCountry) {
@@ -603,14 +766,132 @@ def edit_city(city_id):
                     if (data.lat && data.lon) {
                         document.getElementById('latitude').value = data.lat;
                         document.getElementById('longitude').value = data.lon;
+                        setMapCenter(parseFloat(data.lat), parseFloat(data.lon));
                     } else {
                         alert('Could not find coordinates.');
                     }
                 });
         }
+        // --- Leaflet Map and AOI Logic ---
+        let map, marker, circle, drawnItems, drawControl;
+        let currentAOI = '{{aoi_type}}';
+        function setMapCenter(lat, lon) {
+            if (map) {
+                map.setView([lat, lon], 12);
+                if (marker) marker.setLatLng([lat, lon]);
+                if (circle && currentAOI === 'radius') circle.setLatLng([lat, lon]);
+            }
+        }
+        function toggleAOI() {
+            const aoiType = document.querySelector('input[name="aoi_type"]:checked').value;
+            currentAOI = aoiType;
+            document.getElementById('radiusControls').style.display = aoiType === 'radius' ? '' : 'none';
+            document.getElementById('polygonControls').style.display = aoiType === 'polygon' ? '' : 'none';
+            if (aoiType === 'radius') {
+                if (drawnItems) drawnItems.clearLayers();
+                if (circle) circle.addTo(map);
+                if (marker) marker.addTo(map);
+            } else {
+                if (circle) map.removeLayer(circle);
+                if (marker) map.removeLayer(marker);
+            }
+        }
+        function updateRadius() {
+            if (!circle) return;
+            const r = parseFloat(document.getElementById('radius_meters').value);
+            circle.setRadius(r);
+        }
+        function prepareAOI() {
+            const aoiType = document.querySelector('input[name="aoi_type"]:checked').value;
+            if (aoiType === 'polygon') {
+                if (!drawnItems || drawnItems.getLayers().length === 0) {
+                    alert('Please draw a polygon on the map.');
+                    return false;
+                }
+                const geojson = drawnItems.getLayers()[0].toGeoJSON();
+                document.getElementById('polygon_geojson').value = JSON.stringify(geojson);
+            }
+            if (aoiType === 'radius') {
+                if (!circle) {
+                    alert('Please set a radius on the map.');
+                    return false;
+                }
+                document.getElementById('radius_meters').value = circle.getRadius();
+            }
+            return true;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map
+            const lat = parseFloat(document.getElementById('latitude').value) || 43.7;
+            const lon = parseFloat(document.getElementById('longitude').value) || -79.4;
+            map = L.map('map').setView([lat, lon], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+            marker = L.marker([lat, lon], {draggable:true}).addTo(map);
+            marker.on('dragend', function(e) {
+                const pos = marker.getLatLng();
+                document.getElementById('latitude').value = pos.lat;
+                document.getElementById('longitude').value = pos.lng;
+                if (circle) circle.setLatLng(pos);
+            });
+            circle = L.circle([lat, lon], {radius: parseFloat(document.getElementById('radius_meters').value) || 10000, color:'#3388ff'});
+            if (currentAOI === 'radius') circle.addTo(map);
+            circle.on('edit', function(e) {
+                document.getElementById('radius_meters').value = circle.getRadius();
+            });
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('latitude').value = e.latlng.lat;
+                document.getElementById('longitude').value = e.latlng.lng;
+                if (circle) circle.setLatLng(e.latlng);
+            });
+            // Leaflet Draw for polygon
+            drawnItems = new L.FeatureGroup();
+            map.addLayer(drawnItems);
+            drawControl = new L.Control.Draw({
+                draw: {
+                    polygon: true,
+                    polyline: false,
+                    rectangle: false,
+                    circle: false,
+                    marker: false,
+                    circlemarker: false
+                },
+                edit: {
+                    featureGroup: drawnItems,
+                    remove: true
+                }
+            });
+            map.addControl(drawControl);
+            map.on(L.Draw.Event.CREATED, function (e) {
+                drawnItems.clearLayers();
+                drawnItems.addLayer(e.layer);
+            });
+            map.on(L.Draw.Event.DELETED, function (e) {
+                // nothing needed
+            });
+            // Load existing AOI if present
+            {% if aoi_type == 'polygon' and polygon_geojson %}
+            setTimeout(function() {
+                var geojson = {{ polygon_geojson|tojson }};
+                var layer = L.geoJSON(geojson).getLayers()[0];
+                drawnItems.clearLayers();
+                drawnItems.addLayer(layer);
+                map.fitBounds(layer.getBounds());
+            }, 300);
+            {% elif aoi_type == 'radius' and radius_val %}
+            setTimeout(function() {
+                if (circle) circle.setRadius({{radius_val}});
+            }, 300);
+            {% endif %}
+            // AOI toggle
+            document.querySelectorAll('input[name="aoi_type"]').forEach(r => r.addEventListener('change', toggleAOI));
+        });
         </script>
         </div>
-    ''', city=city)
+    ''', city=city, aoi_type=aoi_type, radius_val=radius_val, polygon_geojson=polygon_geojson)
 
 @app.route('/delete/<city_id>')
 def delete_city(city_id):
@@ -645,6 +926,11 @@ def sync_city(city_id):
         delta = d2 - d1
         dates = [(d1 + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(delta.days + 1)]
         sync_id = str(uuidlib.uuid4())
+        aoi_info = None
+        if 'radius_meters' in city:
+            aoi_info = {'type': 'radius', 'radius_meters': city['radius_meters']}
+        elif 'polygon_geojson' in city:
+            aoi_info = {'type': 'polygon', 'polygon': 'defined'}
         data_sync_progress[sync_id] = {
             'current': 0,
             'total': len(dates),
@@ -655,7 +941,7 @@ def sync_city(city_id):
             'country': city['country'],
             'state_province': city.get('state_province', ''),
             'date_range': f"{start_date} to {end_date}",
-            'radius_meters': city['radius_meters']
+            'aoi': aoi_info
         }
         # Run sync in thread and check for quota error
         def sync_and_check():
@@ -813,47 +1099,6 @@ def view_logs():
         </div>
     ''', logs=''.join(lines))
 
-# Helper to build payload as in scripts
-def build_sync_payload(city, from_date, to_date):
-    return {
-        "date_range": {
-            "from_date": from_date.strftime("%Y-%m-%d"),
-            "to_date": to_date.strftime("%Y-%m-%d")
-        },
-        "schema_type": "FULL",
-        "geo_radius": [{
-            "poi_id": f"{city['city'].lower()}_center",
-            "latitude": float(city['latitude']),
-            "longitude": float(city['longitude']),
-            "distance_in_meters": city['radius_meters']
-        }]
-    }
-
-def make_api_request(endpoint, method="POST", data=None):
-    logging.debug(f"[DEBUG] VERASET_API_KEY: {VERASET_API_KEY}")
-    url = f"{API_ENDPOINT}/v1/{endpoint}"
-    headers = {
-        "Content-Type": "application/json",
-        "X-API-Key": VERASET_API_KEY
-    }
-    logging.debug(f"[DEBUG] Request URL: {url}")
-    logging.debug(f"[DEBUG] Request Headers: {headers}")
-    logging.debug(f"[DEBUG] Request Data: {json.dumps(data, indent=2)}")
-    try:
-        resp = requests.request(method, url, headers=headers, json=data)
-        logging.debug(f"[DEBUG] Response Status: {resp.status_code}")
-        logging.debug(f"[DEBUG] Response Text: {resp.text}")
-        resp.raise_for_status()
-        try:
-            return resp.json()
-        except Exception:
-            logging.error(f"Non-JSON response: {resp.text}")
-            return None
-    except requests.exceptions.RequestException as e:
-        logging.error(f"[ERROR] API request error: {e}")
-        logging.error(f"[ERROR] Response Text: {getattr(resp, 'text', '')}")
-        raise
-
 def get_job_status(job_id):
     return make_api_request(f"job/{job_id}", method="GET")
 
@@ -880,10 +1125,12 @@ def sync_jobs():
         <div class="container">
         <h2>All Sync Jobs Progress (Last 30 Days)</h2>
         <table border=1 cellpadding=5>
-            <tr><th>Sync ID</th><th>Date</th><th>Status</th><th>Current</th><th>Total</th><th>Veraset Status</th><th>Done</th><th>Errors</th><th>Quota Exceeded</th><th>View</th></tr>
+            <tr><th>Sync ID</th><th>City</th><th>Date Range</th><th>Date</th><th>Status</th><th>Current</th><th>Total</th><th>Veraset Status</th><th>Done</th><th>Errors</th><th>Quota Exceeded</th><th>View</th></tr>
             {% for job in jobs %}
             <tr>
                 <td style="font-size:0.9em">{{job.sync_id}}</td>
+                <td>{{job.get('city','')}}</td>
+                <td>{{job.get('date_range','')}}</td>
                 <td>{{job.date}}</td>
                 <td>{{job.status}}</td>
                 <td>{{job.current}}</td>
@@ -999,21 +1246,31 @@ def sync_all():
         def sync_all_thread():
             errors = []
             geo_radius = []
+            geo_json = []
             for city in cities:
-                geo_radius.append({
-                    "poi_id": f"{city['city'].lower()}_center",
-                    "latitude": float(city['latitude']),
-                    "longitude": float(city['longitude']),
-                    "distance_in_meters": float(city.get('radius_meters', 50000))
-                })
+                if 'radius_meters' in city:
+                    geo_radius.append({
+                        "poi_id": f"{city['city'].lower()}_center",
+                        "latitude": float(city['latitude']),
+                        "longitude": float(city['longitude']),
+                        "distance_in_meters": float(city.get('radius_meters', 50000))
+                    })
+                elif 'polygon_geojson' in city:
+                    geo_json.append({
+                        "poi_id": f"{city['city'].lower()}_polygon",
+                        "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
+                    })
             payload = {
                 "date_range": {
                     "from_date": start_date,
                     "to_date": end_date
                 },
-                "schema_type": schema_type,
-                "geo_radius": geo_radius
+                "schema_type": schema_type
             }
+            if geo_radius:
+                payload["geo_radius"] = geo_radius
+            if geo_json:
+                payload["geo_json"] = geo_json
             api_key = os.environ.get('VERASET_API_KEY')
             logging.info(f"[Sync All] Starting sync for ALL cities from {start_date} to {end_date}")
             logging.debug(f"[Sync All] VERASET_API_KEY: {api_key}")
@@ -1021,38 +1278,28 @@ def sync_all():
             data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
             data_sync_progress[sync_id]['status'] = f"syncing all cities"
             try:
-                from sync_logic import make_api_request, wait_for_job_completion, sync_data_to_bucket
                 response = make_api_request("movement/job/pings", data=payload)
                 if not response or 'error' in response:
-                    logging.error(f"[Sync All] Error: {response.get('error', 'No response from API') if response else 'No response from API'}")
-                    errors.append(f"API error: {response.get('error', 'No response from API') if response else 'No response from API'}")
+                    errors.append(response.get('error', 'No response from API'))
                 else:
+                    request_id = response.get("request_id")
                     job_id = response.get("data", {}).get("job_id")
-                    if not job_id:
-                        logging.error(f"[Sync All] No job_id received from Veraset API: {response}")
-                        errors.append(f"No job_id received from Veraset API: {response}")
+                    if not request_id or not job_id:
+                        errors.append(f"No request_id or job_id in response: {response}")
                     else:
-                        data_sync_progress[sync_id]['status'] = 'Polling Veraset job status...'
-                        status_result = wait_for_job_completion(job_id, max_attempts=100, poll_interval=60)
-                        if not status_result or 'error' in status_result:
-                            logging.error(f"[Sync All] Error during job status polling: {status_result.get('error', 'Unknown error') if status_result else 'Unknown error'}")
-                            errors.append(f"Job status polling error: {status_result.get('error', 'Unknown error') if status_result else 'Unknown error'}")
+                        status = wait_for_job_completion(job_id)
+                        if not status or 'error' in status:
+                            errors.append(status.get('error', 'Unknown error during job status polling'))
                         else:
                             # S3 sync step
-                            sync_result = sync_data_to_bucket({"city": "all_cities", "country": "all", "latitude": 0, "longitude": 0}, start_date, status_result.get('s3_location'))
-                            if not sync_result.get('success'):
-                                logging.error(f"[Sync All] S3 sync error: {sync_result.get('error', 'Unknown error during S3 sync')}")
-                                errors.append(f"S3 sync error: {sync_result.get('error', 'Unknown error during S3 sync')}")
-                            else:
-                                logging.info(f"[Sync All] Success: S3 sync complete for all cities from {start_date} to {end_date}")
-                                data_sync_progress[sync_id]['s3_sync'] = f"S3 sync complete for all cities."
+                            for city in cities:
+                                sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'))
+                                if not sync_result.get('success'):
+                                    errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
             except Exception as e:
-                logging.error(f"[Sync All] Exception: {str(e)}")
-                errors.append(f"Exception: {str(e)}")
-            data_sync_progress[sync_id]['current'] = len(cities)
-            data_sync_progress[sync_id]['errors'] = errors.copy()
+                errors.append(str(e))
             data_sync_progress[sync_id]['done'] = True
-            data_sync_progress[sync_id]['status'] = 'done'
+            data_sync_progress[sync_id]['errors'] = errors
         threading.Thread(target=sync_all_thread, daemon=True).start()
         return redirect(url_for('sync_all_progress', sync_id=sync_id))
     # GET: show form

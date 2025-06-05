@@ -4,10 +4,44 @@
     "country": "Canada",
     "state_province": "Ontario",
     "city": "Pickering",
-    "latitude": "43.8357650",
-    "longitude": "-79.0905760",
+    "latitude": "43.80587864349632",
+    "longitude": "-79.03520562336782",
     "notification_email": "salman.naqvi@gmail.com",
-    "radius_meters": "10000"
+    "polygon_geojson": {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -79.125843,
+              43.791258
+            ],
+            [
+              -79.163952,
+              43.833623
+            ],
+            [
+              -79.156055,
+              43.895505
+            ],
+            [
+              -79.086704,
+              43.898474
+            ],
+            [
+              -79.035206,
+              43.805879
+            ],
+            [
+              -79.125843,
+              43.791258
+            ]
+          ]
+        ]
+      }
+    }
   },
   {
     "city_id": "f6f45cfd-d6bc-48eb-aed0-8bdec765e86f",
