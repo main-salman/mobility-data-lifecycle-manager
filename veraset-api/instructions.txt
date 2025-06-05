@@ -17,3 +17,35 @@ The returned data is partitioned by UTC date, and there is a column for the poi_
  
  
  For trips, set "schema_type": "TRIPS" You can call up to 7 days per request in the eval, and that is typically expanded under license for 31 days. When sending requests, send as many POI's that you what to review that have an overlapping time frame. If you had 150 polygons/AOI, for data from 2025/02/01- 2025/02/05. You can have one request for the dates of 2025/02/01- 2025/02/05 and the geometry/geo_radius/geo_json are all arrays that allow up to 200 polygons in the trial.The returned data is partitioned by UTC date, and there is a column for the poi_id so you know which data was for which AOI. So rather than three calls that are each for a day like this "date_range": {        "to_date": "2025-02-06",        "from_date": "2025-02-06"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL"You can run multiple days per call "date_range": {        "to_date": "2025-02-01",        "from_date": "2025-02-07"      },      "geo_radius": [        {          "poi_id": "karachi_center",          "latitude": 24.8546842,          "longitude": 67.0207055,          "distance_in_meters": 50000        }      ],      "schema_type": "FULL",
+
+
+
+
+1.  This is a good question, and not outlined well in the documentation. You can match to the schema on the website
+
+1.  BASIC: AD ID ,UTC TIMESTAMP, HORIZONTAL ACCURACY, ID TYPE, IP ADDRESS, LATITUDE, LONGITUDE, ISO COUNTRY CODE, POI IDS
+2.  FULL: AD ID ,UTC TIMESTAMP, HORIZONTAL ACCURACY, ID TYPE, IP ADDRESS, LATITUDE, LONGITUDE, ISO COUNTRY CODE, POI IDS, QUALITY FIELDS, GEO FIELDS
+3.  TRIPS: AD ID ,UTC TIMESTAMP, HORIZONTAL ACCURACY, ID TYPE, IP ADDRESS, LATITUDE, LONGITUDE, ISO COUNTRY CODE, POI IDS, TRIP_FIELDS, TRIP_PING_FIELDS, TRIP_TO_TRIP_FIELDS
+
+3.  The best option would be the home cohort and the work cohort
+
+1.  This allows you to send the same polygon/ AOI and return the home location for any device seen in that time frame within the polygon/ AOI
+
+5.  A polygon is the shape or Area of interest (AOI). You can draw them with websites like this one, and anything within the red section would be returned.
+6.  Yes, you can send 200 geo_radius or GeoJSON in a single call. Each one has a UID called POI_ID. That is a string you set and we pass back so you can map which values were for each POI sent.
+
+1.  It's best to send as many POI's in a single request that have the same overlapping time frame. So if you had 200 cities and you wanted data for May 2025. That can be one call instead of 200 calls, where each was a single city
+
+8.  You can set the radius for each to be its own value; they do not need to match.
+
+1.  As far as best practice, I don't have a good rule for a point radius size. I am not sure how many locations you are tracking, but you could use that website to build a polygon per city. Store that file for the process to call and send the city name and polygon for the API call.
+
+
+> 
+> Salman had a few questions:
+> 
+> 1.  Does "schema_type": "FULL" include "TRIPS" or are TRIPS and FULL mutually exclusive or somewhere in between?
+> 2.  For Home/Work dataset, what schema do we need to use to fetch Home & Work information?
+> 3.  What is a "polygon" from Veraset API perspective (remember, I am a IT infra guy - I get lost in GIS terminology)?
+> 4.  I understand what you mean when you say "geo_radius/geo_json are all arrays". This part however is not clear for me: "that allow up to 200 polygons in the trial”, does that mean I could practically include 200 cities in one API call?.
+> 5.  We will likely do different radius for difference cities. When we did Toronto with 50 km radius, it didn't end up including all of Toronto, and when we did Logan Australia wiht 50 km radius, it included Brisbane and Gold Coast cities, which was too much. Do you have suggestions/best practices to mitigate these while optimizing the number of API calls?
