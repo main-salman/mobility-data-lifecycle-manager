@@ -4,12 +4,10 @@
     "country": "Canada",
     "state_province": "Ontario",
     "city": "Pickering",
-    "latitude": "43.80587864349632",
-    "longitude": "-79.03520562336782",
+    "latitude": "43.84938414031938",
+    "longitude": "-79.02603149414064",
     "notification_email": "salman.naqvi@gmail.com",
     "polygon_geojson": {
-      "type": "Feature",
-      "properties": {},
       "geometry": {
         "type": "Polygon",
         "coordinates": [
@@ -31,6 +29,10 @@
               43.898474
             ],
             [
+              -79.002686,
+              43.868693
+            ],
+            [
               -79.035206,
               43.805879
             ],
@@ -40,7 +42,9 @@
             ]
           ]
         ]
-      }
+      },
+      "properties": {},
+      "type": "Feature"
     }
   },
   {
@@ -82,5 +86,63 @@
     "longitude": "74.3141829",
     "notification_email": "salman.naqvi@gmail.com",
     "radius_meters": "40000"
+  },
+  {
+    "city_id": "9a3c2000-1e3c-48ea-bfb2-708b32606e58",
+    "country": "India",
+    "state_province": "Maharashtra",
+    "city": "Delhi",
+    "latitude": "21.63749023831886",
+    "longitude": "73.86292836978102",
+    "notification_email": "salman.naqvi@gmail.com",
+    "polygon_geojson": {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.877348,
+              21.584824
+            ],
+            [
+              73.896231,
+              21.535652
+            ],
+            [
+              73.966269,
+              21.541081
+            ],
+            [
+              73.980001,
+              21.600147
+            ],
+            [
+              73.92095,
+              21.640682
+            ],
+            [
+              73.862928,
+              21.63749
+            ],
+            [
+              73.877348,
+              21.584824
+            ]
+          ]
+        ]
+      }
+    }
+  },
+  {
+    "city_id": "298814ae-69fb-4cdc-8b71-3c00e7c34c0d",
+    "country": "India",
+    "state_province": "Punjab",
+    "city": "Jalandhar",
+    "latitude": "31.336356406212253",
+    "longitude": "75.57851217105053",
+    "notification_email": "",
+    "radius_meters": 7000.0
   }
 ]

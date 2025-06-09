@@ -147,3 +147,13 @@ To update the app on your EC2 instance after changes are pushed to the GitHub re
 
 **Note:** If you have made changes to user_data.sh or deployment scripts, you may need to re-run those steps or re-provision the instance.
 
+## City Data Storage and Backups
+
+All city data is stored in the `/db` folder:
+- The main city list is in `/db/cities.json`.
+- Every time you add, edit, or delete a city, the app automatically creates a timestamped backup (e.g., `cities.json.2024-06-10_14-30-00`) in the same `/db` folder.
+- Only the 30 most recent backups are kept; older backups are automatically deleted.
+- The `/db` folder is excluded from version control via `.gitignore`, so your city data and backups are never committed to git.
+
+You do not need to manage these backups manually—this is handled automatically by the app.
+

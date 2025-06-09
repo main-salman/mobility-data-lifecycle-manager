@@ -47,4 +47,7 @@ coverage.xml
 # Misc
 *.bak
 *.swp
-*.swo 
+*.swo
+
+# Ignore the db folder and all its contents
+/db/ 

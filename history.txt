@@ -123,4 +123,8 @@ Updated flask_app.py:
 [Feature][2024-06-09] flask_app.py: Updated GUI to note that daily sync downloads data for one day, 7 days prior. Added a button to disable daily sync, which removes the cron job for daily_sync.py for ec2-user.
 
 [2024-06-10] Added map-based AOI selection to Add/Edit City forms: users can now choose between a radius or a freeform polygon (GeoJSON) as the AOI for each city. Only one AOI type is saved per city in cities.json. Updated backend sync logic to use geo_radius or geo_json in Veraset API payloads based on AOI type. Batch syncs (/sync_all) now support both AOI types. UI uses Leaflet and Leaflet Draw for interactive map and polygon drawing.
+
+[2024-06-10] Added automatic backup and pruning logic to save_cities in flask_app.py: before any write to cities.json, a timestamped backup (cities.json.YYYY-MM-DD_HH-MM-SS) is created, and only the 30 most recent backups are kept. This ensures that any add, edit, or delete operation on cities.json is always backed up and old backups are pruned automatically.
+
+[2024-06-10] Moved cities.json and all backup files to the /db folder. Updated flask_app.py to use db/cities.json for all city data and backup logic. Added /db/ to .gitignore to ensure all city data and backups are excluded from version control.
 --- 
