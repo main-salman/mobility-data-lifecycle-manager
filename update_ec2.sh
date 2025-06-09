@@ -9,7 +9,7 @@ PROJECT_DIR=/home/ec2-user/mobility-data-lifecycle-manager/   # Change if your p
 
 # --- SSH COMMAND WRAPPER ---
 ssh_cmd() {
-  ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "$@"
+  ssh -n -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "$@"
 }
 
 echo "Connecting to $EC2_USER@$EC2_HOST..."
@@ -18,13 +18,18 @@ echo "Connecting to $EC2_USER@$EC2_HOST..."
 echo "Pulling latest code from GitHub..."
 ssh_cmd "cd $PROJECT_DIR && git pull"
 
+# --- ENSURE /db DIRECTORY EXISTS ---
+echo "Ensuring /db directory exists..."
+ssh_cmd "cd $PROJECT_DIR && mkdir -p db"
+
 # --- OPTIONAL: UPDATE PYTHON DEPENDENCIES ---
 echo "Updating Python dependencies..."
-ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt || pip install flask boto3 python-dotenv requests gunicorn"
+# Try requirements.txt, fallback to explicit install if missing
+ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && (pip install --upgrade pip && pip install -r requirements.txt || pip install flask boto3 python-dotenv requests gunicorn)"
 
-# --- STOP EXISTING FLASK APP ---
-echo "Stopping any running Flask app..."
-ssh_cmd "cd $PROJECT_DIR && if lsof -ti:5050 > /dev/null; then kill \$(lsof -ti:5050); fi"
+# --- STOP EXISTING FLASK APP (install lsof if needed) ---
+echo "Stopping any running Flask app (installing lsof if needed)..."
+ssh_cmd "sudo yum install -y lsof && cd $PROJECT_DIR && if lsof -ti:5050 > /dev/null 2>&1; then kill \$(lsof -ti:5050); fi"
 ssh_cmd "cd $PROJECT_DIR && PIDS=\$(ps aux | grep '[f]lask_app.py' | awk '{print \$2}'); if [ ! -z \"\$PIDS\" ]; then kill \$PIDS; fi"
 
 # --- START FLASK APP ---

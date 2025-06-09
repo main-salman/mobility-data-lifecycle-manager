@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import pytz
 from typing import List, Dict, Any
 import uuid
+from utils import load_cities
 
 JOBS_FILE = 'jobs.json'
 
@@ -151,10 +152,6 @@ def create_job_message(city: Dict[str, Any], process_date: str) -> Dict[str, Any
     elif 'polygon_geojson' in city:
         job['polygon_geojson'] = city['polygon_geojson']
     return job
-
-def load_cities() -> List[Dict[str, Any]]:
-    # Implement load_cities() as needed
-    return []
 
 def get_notification_emails() -> List[str]:
     """

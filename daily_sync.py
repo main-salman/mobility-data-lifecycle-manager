@@ -5,18 +5,12 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from sync_logic import sync_city_for_date
 import argparse
+from utils import load_cities
 
 # Load environment variables
 load_dotenv()
 
 CITIES_FILE = 'cities.json'
-
-def load_cities():
-    if not os.path.exists(CITIES_FILE):
-        print(f"No {CITIES_FILE} found.")
-        return []
-    with open(CITIES_FILE, 'r') as f:
-        return json.load(f)
 
 def main():
     parser = argparse.ArgumentParser()
