@@ -11,11 +11,10 @@ SECRETS_NAME = 'veraset_api_key'  # Change if needed
 S3_BUCKET = 'veraset-data-qoli-dev'
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')  # Optional: can be set per city/email
 API_ENDPOINT = "https://platform.prd.veraset.tech"
-VERASET_API_KEY = os.environ.get('VERASET_API_KEY')
 
 # Helper to get secret from .env
 def get_veraset_api_key():
-    return os.environ['veraset_api_key']
+    return os.environ.get('VERASET_API_KEY')
 
 # Helper to send SNS notification
 def send_sns_notification(email, subject, message):
@@ -64,7 +63,7 @@ def make_api_request(endpoint, method="POST", data=None):
     url = f"{API_ENDPOINT}/v1/{endpoint}"
     headers = {
         "Content-Type": "application/json",
-        "X-API-Key": VERASET_API_KEY
+        "X-API-Key": get_veraset_api_key()
     }
     if method == "POST":
         logging.info(f"[API POST] Endpoint: {url}")

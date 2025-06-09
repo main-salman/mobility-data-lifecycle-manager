@@ -131,4 +131,6 @@ Updated flask_app.py:
 2025-06-09: Created utils.py with shared load_cities and save_cities functions for db/cities.json. Updated flask_app.py, daily_sync.py, and orchestrator.py to import and use these shared functions. Removed local definitions of load_cities and save_cities from those files to avoid duplication and ensure consistent city data loading across the codebase.
 
 2025-06-09: Updated daily_sync.py to print the full JSON result of each sync_city_for_date API call using json.dumps, matching the output style of flask_app.py and sync_logic.py for easier debugging and consistency.
+
+2025-06-09: Fixed environment variable loading for API key. Moved load_dotenv() to the very top of daily_sync.py and refactored sync_logic.py to always fetch VERASET_API_KEY at call time, ensuring correct authentication in all scripts regardless of import order.
 --- 

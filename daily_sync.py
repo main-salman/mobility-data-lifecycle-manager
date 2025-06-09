@@ -1,14 +1,12 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import sys
 import json
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from sync_logic import sync_city_for_date
 import argparse
 from utils import load_cities
-
-# Load environment variables
-load_dotenv()
 
 CITIES_FILE = 'cities.json'
 
