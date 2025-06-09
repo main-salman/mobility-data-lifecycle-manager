@@ -1220,7 +1220,7 @@ def sync_all():
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
-        schema_type = request.form.get('schema_type', 'FULL')
+        schema_type = request.form.get('schema_type', 'TRIPS')
         cities = load_cities()
         sync_id = str(uuidlib.uuid4())
         data_sync_progress[sync_id] = {

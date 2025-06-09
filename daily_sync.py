@@ -35,6 +35,7 @@ def main():
     for city in cities:
         print(f"Syncing {city['city']} ({city['country']})...")
         result = sync_city_for_date(city, from_date, to_date)
+        print(json.dumps(result, indent=2))
         if result and result.get('success', True):
             print(f"  Success: {city['city']} ({city['country']})")
         else:
