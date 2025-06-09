@@ -133,4 +133,6 @@ Updated flask_app.py:
 2025-06-09: Updated daily_sync.py to use the full path for load_dotenv, print the VERASET_API_KEY after loading, add exception handling around the sync loop, and use flush=True for all print statements to ensure immediate output and easier debugging, especially when run via cron.
 
 2025-06-09: Fixed environment variable loading for API key. Moved load_dotenv() to the very top of daily_sync.py and refactored sync_logic.py to always fetch VERASET_API_KEY at call time, ensuring correct authentication in all scripts regardless of import order.
+
+2025-06-09: Updated sync_logic.py to use the full path /usr/local/bin/aws for all AWS CLI subprocess calls (assume-role and s3 sync), fixing PATH issues when running from cron or restricted environments.
 --- 

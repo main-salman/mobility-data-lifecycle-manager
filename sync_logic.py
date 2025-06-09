@@ -11,6 +11,7 @@ SECRETS_NAME = 'veraset_api_key'  # Change if needed
 S3_BUCKET = 'veraset-data-qoli-dev'
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')  # Optional: can be set per city/email
 API_ENDPOINT = "https://platform.prd.veraset.tech"
+AWS_CLI = '/usr/local/bin/aws'
 
 # Helper to get secret from .env
 def get_veraset_api_key():
@@ -125,7 +126,7 @@ def sync_data_to_bucket(city, date, s3_location):
     # 1. Assume role to get temp credentials
     try:
         assume_role_cmd = [
-            "aws", "sts", "assume-role",
+            AWS_CLI, "sts", "assume-role",
             "--role-arn", role_arn,
             "--role-session-name", "veraset-sync-session",
             "--output", "json"
@@ -140,7 +141,7 @@ def sync_data_to_bucket(city, date, s3_location):
     env["AWS_SECRET_ACCESS_KEY"] = credentials["SecretAccessKey"]
     env["AWS_SESSION_TOKEN"] = credentials["SessionToken"]
     sync_command = [
-        "aws", "s3", "sync",
+        AWS_CLI, "s3", "sync",
         "--copy-props", "none",
         "--no-progress",
         "--no-follow-symlinks",
