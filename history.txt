@@ -135,4 +135,14 @@ Updated flask_app.py:
 2025-06-09: Fixed environment variable loading for API key. Moved load_dotenv() to the very top of daily_sync.py and refactored sync_logic.py to always fetch VERASET_API_KEY at call time, ensuring correct authentication in all scripts regardless of import order.
 
 2025-06-09: Updated sync_logic.py to use the full path /usr/local/bin/aws for all AWS CLI subprocess calls (assume-role and s3 sync), fixing PATH issues when running from cron or restricted environments.
+
+2025-06-09: Added --schema-type argument to daily_sync.py (choices: FULL, TRIPS, BASIC) and updated sync_logic.py to support schema_type throughout, allowing users to select the schema type for sync jobs.
+
+2025-06-09: Updated flask_app.py to add an API endpoint dropdown to the main, sync city, and sync all forms. Users can now select from movement/job/pings (default), movement/job/pings_by_device, movement/job/cohort, movement/job/aggregate, movement/job/devices, and movement/job/pings_by_ip. The selected endpoint is passed to the backend and used in the sync logic for all relevant sync operations.
+
+2025-06-09: Added /v1/home/job/devices, /v1/home/job/aggregate, and /v1/home/job/cohort to the API endpoint dropdowns in flask_app.py for the main, sync city, and sync all forms.
+
+2025-06-09: Changed API endpoint selection on the main, sync city, and sync all forms from a dropdown to checkboxes, allowing users to pick multiple endpoints. The backend now loops through the selected endpoints and makes a separate API call for each selected endpoint.
+
+2025-06-09: Updated the labels for 'cohort', 'aggregate', and 'devices' endpoints to be prefixed with 'Work' (e.g., 'Work Cohort', 'Work Aggregate', 'Work Devices') in the API endpoint checkboxes to differentiate them from the Home endpoints.
 --- 

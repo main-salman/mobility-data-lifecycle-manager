@@ -28,7 +28,7 @@ def send_sns_notification(email, subject, message):
         print(f"SNS notification to {email}: {subject}\n{message}")
 
 # Helper to build payload as in scripts
-def build_sync_payload(city, from_date, to_date):
+def build_sync_payload(city, from_date, to_date, schema_type="FULL"):
     # Accepts from_date and to_date as string (YYYY-MM-DD) or datetime
     if hasattr(from_date, 'strftime'):
         from_date_str = from_date.strftime('%Y-%m-%d')
@@ -43,7 +43,7 @@ def build_sync_payload(city, from_date, to_date):
             "from_date": from_date_str,
             "to_date": to_date_str
         },
-        "schema_type": "FULL"
+        "schema_type": schema_type
     }
     if 'radius_meters' in city:
         payload["geo_radius"] = [{
@@ -156,11 +156,11 @@ def sync_data_to_bucket(city, date, s3_location):
     except subprocess.CalledProcessError as e:
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
-def sync_city_for_date(city, from_date, to_date=None):
+def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL"):
     try:
         if to_date is None:
             to_date = from_date
-        payload = build_sync_payload(city, from_date, to_date)
+        payload = build_sync_payload(city, from_date, to_date, schema_type=schema_type)
         response = make_api_request("movement/job/pings", data=payload)
         if not response or 'error' in response:
             return {"success": False, "error": response.get('error', 'No response from API')}
