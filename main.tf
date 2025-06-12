@@ -330,3 +330,59 @@ output "app_dns_record" {
   description = "Route53 record for the app domain"
   value       = aws_route53_record.app.fqdn
 }
+
+# --- CloudWatch Log Group for EC2 Logs ---
+resource "aws_cloudwatch_log_group" "mobility_manager" {
+  name              = "/mobility/manager"
+  retention_in_days = 60
+}
+
+# --- IAM Policy for CloudWatch Logs ---
+data "aws_iam_policy_document" "cloudwatch_logs_access" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "ec2_cloudwatch_logs_policy" {
+  name   = "ec2-cloudwatch-logs-policy"
+  role   = aws_iam_role.ec2_mobility_role.id
+  policy = data.aws_iam_policy_document.cloudwatch_logs_access.json
+}
+
+# --- Update user_data.sh template to install and configure CloudWatch agent ---
+# (Assumes you will update user_data.sh to include the following logic:)
+# 1. Install the CloudWatch agent
+# 2. Create /opt/aws/amazon-cloudwatch-agent/bin/config.json with log configuration:
+#    - /var/log/messages
+#    - /var/log/cloud-init.log
+#    - log_group_name: /mobility/manager
+#    - log_stream_name: {instance_id}
+# 3. Start the CloudWatch agent
+#
+# Example snippet to add to user_data.sh:
+#
+# yum install -y amazon-cloudwatch-agent
+# cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
+# {
+#   "logs": {
+#     "logs_collected": {
+#       "files": {
+#         "collect_list": [
+#           {"file_path": "/var/log/messages", "log_group_name": "/mobility/manager", "log_stream_name": "{instance_id}-messages"},
+#           {"file_path": "/var/log/cloud-init.log", "log_group_name": "/mobility/manager", "log_stream_name": "{instance_id}-cloudinit"}
+#         ]
+#       }
+#     }
+#   }
+# }
+# EOF
+# /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s
+#
+# Make sure to substitute {instance_id} with the actual instance ID in user_data.sh.

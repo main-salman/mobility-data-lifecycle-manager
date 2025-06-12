@@ -19,6 +19,30 @@ echo "[user_data] Script started at $(date)"
 sudo yum update -y
 sudo yum install -y python3 python3-pip git nginx unzip curl
 
+# --- CloudWatch Agent Installation and Configuration ---
+echo "[user_data] Installing Amazon CloudWatch Agent..."
+sudo yum install -y amazon-cloudwatch-agent
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+CLOUDWATCH_CONFIG_FILE="/opt/aws/amazon-cloudwatch-agent/bin/config.json"
+
+sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/bin
+sudo tee $CLOUDWATCH_CONFIG_FILE > /dev/null <<EOF
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {"file_path": "/var/log/messages", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-messages"},
+          {"file_path": "/var/log/cloud-init.log", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-cloudinit"}
+        ]
+      }
+    }
+  }
+}
+EOF
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:$CLOUDWATCH_CONFIG_FILE -s
+
 # AWS CLI v2
 sudo yum remove -y awscli || true
 cd /tmp
@@ -130,8 +154,13 @@ sudo systemctl restart nginx
 echo "[user_data] Obtaining SSL certificate..."
 if [ ! -f "/etc/letsencrypt/live/$APP_DOMAIN/fullchain.pem" ]; then
   sudo systemctl stop nginx
-  sudo certbot certonly --staging --standalone --non-interactive --agree-tos --email $LETSENCRYPT_EMAIL -d $APP_DOMAIN
+  sudo certbot certonly --standalone --non-interactive --agree-tos --email $LETSENCRYPT_EMAIL -d $APP_DOMAIN || {
+    echo "[user_data] Certbot failed. Check logs for details.";
+    sudo systemctl start nginx;
+    exit 1;
+  }
   sudo systemctl start nginx
+  sudo nginx -t && sudo systemctl reload nginx
 fi
 
 # Write HTTPS config
@@ -157,7 +186,7 @@ sudo systemctl reload nginx
 # Set up auto-renewal
 echo "[user_data] Setting up certbot auto-renewal..."
 if ! sudo crontab -l | grep -q 'certbot renew'; then
-  echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" | sudo crontab -
+  echo "0 3 * * * certbot renew --quiet --post-hook 'nginx -t && systemctl reload nginx'" | sudo crontab -
 fi
 
 # Ensure passwordless sudo for crontab for ec2-user
