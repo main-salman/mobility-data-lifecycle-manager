@@ -1,6 +1,39 @@
 #!/bin/bash
 set -e
 
+# Usage: ./troubleshoot.sh [user@host] [ssh_key (optional)]
+
+INSTANCE="$1"
+KEY="$2"
+
+if [ -z "$INSTANCE" ]; then
+  echo "Usage: $0 [user@host] [ssh_key (optional)]"
+  exit 1
+fi
+
+REMOTE_SCRIPT="/tmp/remote_troubleshoot.sh"
+
+# Copy this script to the remote instance
+if [ -n "$KEY" ]; then
+  scp -i "$KEY" "$0" "$INSTANCE:$REMOTE_SCRIPT"
+else
+  scp "$0" "$INSTANCE:$REMOTE_SCRIPT"
+fi
+
+# Run the script remotely
+if [ -n "$KEY" ]; then
+  ssh -i "$KEY" "$INSTANCE" "chmod +x $REMOTE_SCRIPT && sudo bash $REMOTE_SCRIPT"
+else
+  ssh "$INSTANCE" "chmod +x $REMOTE_SCRIPT && sudo bash $REMOTE_SCRIPT"
+fi
+
+# Optionally clean up remote script (uncomment if desired)
+# if [ -n "$KEY" ]; then
+#   ssh -i "$KEY" "$INSTANCE" "rm -f $REMOTE_SCRIPT"
+# else
+#   ssh "$INSTANCE" "rm -f $REMOTE_SCRIPT"
+# fi
+
 # Print header
 echo "==== CloudWatch Agent Troubleshooting ===="
 

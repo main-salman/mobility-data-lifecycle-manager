@@ -24,6 +24,7 @@ from datetime import datetime, timedelta
 import shutil
 from glob import glob
 from utils import load_cities, save_cities
+import geojson  # Add this import at the top
 
 # Load credentials
 load_dotenv()
@@ -509,7 +510,7 @@ def add_city():
                 <span>Draw a polygon on the map below.</span>
                 <input type="hidden" name="polygon_geojson" id="polygon_geojson">
             </div>
-            <div id="map" style="height:400px;margin:1em 0;"></div>
+            <div id="map" style="height:800px;margin:1em 0;"></div>
             <input type="submit" value="Add">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
@@ -557,8 +558,36 @@ def add_city():
                         document.getElementById('latitude').value = data.lat;
                         document.getElementById('longitude').value = data.lon;
                         setMapCenter(parseFloat(data.lat), parseFloat(data.lon));
+                        showCityBoundary();
                     } else {
                         alert('Could not find coordinates.');
+                    }
+                });
+        }
+        let cityBoundaryLayer;
+        function showCityBoundary() {
+            const city = document.getElementById('city').value;
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state_province').value;
+            if (!city || !country) return;
+            fetch(`/city_boundary?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&state=${encodeURIComponent(state)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (cityBoundaryLayer) {
+                        map.removeLayer(cityBoundaryLayer);
+                        cityBoundaryLayer = null;
+                    }
+                    if (data && data.features && data.features.length > 0) {
+                        cityBoundaryLayer = L.geoJSON(data, {color: '#ff7800', weight: 2}).addTo(map);
+                        map.fitBounds(cityBoundaryLayer.getBounds());
+                        // Re-center on city after fitting bounds
+                        const lat = parseFloat(document.getElementById('latitude').value);
+                        const lon = parseFloat(document.getElementById('longitude').value);
+                        if (!isNaN(lat) && !isNaN(lon)) {
+                            setMapCenter(lat, lon);
+                        }
+                    } else if (data && data.error) {
+                        // Optionally alert or ignore
                     }
                 });
         }
@@ -722,7 +751,7 @@ def edit_city(city_id):
                 <span>Draw a polygon on the map below.</span>
                 <input type="hidden" name="polygon_geojson" id="polygon_geojson">
             </div>
-            <div id="map" style="height:400px;margin:1em 0;"></div>
+            <div id="map" style="height:800px;margin:1em 0;"></div>
             <input type="submit" value="Save">
         </form>
         <a href="{{ url_for('index') }}">Back</a>
@@ -779,8 +808,36 @@ def edit_city(city_id):
                         document.getElementById('latitude').value = data.lat;
                         document.getElementById('longitude').value = data.lon;
                         setMapCenter(parseFloat(data.lat), parseFloat(data.lon));
+                        showCityBoundary();
                     } else {
                         alert('Could not find coordinates.');
+                    }
+                });
+        }
+        let cityBoundaryLayer;
+        function showCityBoundary() {
+            const city = document.getElementById('city').value;
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state_province').value;
+            if (!city || !country) return;
+            fetch(`/city_boundary?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&state=${encodeURIComponent(state)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (cityBoundaryLayer) {
+                        map.removeLayer(cityBoundaryLayer);
+                        cityBoundaryLayer = null;
+                    }
+                    if (data && data.features && data.features.length > 0) {
+                        cityBoundaryLayer = L.geoJSON(data, {color: '#ff7800', weight: 2}).addTo(map);
+                        map.fitBounds(cityBoundaryLayer.getBounds());
+                        // Re-center on city after fitting bounds
+                        const lat = parseFloat(document.getElementById('latitude').value);
+                        const lon = parseFloat(document.getElementById('longitude').value);
+                        if (!isNaN(lat) && !isNaN(lon)) {
+                            setMapCenter(lat, lon);
+                        }
+                    } else if (data && data.error) {
+                        // Optionally alert or ignore
                     }
                 });
         }
@@ -1026,7 +1083,7 @@ def geocode_city():
         logging.warning("Geocoding failed: city and country required.")
         return {'error': 'city and country required'}, 400
     query = f"{city}, {state+', ' if state else ''}{country}"
-    url = f"https://nominatim.openstreetmap.org/search"
+    url = "https://nominatim.openstreetmap.org/search"
     params = {'q': query, 'format': 'json', 'limit': 1}
     headers = {'User-Agent': 'mobility-app/1.0'}
     resp = requests.get(url, params=params, headers=headers)
@@ -1363,6 +1420,49 @@ def sync_all_progress(sync_id):
         </script>
         </div>
     ''', prog=prog, sync_id=sync_id)
+
+@app.route('/city_boundary')
+def city_boundary():
+    city = request.args.get('city')
+    country = request.args.get('country')
+    state = request.args.get('state')
+    if not city or not country:
+        return {'error': 'city and country required'}, 400
+    # Build Overpass QL query
+    query = f"""
+    [out:json];
+    area["name"="{country}"]["boundary"="administrative"]->.country;
+    (
+      relation["name"="{city}"]["boundary"="administrative"]["type"="boundary"](area.country);
+    );
+    out geom;
+    """
+    url = "https://overpass-api.de/api/interpreter"
+    try:
+        resp = requests.get(url, params={'data': query}, timeout=30)
+        if resp.status_code != 200:
+            return {'error': 'not found'}, 404
+        data = resp.json()
+        if not data.get('elements'):
+            return {'error': 'not found'}, 404
+        features = []
+        for el in data['elements']:
+            if el['type'] == 'relation' and 'members' in el:
+                coords = []
+                for member in el['members']:
+                    if member['type'] == 'way' and 'geometry' in member:
+                        coords.append([(pt['lon'], pt['lat']) for pt in member['geometry']])
+                if coords:
+                    features.append(geojson.Feature(geometry=geojson.MultiLineString(coords), properties={"name": city}))
+        if not features:
+            return {'error': 'not found'}, 404
+        return app.response_class(
+            response=geojson.dumps(geojson.FeatureCollection(features)),
+            status=200,
+            mimetype='application/json'
+        )
+    except Exception as e:
+        return {'error': str(e)}, 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 

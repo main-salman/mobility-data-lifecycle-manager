@@ -145,4 +145,10 @@ Updated flask_app.py:
 2025-06-09: Changed API endpoint selection on the main, sync city, and sync all forms from a dropdown to checkboxes, allowing users to pick multiple endpoints. The backend now loops through the selected endpoints and makes a separate API call for each selected endpoint.
 
 2025-06-09: Updated the labels for 'cohort', 'aggregate', and 'devices' endpoints to be prefixed with 'Work' (e.g., 'Work Cohort', 'Work Aggregate', 'Work Devices') in the API endpoint checkboxes to differentiate them from the Home endpoints.
+
+[2024-06-09] Added /city_boundary endpoint to flask_app.py to fetch city boundaries as GeoJSON from Overpass API for use in the add/edit city map. Also imported geojson at the top of flask_app.py. This enables automatic display of city boundaries on the map after geocoding.
+
+[2024-06-09] Added 'pip install geojson' to user_data.sh to ensure geojson is installed for Flask city boundary feature.
+
+[2024-06-09] Improved city boundary display: after showing the boundary, the map remains centered on the city, and the map height was increased to 800px in both add and edit city forms.
 --- 

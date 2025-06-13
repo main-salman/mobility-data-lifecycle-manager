@@ -82,6 +82,7 @@ echo "[user_data] Installing Python requirements..."
 source venv/bin/activate
 pip install --upgrade pip
 pip install flask boto3 python-dotenv requests
+pip install geojson
 
 echo "[user_data] Parsing SYNC_TIME and setting up cron..."
 SYNC_TIME=$(grep '^SYNC_TIME' .env | cut -d'=' -f2 | tr -d "'\"")

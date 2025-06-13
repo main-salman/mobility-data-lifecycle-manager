@@ -157,3 +157,16 @@ All city data is stored in the `/db` folder:
 
 You do not need to manage these backups manually—this is handled automatically by the app.
 
+## New Features
+
+- City boundary display: When adding or editing a city, the app can now show the administrative boundary of the city on the map (if available) using OpenStreetMap/Overpass API.
+- New endpoint `/city_boundary` (GET): Returns the city boundary as GeoJSON for a given city, country, and optional state. Used by the frontend map.
+
+## Requirements
+
+- Add `geojson` to your Python environment:
+  ```bash
+  pip install geojson
+  ```
+- The city boundary feature uses the public Overpass API (https://overpass-api.de/). This service may be rate-limited or unavailable at times. If boundaries do not appear, try again later or check Overpass API status.
+
