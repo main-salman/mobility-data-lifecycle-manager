@@ -1004,11 +1004,6 @@ def sync_city(city_id):
         api_endpoints_selected = request.form.getlist('api_endpoints')
         if not api_endpoints_selected:
             api_endpoints_selected = ['movement/job/pings']
-        from datetime import datetime, timedelta
-        d1 = datetime.strptime(start_date, '%Y-%m-%d')
-        d2 = datetime.strptime(end_date, '%Y-%m-%d')
-        delta = d2 - d1
-        dates = [(d1 + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(delta.days + 1)]
         sync_id = str(uuidlib.uuid4())
         aoi_info = None
         if 'radius_meters' in city:
@@ -1017,7 +1012,7 @@ def sync_city(city_id):
             aoi_info = {'type': 'polygon', 'polygon': 'defined'}
         data_sync_progress[sync_id] = {
             'current': 0,
-            'total': len(dates),
+            'total': len(api_endpoints_selected),
             'date': '',
             'status': 'pending',
             'done': False,
@@ -1030,14 +1025,13 @@ def sync_city(city_id):
         }
         # Run sync in thread and check for quota error
         def sync_and_check():
-            for date in dates:
-                for api_endpoint in api_endpoints_selected:
-                    # Normalize endpoint (strip leading /v1/ if present)
-                    endpoint = api_endpoint.lstrip('/')
-                    if endpoint.startswith('v1/'):
-                        endpoint = endpoint[3:]
-                    sync_result = sync_city_for_date(city, date, date, schema_type=schema_type, api_endpoint=endpoint)
-                    # Update progress/errors as before (omitted for brevity)
+            for api_endpoint in api_endpoints_selected:
+                # Normalize endpoint (strip leading /v1/ if present)
+                endpoint = api_endpoint.lstrip('/')
+                if endpoint.startswith('v1/'):
+                    endpoint = endpoint[3:]
+                sync_result = sync_city_for_date(city, start_date, end_date, schema_type=schema_type, api_endpoint=endpoint)
+                # Update progress/errors as before (omitted for brevity)
         threading.Thread(target=sync_and_check, daemon=True).start()
         return redirect(url_for('sync_all_progress', sync_id=sync_id))
     return render_template_string(APPLE_STYLE + '''

@@ -161,11 +161,35 @@ def sync_data_to_bucket(city, date, s3_location):
     logging.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
     try:
         sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
-        logging.info(f"[S3 SYNC] stdout: {sync_result.stdout}")
+        # Filter aws s3 sync output: only log first 5 and last 5 copy lines, summarize omitted
+        copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
+        non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
+        total_copies = len(copy_lines)
+        summary_lines = []
+        if total_copies > 10:
+            summary_lines.extend(copy_lines[:5])
+            summary_lines.append(f"... ({total_copies-10} copy lines omitted) ...")
+            summary_lines.extend(copy_lines[-5:])
+        else:
+            summary_lines = copy_lines
+        log_output = '\n'.join(non_copy_lines + summary_lines)
+        logging.info(f"[S3 SYNC] stdout (filtered):\n{log_output}")
         logging.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
         # Check if any files were copied
-        if 'download:' not in sync_result.stdout and 'upload:' not in sync_result.stdout and 'copy:' not in sync_result.stdout:
+        if total_copies == 0:
             logging.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
+        # Enforce 10,000 line limit on app.log
+        try:
+            log_path = os.path.join(os.path.dirname(__file__), 'app.log')
+            with open(log_path, 'r') as f:
+                lines = f.readlines()
+            if len(lines) > 10000:
+                with open(log_path + '.1', 'w') as f:
+                    f.writelines(lines[:-10000])
+                with open(log_path, 'w') as f:
+                    f.writelines(lines[-10000:])
+        except Exception as e:
+            logging.warning(f"[S3 SYNC] Log rotation failed: {e}")
         return {"success": True, "dest_prefix": dest_prefix}
     except subprocess.CalledProcessError as e:
         logging.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
