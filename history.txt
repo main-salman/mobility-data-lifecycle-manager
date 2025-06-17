@@ -151,4 +151,6 @@ Updated flask_app.py:
 [2024-06-09] Added 'pip install geojson' to user_data.sh to ensure geojson is installed for Flask city boundary feature.
 
 [2024-06-09] Improved city boundary display: after showing the boundary, the map remains centered on the city, and the map height was increased to 800px in both add and edit city forms.
+
+[2025-06-16] Fixed API endpoint selection: sync_city_for_date now accepts a custom endpoint, and both sync_city and sync_all in flask_app.py use the correct endpoint for each selected API endpoint (including Home endpoints). Endpoint normalization is handled for both /v1/... and ... forms.
 --- 

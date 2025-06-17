@@ -1032,9 +1032,12 @@ def sync_city(city_id):
         def sync_and_check():
             for date in dates:
                 for api_endpoint in api_endpoints_selected:
-                    sync_result = sync_city_for_date(city, date, date, schema_type=schema_type)
+                    # Normalize endpoint (strip leading /v1/ if present)
+                    endpoint = api_endpoint.lstrip('/')
+                    if endpoint.startswith('v1/'):
+                        endpoint = endpoint[3:]
+                    sync_result = sync_city_for_date(city, date, date, schema_type=schema_type, api_endpoint=endpoint)
                     # Update progress/errors as before (omitted for brevity)
-            # ... rest of the function unchanged ...
         threading.Thread(target=sync_and_check, daemon=True).start()
         return redirect(url_for('sync_all_progress', sync_id=sync_id))
     return render_template_string(APPLE_STYLE + '''
@@ -1331,24 +1334,29 @@ def sync_all():
             data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
             data_sync_progress[sync_id]['status'] = f"syncing all cities"
             try:
-                response = make_api_request(api_endpoints_selected[0], data=payload)
-                if not response or 'error' in response:
-                    errors.append(response.get('error', 'No response from API'))
-                else:
-                    request_id = response.get("request_id")
-                    job_id = response.get("data", {}).get("job_id")
-                    if not request_id or not job_id:
-                        errors.append(f"No request_id or job_id in response: {response}")
+                for api_endpoint in api_endpoints_selected:
+                    # Normalize endpoint (strip leading /v1/ if present)
+                    endpoint = api_endpoint.lstrip('/')
+                    if endpoint.startswith('v1/'):
+                        endpoint = endpoint[3:]
+                    response = make_api_request(endpoint, data=payload)
+                    if not response or 'error' in response:
+                        errors.append(response.get('error', 'No response from API'))
                     else:
-                        status = wait_for_job_completion(job_id)
-                        if not status or 'error' in status:
-                            errors.append(status.get('error', 'Unknown error during job status polling'))
+                        request_id = response.get("request_id")
+                        job_id = response.get("data", {}).get("job_id")
+                        if not request_id or not job_id:
+                            errors.append(f"No request_id or job_id in response: {response}")
                         else:
-                            # S3 sync step
-                            for city in cities:
-                                sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'))
-                                if not sync_result.get('success'):
-                                    errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
+                            status = wait_for_job_completion(job_id)
+                            if not status or 'error' in status:
+                                errors.append(status.get('error', 'Unknown error during job status polling'))
+                            else:
+                                # S3 sync step
+                                for city in cities:
+                                    sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'))
+                                    if not sync_result.get('success'):
+                                        errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
             except Exception as e:
                 errors.append(str(e))
             data_sync_progress[sync_id]['done'] = True

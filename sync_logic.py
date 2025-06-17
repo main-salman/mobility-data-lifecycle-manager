@@ -110,19 +110,26 @@ def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_c
 
 def sync_data_to_bucket(city, date, s3_location):
     import json
+    import logging
     source_bucket = "veraset-prd-platform-us-west-2"
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
     # Build destination path: data/{country}/{state_province}/{city_name}/{date}
     country = city['country'].strip().lower().replace(' ', '_')
     state = city.get('state_province', '').strip().lower().replace(' ', '_')
     city_name = city['city'].strip().lower().replace(' ', '_')
-    # Remove date_folder from destination path
     if state:
         dest_prefix = f"data/{country}/{state}/{city_name}"
     else:
         dest_prefix = f"data/{country}/{city_name}"
     # Remove leading slash if present
     source_path = s3_location['folder_path'].lstrip('/') if isinstance(s3_location, dict) else s3_location.lstrip('/')
+    # Ensure source_path ends with a slash
+    if not source_path.endswith('/'):
+        source_path += '/'
+    src_s3 = f"s3://{source_bucket}/{source_path}"
+    dst_s3 = f"s3://{S3_BUCKET}/{dest_prefix}/"
+    logging.info(f"[S3 SYNC] Source: {src_s3}")
+    logging.info(f"[S3 SYNC] Destination: {dst_s3}")
     # 1. Assume role to get temp credentials
     try:
         assume_role_cmd = [
@@ -134,6 +141,7 @@ def sync_data_to_bucket(city, date, s3_location):
         result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
         credentials = json.loads(result.stdout)["Credentials"]
     except Exception as e:
+        logging.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}\n{getattr(e, 'stderr', '')}")
         return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}\n{getattr(e, 'stderr', '')}"}
     # 2. Set temp credentials in env for sync
     env = os.environ.copy()
@@ -147,21 +155,28 @@ def sync_data_to_bucket(city, date, s3_location):
         "--no-follow-symlinks",
         "--exclude", "*",
         "--include", "*.parquet",
-        f"s3://{source_bucket}/{source_path}",
-        f"s3://{S3_BUCKET}/{dest_prefix}/"
+        src_s3,
+        dst_s3
     ]
+    logging.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
     try:
         sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
+        logging.info(f"[S3 SYNC] stdout: {sync_result.stdout}")
+        logging.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
+        # Check if any files were copied
+        if 'download:' not in sync_result.stdout and 'upload:' not in sync_result.stdout and 'copy:' not in sync_result.stdout:
+            logging.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
         return {"success": True, "dest_prefix": dest_prefix}
     except subprocess.CalledProcessError as e:
+        logging.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
-def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL"):
+def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings"):
     try:
         if to_date is None:
             to_date = from_date
         payload = build_sync_payload(city, from_date, to_date, schema_type=schema_type)
-        response = make_api_request("movement/job/pings", data=payload)
+        response = make_api_request(api_endpoint, data=payload)
         if not response or 'error' in response:
             return {"success": False, "error": response.get('error', 'No response from API')}
         request_id = response.get("request_id")
