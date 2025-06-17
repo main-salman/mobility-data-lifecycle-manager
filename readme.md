@@ -27,40 +27,35 @@ This system automates the daily download and sync of Veraset mobility data for a
 
 ---
 
-## Setup Steps
+## Setup Steps (Recommended)
 
-### 1. SSH into your EC2 instance
+### 1. Provision Infrastructure with Terraform
+Run Terraform to create the EC2 instance and all required AWS resources:
+```sh
+terraform init
+terraform apply
 ```
-ssh -i MY-AWS-KEY.pem ec2-user@<EC2_PUBLIC_IP>
-```
+Follow prompts and wait for completion. Note the public IP of the new instance from the Terraform output.
 
-### 2. Upload all project files
-Use `scp` or `rsync` to upload the files listed above to your EC2 home directory.
+### 2. Update Instance Info in update_ec2.sh
+Edit `update_ec2.sh` and set the correct `EC2_HOST` (public IP) and any other relevant variables to match your new instance.
 
-### 3. Run the setup script
-```
-chmod +x setup_ec2.sh
-./setup_ec2.sh
+### 3. Deploy Code to the Instance
+Run the update script to push the latest code and dependencies:
+```sh
+./update_ec2.sh
 ```
 This will:
-- Install all dependencies
-- Set up Python environment
-- Create the DynamoDB table
-- Set up SNS topic and subscribe your email
-- Set up Flask as a systemd service
-- Create a daily sync script
+- Pull the latest code from GitHub
+- Ensure Python dependencies are installed
+- Restart the Flask app
 
-### 4. Complete manual AWS Console steps
-- **Secrets Manager:**
-  - Go to AWS Console > Secrets Manager > Store a new secret
-  - Type: Other type of secret
-  - Key: `VERASET_API_KEY`, Value: `<your-api-key>`
-  - Secret name: `veraset_api_key`
-- **S3 Lifecycle:**
-  - Go to S3 Console > `veraset-data-qoli-dev` > Management > Lifecycle rules
-  - Add a rule to delete objects older than 7 days
-- **SNS Email Confirmation:**
-  - Check your email (`salman.naqvi@gmail.com`) and confirm the SNS subscription
+### 4. Access the Instance
+- Use the public DNS or IP from Terraform output to access the web UI (e.g., https://mobility.qolimpact.click/)
+- Or use SSH as needed:
+  ```sh
+  ssh -i MY-AWS-KEY.pem ec2-user@<EC2_PUBLIC_IP>
+  ```
 
 ---
 
@@ -102,50 +97,19 @@ This will sync all cities for the previous day at 2am UTC.
 - **DynamoDB table issues?**
   - Re-run `python dynamodb_create_table.py` if needed
 
-## Updating the App After a GitHub Repo Update
+## Updating the App After Code Changes
 
-To update the app on your EC2 instance after changes are pushed to the GitHub repository:
-
-1. **SSH into your EC2 instance:**
+1. **Push your code changes to GitHub:**
    ```sh
-   ssh -i salman-dev.pem ec2-user@<EC2_PUBLIC_IP>
+   git add .
+   git commit -m "Describe your changes"
+   git push origin main
    ```
-
-2. **Navigate to the project directory:**
+2. **Update the EC2 instance:**
    ```sh
-   cd ~/mobility-data-lifecycle-manager
+   ./update_ec2.sh
    ```
-
-3. **Pull the latest changes from GitHub:**
-   ```sh
-   git pull origin main
-   ```
-
-4. **(Optional) Update Python dependencies:**
-   If `requirements.txt` has changed:
-   ```sh
-   source venv/bin/activate
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   deactivate
-   ```
-
-5. **Restart the Flask app:**
-   If running with a process manager (e.g., systemd, supervisor, or gunicorn), restart the service. If running manually, stop and re-run the app:
-   ```sh
-   # If running in the background, find and kill the process:
-   pkill -f flask_app.py
-   # Then restart:
-   source venv/bin/activate
-   python flask_app.py &
-   ```
-
-6. **Check the logs:**
-   ```sh
-   tail -f app.log
-   ```
-
-**Note:** If you have made changes to user_data.sh or deployment scripts, you may need to re-run those steps or re-provision the instance.
+   This will pull the latest Python code and restart the Flask app. (For infrastructure changes, re-run Terraform as described above.)
 
 ## City Data Storage and Backups
 

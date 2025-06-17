@@ -43,6 +43,33 @@ EOF
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:$CLOUDWATCH_CONFIG_FILE -s
 
+# Create CloudWatch Agent config for app.log
+cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/bin/app-log-config.json
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/home/ec2-user/mobility-data-lifecycle-manager/app.log",
+            "log_group_name": "/mobility/manager",
+            "log_stream_name": "{instance_id}-app",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
+          }
+        ]
+      }
+    }
+  }
+}
+EOF
+
+# Start CloudWatch Agent with the new config
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 \
+  -c file:/opt/aws/amazon-cloudwatch-agent/bin/app-log-config.json \
+  -s
+
 # AWS CLI v2
 sudo yum remove -y awscli || true
 cd /tmp
