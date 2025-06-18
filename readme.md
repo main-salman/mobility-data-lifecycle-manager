@@ -116,10 +116,23 @@ This will sync all cities for the previous day at 2am UTC.
 All city data is stored in the `/db` folder:
 - The main city list is in `/db/cities.json`.
 - Every time you add, edit, or delete a city, the app automatically creates a timestamped backup (e.g., `cities.json.2024-06-10_14-30-00`) in the same `/db` folder.
-- Only the 30 most recent backups are kept; older backups are automatically deleted.
+- Only the 30 most recent local backups are kept; older backups are automatically deleted.
+- **Additionally, every time cities.json is updated, a timestamped backup is uploaded to S3.**
+  - The S3 bucket and folder for these backups are configurable via the `.env` file:
+    - `CITIES_BACKUP_BUCKET` — S3 bucket for cities.json backups (e.g., `qoli-mobile-ping-raw-dev`)
+    - `S3_BUCKET` — S3 bucket for main data sync (e.g., `veraset-data-qoli-dev`)
+  - Each backup is stored in the `cities-backup/` folder in the specified S3 bucket, with a unique timestamp in the filename.
 - The `/db` folder is excluded from version control via `.gitignore`, so your city data and backups are never committed to git.
 
-You do not need to manage these backups manually—this is handled automatically by the app.
+You do not need to manage these backups manually—this is handled automatically by the app. S3 backups provide additional durability and disaster recovery for your city list.
+
+## Environment Variables for S3
+
+Add the following to your `.env` (see `.env.example`):
+```
+S3_BUCKET=veraset-data-qoli-dev           # Main data sync bucket
+CITIES_BACKUP_BUCKET=qoli-mobile-ping-raw-dev  # Bucket for cities.json backups
+```
 
 ## New Features
 
