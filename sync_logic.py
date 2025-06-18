@@ -5,10 +5,13 @@ import boto3
 import requests
 from datetime import datetime
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 REGION = 'us-west-2'
 SECRETS_NAME = 'veraset_api_key'  # Change if needed
-S3_BUCKET = 'veraset-data-qoli-dev'
+S3_BUCKET = os.getenv('S3_BUCKET')
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')  # Optional: can be set per city/email
 API_ENDPOINT = "https://platform.prd.veraset.tech"
 AWS_CLI = '/usr/local/bin/aws'

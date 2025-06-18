@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-load_dotenv('/home/ec2-user/mobility-data-lifecycle-manager/.env')
+load_dotenv()
 print("VERASET_API_KEY:", os.environ.get("VERASET_API_KEY"), flush=True)
 import sys
 import json

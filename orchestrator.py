@@ -5,6 +5,9 @@ import pytz
 from typing import List, Dict, Any
 import uuid
 from utils import load_cities
+from dotenv import load_dotenv
+
+load_dotenv()
 
 JOBS_FILE = 'jobs.json'
 

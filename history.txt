@@ -157,4 +157,6 @@ Updated flask_app.py:
 [2024-06-17] Improved logging: aws s3 sync output in app.log now only shows the first 5 and last 5 copy lines (with a summary if more than 10), and app.log is rotated to keep only the newest 10,000 lines after each sync.
 
 [2024-06-17] Fixed sync_city in flask_app.py to make a single API call per endpoint for the full date range (start_date to end_date), not one per day. This matches Veraset API best practices and reduces API calls.
+
+2025-06-17: Added S3 backup functionality to save_cities() in utils.py. Now, every update to cities.json is also backed up to S3 using the bucket specified by CITIES_BACKUP_BUCKET in .env. Backups are timestamped and stored in the cities-backup/ folder in the bucket.
 --- 

@@ -3,6 +3,10 @@ import json
 import threading
 from datetime import datetime
 from glob import glob
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 CITIES_FILE = os.path.join('db', 'cities.json')
 cities_lock = threading.Lock()
@@ -31,4 +35,19 @@ def save_cities(cities):
                 print(f"Could not remove old backup {old}: {e}")
     with cities_lock:
         with open(CITIES_FILE, 'w') as f:
-            json.dump(cities, f, indent=2) 
+            json.dump(cities, f, indent=2)
+    # S3 backup
+    try:
+        import boto3
+        backup_bucket = os.getenv('CITIES_BACKUP_BUCKET')
+        if backup_bucket:
+            s3_client = boto3.client('s3')
+            s3_key = f"cities-backup/cities.json.{timestamp}"
+            s3_client.upload_file(CITIES_FILE, backup_bucket, s3_key)
+            print(f"Backed up cities.json to s3://{backup_bucket}/{s3_key}")
+        else:
+            print("CITIES_BACKUP_BUCKET not set in .env, skipping S3 backup")
+    except ImportError:
+        print("boto3 not available, skipping S3 backup")
+    except Exception as e:
+        print(f"S3 backup failed: {e}") 
