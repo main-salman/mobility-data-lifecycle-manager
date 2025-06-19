@@ -25,6 +25,7 @@ import shutil
 from glob import glob
 from utils import load_cities, save_cities
 import geojson  # Add this import at the top
+import subprocess
 
 # Load credentials
 load_dotenv()
@@ -47,6 +48,19 @@ data_sync_progress = {}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Define API endpoints globally since they're used in multiple routes
+api_endpoints = [
+    ("movement/job/pings", "Pings (default)"),
+    ("movement/job/pings_by_device", "Pings by Device"),
+    ("work/job/cohort", "Work Cohort"),
+    ("work/job/aggregate", "Work Aggregate"),
+    ("work/job/devices", "Work Devices"),
+    ("movement/job/pings_by_ip", "Pings by IP"),
+    ("/v1/home/job/devices", "Home Devices"),
+    ("/v1/home/job/aggregate", "Home Aggregate"),
+    ("/v1/home/job/cohort", "Home Cohort")
+]
 
 # Logging setup
 LOG_FILE = 'app.log'
@@ -356,23 +370,237 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+# Add this after the existing API_ENDPOINTS list
+S3_BUCKET_MAPPING = {
+    "movement/job/pings": "S3_BUCKET_MOVEMENT_PINGS",
+    "movement/job/pings_by_device": "S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE",
+    "work/job/cohort": "S3_BUCKET_WORK_COHORT",
+    "work/job/aggregate": "S3_BUCKET_WORK_AGGREGATE",
+    "work/job/devices": "S3_BUCKET_WORK_DEVICES",
+    "movement/job/pings_by_ip": "S3_BUCKET_MOVEMENT_PINGS_BY_IP",
+    "/v1/home/job/devices": "S3_BUCKET_HOME_DEVICES",
+    "/v1/home/job/aggregate": "S3_BUCKET_HOME_AGGREGATE",
+    "/v1/home/job/cohort": "S3_BUCKET_HOME_COHORT"
+}
+
+@app.route('/daily_sync_config', methods=['GET', 'POST'])
+def daily_sync_config():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    
+    # Get current daily sync settings
+    current_endpoints = os.getenv('DAILY_SYNC_ENDPOINTS', 'movement/job/pings').split(',')
+    endpoint_configs = json.loads(os.getenv('DAILY_SYNC_ENDPOINT_CONFIGS', '{}'))
+    
+    # Get current S3 bucket settings
+    bucket_settings = {endpoint: os.getenv(S3_BUCKET_MAPPING[endpoint], '') 
+                      for endpoint in S3_BUCKET_MAPPING}
+    
+    # Get cities backup bucket setting
+    cities_backup_bucket = os.getenv('CITIES_BACKUP_BUCKET', '')
+    
+    # Get sync time
+    sync_hour, sync_minute = get_sync_time()
+    
+    return render_template_string(APPLE_STYLE + '''
+        <div class="container">
+        <h2>S3 Buckets and Daily Sync Configuration</h2>
+        
+        <!-- Sync Time Configuration -->
+        <div style="margin-bottom:2em;padding:1em;background:#f5f5f7;border-radius:8px;">
+            <form method="post" action="{{ url_for('index') }}">
+                <label>Daily Sync Time (24h, UTC):
+                    <input type="time" name="sync_time" value="{{'%02d:%02d' % (sync_hour, sync_minute)}}">
+                </label>
+                <input type="submit" value="Update Sync Time">
+                <button type="submit" name="disable_sync" value="1" style="background:#ccc;color:#222;">Disable Daily Sync</button>
+            </form>
+        </div>
+        
+        <!-- Daily Sync Settings -->
+        <div style="margin-bottom:2em;padding:1.5em;background:#f5f5f7;border-radius:12px;">
+            <form method="post" action="{{ url_for('update_daily_sync') }}">
+                <!-- Cities Backup Configuration -->
+                <div style="margin-bottom:2em;padding:1em;border:1px solid #ddd;border-radius:8px;">
+                    <label style="font-weight:500;">Cities Database Backup Configuration:</label>
+                    <div style="margin:0.5em 0 0 1.5em;">
+                        <label>S3 Bucket for cities.json backup:
+                            <input type="text" 
+                                   name="cities_backup_bucket"
+                                   value="{{cities_backup_bucket}}"
+                                   placeholder="S3 bucket for cities.json backup"
+                                   style="width:300px;">
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom:1em;">
+                    <b>API Endpoints for Daily Sync:</b><br>
+                    {% for val, label in api_endpoints %}
+                        <div style="margin:1em 0;padding:1em;border:1px solid #ddd;border-radius:8px;">
+                            <label style="font-weight:500;">
+                                <input type="checkbox" 
+                                       name="endpoint_{{val.replace('/', '_')}}_enabled"
+                                       value="1"
+                                       {% if val in current_endpoints %}checked{% endif %}
+                                       onchange="toggleEndpointConfig(this, '{{val.replace('/', '_')}}')"> 
+                                {{label}}
+                            </label>
+                            <div id="config_{{val.replace('/', '_')}}" 
+                                 style="margin-left:1.5em;margin-top:0.5em;
+                                        {% if val not in current_endpoints %}display:none;{% endif %}">
+                                <div style="margin-bottom:0.5em;">
+                                    <label>Schema Type:
+                                        <select name="schema_{{val.replace('/', '_')}}">
+                                            <option value="FULL" 
+                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'FULL' %}selected{% endif %}>
+                                                FULL
+                                            </option>
+                                            <option value="TRIPS"
+                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'TRIPS' %}selected{% endif %}>
+                                                TRIPS
+                                            </option>
+                                            <option value="BASIC"
+                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'BASIC' %}selected{% endif %}>
+                                                BASIC
+                                            </option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>S3 Bucket:
+                                        <input type="text" 
+                                               name="bucket_{{val.replace('/', '_')}}"
+                                               value="{{bucket_settings[val]}}"
+                                               placeholder="S3 bucket for {{label}}"
+                                               style="width:300px;">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="submit">Update Daily Sync Settings</button>
+            </form>
+        </div>
+        
+        <script>
+        function toggleEndpointConfig(checkbox, endpoint) {
+            const configDiv = document.getElementById('config_' + endpoint);
+            configDiv.style.display = checkbox.checked ? 'block' : 'none';
+        }
+        </script>
+        
+        <a href="{{ url_for('index') }}" class="button">Back to Main Page</a>
+        </div>
+    ''', sync_hour=sync_hour, sync_minute=sync_minute,
+         api_endpoints=api_endpoints, current_endpoints=current_endpoints,
+         endpoint_configs=endpoint_configs, bucket_settings=bucket_settings,
+         cities_backup_bucket=cities_backup_bucket)
+
+@app.route('/update_daily_sync', methods=['POST'])
+def update_daily_sync():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    
+    # Update daily sync settings in .env
+    selected_endpoints = []
+    endpoint_configs = {}
+    
+    # Process each endpoint's configuration
+    for endpoint, _ in api_endpoints:
+        if request.form.get(f"endpoint_{endpoint.replace('/', '_')}_enabled"):
+            selected_endpoints.append(endpoint)
+            endpoint_configs[endpoint] = {
+                'schema_type': request.form.get(f"schema_{endpoint.replace('/', '_')}", 'FULL'),
+                'bucket': request.form.get(f"bucket_{endpoint.replace('/', '_')}")
+            }
+    
+    # Save endpoint configurations as JSON in .env
+    set_key('.env', 'DAILY_SYNC_ENDPOINTS', ','.join(selected_endpoints))
+    set_key('.env', 'DAILY_SYNC_ENDPOINT_CONFIGS', json.dumps(endpoint_configs))
+    
+    # Update S3 bucket mappings
+    for endpoint in S3_BUCKET_MAPPING.keys():
+        bucket_key = S3_BUCKET_MAPPING[endpoint]
+        bucket_value = request.form.get(f"bucket_{endpoint.replace('/', '_')}")
+        if bucket_value:
+            set_key('.env', bucket_key, bucket_value)
+            # Update environment variable immediately
+            os.environ[bucket_key] = bucket_value
+    
+    # Update cities backup bucket
+    cities_backup_bucket = request.form.get('cities_backup_bucket')
+    if cities_backup_bucket:
+        set_key('.env', 'CITIES_BACKUP_BUCKET', cities_backup_bucket)
+        # Update environment variable immediately
+        os.environ['CITIES_BACKUP_BUCKET'] = cities_backup_bucket
+    
+    flash('Daily sync settings updated successfully')
+    # Redirect back to the daily sync configuration page
+    return redirect(url_for('daily_sync_config'))
+
+def is_running_on_ec2():
+    """Check if we're running on EC2 or locally"""
+    try:
+        import requests
+        r = requests.get('http://169.254.169.254/latest/meta-data/instance-id', timeout=0.1)
+        return r.status_code == 200
+    except:
+        return False
+
+def update_crontab(action='disable'):
+    """Update crontab in both EC2 and local environments"""
+    try:
+        # Check if we're on EC2 or local
+        on_ec2 = is_running_on_ec2()
+        
+        if on_ec2:
+            # EC2 environment - use sudo and ec2-user
+            try:
+                current_crontab = subprocess.check_output(['sudo', 'crontab', '-u', 'ec2-user', '-l'], text=True)
+            except subprocess.CalledProcessError:
+                current_crontab = ''
+            
+            # Filter out daily_sync.py lines
+            lines = [l for l in current_crontab.splitlines() if 'daily_sync.py' not in l]
+            new_crontab = '\n'.join(lines) + '\n'
+            
+            # Update crontab
+            subprocess.run(['sudo', 'crontab', '-u', 'ec2-user', '-'], input=new_crontab, text=True, check=True)
+        else:
+            # Local environment - use current user's crontab
+            try:
+                current_crontab = subprocess.check_output(['crontab', '-l'], text=True)
+            except subprocess.CalledProcessError:
+                current_crontab = ''
+            
+            # Filter out daily_sync.py lines
+            lines = [l for l in current_crontab.splitlines() if 'daily_sync.py' not in l]
+            new_crontab = '\n'.join(lines) + '\n'
+            
+            # Update crontab
+            subprocess.run(['crontab', '-'], input=new_crontab, text=True, check=True)
+        
+        return True, "Daily sync has been disabled (cron job removed)."
+    except Exception as e:
+        return False, f"Error updating crontab: {str(e)}"
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not is_logged_in():
         return redirect(url_for('login'))
+    
     sync_hour, sync_minute = get_sync_time()
+    
     if request.method == 'POST':
         if 'disable_sync' in request.form:
-            # Remove the cron job for daily_sync.py
-            import subprocess
-            try:
-                crontab = subprocess.check_output(['sudo', 'crontab', '-u', 'ec2-user', '-l'], text=True)
-                lines = [l for l in crontab.splitlines() if 'daily_sync.py' not in l]
-            except subprocess.CalledProcessError:
-                lines = []
-            new_crontab = '\n'.join(lines) + '\n'
-            subprocess.run(['sudo', 'crontab', '-u', 'ec2-user', '-'], input=new_crontab, text=True, check=True)
-            flash("Daily sync has been disabled (cron job removed).")
+            success, message = update_crontab(action='disable')
+            if success:
+                flash(message)
+            else:
+                flash(message, 'error')
             return redirect(url_for('index'))
         if 'sync_time' in request.form:
             new_time = request.form['sync_time']
@@ -382,27 +610,19 @@ def index():
                 flash(f"Sync time updated to {hour}:{minute} (24h)")
             return redirect(url_for('index'))
     cities = load_cities()
-    api_endpoints = [
-        ("movement/job/pings", "Pings (default)"),
-        ("movement/job/pings_by_device", "Pings by Device"),
-        ("movement/job/cohort", "Work Cohort"),
-        ("movement/job/aggregate", "Work Aggregate"),
-        ("movement/job/devices", "Work Devices"),
-        ("movement/job/pings_by_ip", "Pings by IP"),
-        ("/v1/home/job/devices", "Home Devices"),
-        ("/v1/home/job/aggregate", "Home Aggregate"),
-        ("/v1/home/job/cohort", "Home Cohort")
-    ]
+    
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>Mobility Cities</h2>
-        <form method="post" style="margin-bottom:2em;">
-            <label>Daily Sync Time (24h, UTC):
-                <input type="time" name="sync_time" value="{{'%02d:%02d' % (sync_hour, sync_minute)}}">
-            </label>
-            <input type="submit" value="Update Sync Time">
-            <button type="submit" name="disable_sync" value="1" style="background:#ccc;color:#222;">Disable Daily Sync</button>
-        </form>
+        
+        <!-- Daily Sync Configuration Button -->
+        <div style="margin-bottom:2em;">
+            <a href="{{ url_for('daily_sync_config') }}" class="button" style="display:inline-block;padding:10px 20px;background:#007AFF;color:white;text-decoration:none;border-radius:6px;margin-bottom:20px;">
+                Configure S3 Buckets and Daily Sync
+            </a>
+        </div>
+        
+        <!-- Rest of the existing template -->
         <div style="margin-bottom:1em;color:#555;font-size:0.98em;">
             <b>Note:</b> Each daily sync downloads data for <b>one day, 7 days prior</b> to the current UTC date.
         </div>
@@ -449,9 +669,8 @@ def index():
         </div>
         <br><a href="{{ url_for('add_city') }}">Add City</a>
         <br><a href="{{ url_for('view_logs') }}">View Logs</a>
-        <br><a href="{{ url_for('sync_jobs') }}">View Sync Jobs Progress</a>
         </div>
-    ''', cities=cities, sync_hour=sync_hour, sync_minute=sync_minute, api_endpoints=api_endpoints)
+    ''', cities=cities, api_endpoints=api_endpoints)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_city():
@@ -986,17 +1205,7 @@ def sync_city(city_id):
     if not city:
         return 'City not found', 404
     error_message = None
-    api_endpoints = [
-        ("movement/job/pings", "Pings (default)"),
-        ("movement/job/pings_by_device", "Pings by Device"),
-        ("movement/job/cohort", "Work Cohort"),
-        ("movement/job/aggregate", "Work Aggregate"),
-        ("movement/job/devices", "Work Devices"),
-        ("movement/job/pings_by_ip", "Pings by IP"),
-        ("/v1/home/job/devices", "Home Devices"),
-        ("/v1/home/job/aggregate", "Home Aggregate"),
-        ("/v1/home/job/cohort", "Home Cohort")
-    ]
+    
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
@@ -1259,131 +1468,128 @@ def sync_progress_page(sync_id):
 def sync_all():
     if not is_logged_in():
         return redirect(url_for('login'))
-    error_message = None
-    api_endpoints = [
-        ("movement/job/pings", "Pings (default)"),
-        ("movement/job/pings_by_device", "Pings by Device"),
-        ("movement/job/cohort", "Work Cohort"),
-        ("movement/job/aggregate", "Work Aggregate"),
-        ("movement/job/devices", "Work Devices"),
-        ("movement/job/pings_by_ip", "Pings by IP"),
-        ("/v1/home/job/devices", "Home Devices"),
-        ("/v1/home/job/aggregate", "Home Aggregate"),
-        ("/v1/home/job/cohort", "Home Cohort")
-    ]
-    if request.method == 'POST':
-        start_date = request.form['start_date']
-        end_date = request.form['end_date']
-        schema_type = request.form.get('schema_type', 'TRIPS')
-        api_endpoints_selected = request.form.getlist('api_endpoints')
-        if not api_endpoints_selected:
-            api_endpoints_selected = ['movement/job/pings']
-        cities = load_cities()
-        sync_id = str(uuidlib.uuid4())
-        data_sync_progress[sync_id] = {
-            'current': 0,
-            'total': len(cities),
-            'date': '',
-            'status': 'pending',
-            'done': False,
-            'city': 'ALL',
-            'country': '',
-            'state_province': '',
-            'date_range': f"{start_date} to {end_date}",
-            'errors': [],
-            'schema_type': schema_type
+
+    if request.method == 'GET':
+        return render_template_string(APPLE_STYLE + '''
+            <div class="container">
+            <h2>Sync All Cities</h2>
+            <form method="post">
+                Start Date: <input name="start_date" type="date" required><br>
+                End Date: <input name="end_date" type="date" required><br>
+                <label>Schema Type:
+                    <select name="schema_type">
+                        <option value="FULL" selected>FULL</option>
+                        <option value="TRIPS">TRIPS</option>
+                        <option value="BASIC">BASIC</option>
+                    </select>
+                </label><br>
+                <fieldset style="border:none;margin:0;padding:0;">
+                    <legend style="font-weight:500;">API Endpoints:</legend>
+                    {% for val, label in api_endpoints %}
+                        <label style="margin-right:12px;">
+                            <input type="checkbox" name="api_endpoints" value="{{val}}" {% if val == 'movement/job/pings' %}checked{% endif %}> {{label}}
+                        </label>
+                    {% endfor %}
+                </fieldset>
+                <input type="submit" value="Sync All Cities">
+            </form>
+            <a href="{{ url_for('index') }}">Back</a>
+            </div>
+        ''', api_endpoints=api_endpoints)
+
+    sync_id = str(uuid.uuid4())
+    data_sync_progress[sync_id] = {
+        'current': 0,
+        'total': 1,
+        'status': 'starting',
+        'errors': []
+    }
+
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date', start_date)
+    schema_type = request.form.get('schema_type', 'FULL')
+    api_endpoints_selected = request.form.getlist('api_endpoints')
+
+    if not start_date or not api_endpoints_selected:
+        flash('Please provide start date and select at least one API endpoint')
+        return redirect(url_for('sync_all'))
+
+    cities = load_cities()
+    if not cities:
+        flash('No cities configured')
+        return redirect(url_for('index'))
+
+    def sync_all_thread():
+        errors = []
+        geo_radius = []
+        geo_json = []
+        for city in cities:
+            if 'radius_meters' in city:
+                geo_radius.append({
+                    "poi_id": f"{city['city'].lower()}_center",
+                    "latitude": float(city['latitude']),
+                    "longitude": float(city['longitude']),
+                    "distance_in_meters": float(city.get('radius_meters', 50000))
+                })
+            elif 'polygon_geojson' in city:
+                geo_json.append({
+                    "poi_id": f"{city['city'].lower()}_polygon",
+                    "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
+                })
+        payload = {
+            "date_range": {
+                "from_date": start_date,
+                "to_date": end_date
+            },
+            "schema_type": schema_type
         }
-        def sync_all_thread():
-            errors = []
-            geo_radius = []
-            geo_json = []
-            for city in cities:
-                if 'radius_meters' in city:
-                    geo_radius.append({
-                        "poi_id": f"{city['city'].lower()}_center",
-                        "latitude": float(city['latitude']),
-                        "longitude": float(city['longitude']),
-                        "distance_in_meters": float(city.get('radius_meters', 50000))
-                    })
-                elif 'polygon_geojson' in city:
-                    geo_json.append({
-                        "poi_id": f"{city['city'].lower()}_polygon",
-                        "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
-                    })
-            payload = {
-                "date_range": {
-                    "from_date": start_date,
-                    "to_date": end_date
-                },
-                "schema_type": schema_type
-            }
-            if geo_radius:
-                payload["geo_radius"] = geo_radius
-            if geo_json:
-                payload["geo_json"] = geo_json
-            api_key = os.environ.get('VERASET_API_KEY')
-            logging.info(f"[Sync All] Starting sync for ALL cities from {start_date} to {end_date}")
-            logging.debug(f"[Sync All] VERASET_API_KEY: {api_key}")
-            logging.debug(f"[Sync All] Payload: {payload}")
-            data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
-            data_sync_progress[sync_id]['status'] = f"syncing all cities"
-            try:
-                for api_endpoint in api_endpoints_selected:
-                    # Normalize endpoint (strip leading /v1/ if present)
-                    endpoint = api_endpoint.lstrip('/')
-                    if endpoint.startswith('v1/'):
-                        endpoint = endpoint[3:]
-                    response = make_api_request(endpoint, data=payload)
-                    if not response or 'error' in response:
-                        errors.append(response.get('error', 'No response from API'))
+        if geo_radius:
+            payload["geo_radius"] = geo_radius
+        if geo_json:
+            payload["geo_json"] = geo_json
+        api_key = os.environ.get('VERASET_API_KEY')
+        logging.info(f"[Sync All] Starting sync for ALL cities from {start_date} to {end_date}")
+        logging.debug(f"[Sync All] VERASET_API_KEY: {api_key}")
+        logging.debug(f"[Sync All] Payload: {payload}")
+        data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
+        data_sync_progress[sync_id]['status'] = f"syncing all cities"
+        try:
+            for api_endpoint in api_endpoints_selected:
+                # Get the correct S3 bucket for this endpoint
+                bucket_env_var = S3_BUCKET_MAPPING.get(api_endpoint)
+                s3_bucket = os.getenv(bucket_env_var) if bucket_env_var else os.getenv('S3_BUCKET')
+                
+                # Log which bucket we're using
+                logging.info(f"[Sync All] Using S3 bucket {s3_bucket} for endpoint {api_endpoint}")
+                
+                # Normalize endpoint (strip leading /v1/ if present)
+                endpoint = api_endpoint.lstrip('/')
+                if endpoint.startswith('v1/'):
+                    endpoint = endpoint[3:]
+                response = make_api_request(endpoint, data=payload)
+                if not response or 'error' in response:
+                    errors.append(response.get('error', 'No response from API'))
+                else:
+                    request_id = response.get("request_id")
+                    job_id = response.get("data", {}).get("job_id")
+                    if not request_id or not job_id:
+                        errors.append(f"No request_id or job_id in response: {response}")
                     else:
-                        request_id = response.get("request_id")
-                        job_id = response.get("data", {}).get("job_id")
-                        if not request_id or not job_id:
-                            errors.append(f"No request_id or job_id in response: {response}")
+                        status = wait_for_job_completion(job_id)
+                        if not status or 'error' in status:
+                            errors.append(status.get('error', 'Unknown error during job status polling'))
                         else:
-                            status = wait_for_job_completion(job_id)
-                            if not status or 'error' in status:
-                                errors.append(status.get('error', 'Unknown error during job status polling'))
-                            else:
-                                # S3 sync step
-                                for city in cities:
-                                    sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'))
-                                    if not sync_result.get('success'):
-                                        errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
-            except Exception as e:
-                errors.append(str(e))
-            data_sync_progress[sync_id]['done'] = True
-            data_sync_progress[sync_id]['errors'] = errors
-        threading.Thread(target=sync_all_thread, daemon=True).start()
-        return redirect(url_for('sync_all_progress', sync_id=sync_id))
-    # GET: show form
-    return render_template_string(APPLE_STYLE + '''
-        <div class="container">
-        <h2>Sync All Cities</h2>
-        <form method="post">
-            Start Date: <input name="start_date" type="date" required><br>
-            End Date: <input name="end_date" type="date" required><br>
-            <label>Schema Type:
-                <select name="schema_type">
-                    <option value="FULL" selected>FULL</option>
-                    <option value="TRIPS">TRIPS</option>
-                    <option value="BASIC">BASIC</option>
-                </select>
-            </label><br>
-            <fieldset style="border:none;margin:0;padding:0;">
-                <legend style="font-weight:500;">API Endpoints:</legend>
-                {% for val, label in api_endpoints %}
-                    <label style="margin-right:12px;">
-                        <input type="checkbox" name="api_endpoints" value="{{val}}" {% if val == 'movement/job/pings' %}checked{% endif %}> {{label}}
-                    </label>
-                {% endfor %}
-            </fieldset>
-            <input type="submit" value="Sync All Cities">
-        </form>
-        <a href="{{ url_for('index') }}">Back</a>
-        </div>
-    ''', api_endpoints=api_endpoints)
+                            # S3 sync step with the correct bucket
+                            for city in cities:
+                                sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'), s3_bucket=s3_bucket)
+                                if not sync_result.get('success'):
+                                    errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
+        except Exception as e:
+            errors.append(str(e))
+        data_sync_progress[sync_id]['done'] = True
+        data_sync_progress[sync_id]['errors'] = errors
+    threading.Thread(target=sync_all_thread, daemon=True).start()
+    return redirect(url_for('sync_all_progress', sync_id=sync_id))
 
 @app.route('/sync_all_progress/<sync_id>')
 def sync_all_progress(sync_id):

@@ -111,11 +111,15 @@ def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_c
         time.sleep(poll_interval)
     return {"error": "Job timed out"}
 
-def sync_data_to_bucket(city, date, s3_location):
+def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
     import json
     import logging
     source_bucket = "veraset-prd-platform-us-west-2"
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
+    # Use provided bucket or fall back to environment variable
+    bucket = s3_bucket or os.getenv('S3_BUCKET')
+    if not bucket:
+        raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
     # Build destination path: data/{country}/{state_province}/{city_name}/{date}
     country = city['country'].strip().lower().replace(' ', '_')
     state = city.get('state_province', '').strip().lower().replace(' ', '_')
@@ -130,7 +134,7 @@ def sync_data_to_bucket(city, date, s3_location):
     if not source_path.endswith('/'):
         source_path += '/'
     src_s3 = f"s3://{source_bucket}/{source_path}"
-    dst_s3 = f"s3://{S3_BUCKET}/{dest_prefix}/"
+    dst_s3 = f"s3://{bucket}/{dest_prefix}/"
     logging.info(f"[S3 SYNC] Source: {src_s3}")
     logging.info(f"[S3 SYNC] Destination: {dst_s3}")
     # 1. Assume role to get temp credentials
@@ -198,10 +202,27 @@ def sync_data_to_bucket(city, date, s3_location):
         logging.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
-def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings"):
+def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
+    """
+    Sync data for a city for a given date range.
+    
+    Args:
+        city (dict): City configuration dictionary
+        from_date (str): Start date in YYYY-MM-DD format
+        to_date (str): End date in YYYY-MM-DD format (optional, defaults to from_date)
+        schema_type (str): Schema type to use (FULL, TRIPS, or BASIC)
+        api_endpoint (str): API endpoint to use
+        s3_bucket (str): Optional S3 bucket name. If not provided, uses S3_BUCKET from env.
+    """
     try:
         if to_date is None:
             to_date = from_date
+            
+        # Use provided bucket or fall back to environment variable
+        bucket = s3_bucket or os.getenv('S3_BUCKET')
+        if not bucket:
+            raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
+            
         payload = build_sync_payload(city, from_date, to_date, schema_type=schema_type)
         response = make_api_request(api_endpoint, data=payload)
         if not response or 'error' in response:
@@ -214,7 +235,7 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
         if not status or 'error' in status:
             return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
         # S3 sync step
-        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'))
+        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=bucket)
         if not sync_result.get('success'):
             return {"success": False, "error": sync_result.get('error', 'Unknown error during S3 sync')}
         return {"success": True, "s3_location": status.get('s3_location'), "dest_prefix": sync_result.get('dest_prefix')}
