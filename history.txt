@@ -205,4 +205,6 @@ Updated flask_app.py:
 
 [2024-06-20] Updated flask_app.py to prevent `python-dotenv` from adding quotes to environment variables when saving the `.env` file. All calls to `set_key` now use `quote_mode='never'` to ensure that values are written without quotes, resolving issues with cron job parsing.
 
+[2024-06-20] Made `daily_sync.py` more robust. The script now correctly handles quoted environment variables, uses the correct S3 bucket for each data type by incorporating the `S3_BUCKET_MAPPING` from the Flask app, and includes enhanced error logging for configuration issues. This will prevent silent failures and ensure the daily sync runs reliably on the EC2 instance.
+
 --- 

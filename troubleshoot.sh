@@ -3,8 +3,8 @@ set -e
 
 # Usage: ./troubleshoot.sh [user@host] [ssh_key (optional)]
 
-INSTANCE="$1"
-KEY="$2"
+INSTANCE=ec2-user@3.228.4.143
+KEY=salman-dev.pem
 
 if [ -z "$INSTANCE" ]; then
   echo "Usage: $0 [user@host] [ssh_key (optional)]"
