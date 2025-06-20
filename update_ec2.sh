@@ -1,6 +1,26 @@
 #!/bin/bash
 set -e
 
+# --- LOCAL GIT OPERATIONS ---
+echo "--- Running local git commands... ---"
+
+echo "Staging all changes..."
+git add .
+
+echo "Committing changes (if any)..."
+# Only commit if there are staged changes, to avoid an error.
+if ! git diff --cached --quiet; then
+    git commit -m "updating app"
+else
+    echo "No changes to commit."
+fi
+
+echo "Pushing to remote..."
+git push
+
+echo "--- Local operations complete. Proceeding with EC2 update. ---"
+echo ""
+
 # --- CONFIGURATION ---
 EC2_USER=ec2-user
 EC2_HOST=3.228.4.143

@@ -213,4 +213,6 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed `troubleshoot.sh` to correctly diagnose environment issues on EC2. The script now activates the Python virtual environment *before* running any checks, ensuring that all commands use the correct interpreter and packages. This resolves the "pip: command not found" error and provides accurate diagnostic information.
 
+[2024-06-20] Updated `update_ec2.sh` to streamline the development workflow. The script now automatically stages, commits, and pushes local Git changes before initiating the remote EC2 update, ensuring that the latest code is always deployed.
+
 --- 
