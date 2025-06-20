@@ -11,12 +11,16 @@ from utils import load_cities
 # Load .env first
 load_dotenv()
 
-# --- Clean Logging Setup (Python 3.7 compatible) ---
-# Manually remove all handlers from the root logger before configuring new ones.
-# This is the correct, backward-compatible way to prevent duplicate log entries.
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
+# --- Definitive Logging Fix (Python 3.7 compatible) ---
+# Get the root logger.
+logger = logging.getLogger()
 
+# Remove all existing handlers from the root logger. This is the only
+# guaranteed way to prevent duplicate log entries in complex scenarios.
+if logger.hasHandlers():
+    logger.handlers.clear()
+
+# Now, configure the new handlers.
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -138,64 +142,41 @@ def get_endpoint_configs():
     return final_configs
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--from-date', type=str, help='Start date (YYYY-MM-DD)')
-    parser.add_argument('--to-date', type=str, help='End date (YYYY-MM-DD)')
+    parser = argparse.ArgumentParser(description='Run daily data sync for Veraset.')
+    parser.add_argument('--date', help='Date to sync for in YYYY-MM-DD format. Defaults to 7 days ago.')
     args = parser.parse_args()
 
-    # Get endpoint configurations
-    endpoint_configs = get_endpoint_configs()
-    
-    # Load cities
-    cities = load_cities()
-    if not cities:
-        logging.warning("No cities found in db/cities.json. Exiting.")
-        return
-    
-    # Set dates
-    if args.from_date:
-        from_date = args.from_date
-        to_date = args.to_date if args.to_date else from_date
-    else:
-        # Per UI note, sync for 7 days prior
-        target_date = datetime.now() - timedelta(days=7)
-        from_date = target_date.strftime('%Y-%m-%d')
-        to_date = from_date
+    sync_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+    if args.date:
+        sync_date = args.date
 
+    from_date = sync_date
+    to_date = sync_date
+    
     logging.info(f"Starting daily sync for date range: {from_date} to {to_date}")
 
-    # Sync all cities for each configured endpoint+schema combination
-    for endpoint_schema, config in endpoint_configs.items():
-        try:
-            endpoint, schema = endpoint_schema.split('#')
-            if not config.get('bucket'):
-                logging.warning(f"Skipping {endpoint_schema} because S3 bucket is not configured.")
-                continue
+    cities = load_cities()
+    if not cities:
+        logging.error("No cities found in cities.json. Exiting.")
+        return
 
-            logging.info(f"Starting batch sync for ALL cities using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
-            
-            result = sync_all_cities_for_date_range(
-                cities=cities,
-                from_date=from_date,
-                to_date=to_date,
-                schema_type=config['schema_type'],
-                api_endpoint=endpoint,
-                s3_bucket=config['bucket']
-            )
-            
-            if result.get('success'):
-                logging.info(f"Batch sync successful for {endpoint_schema}")
-            else:
-                logging.error(f"Batch sync failed for {endpoint_schema}: {result.get('error')}")
-                if result.get('details'):
-                    for detail in result['details']:
-                        logging.error(f"  - {detail}")
+    configs = get_endpoint_configs()
 
-        except Exception as e:
-            logging.error(f"Critical error during batch sync for {endpoint_schema}: {str(e)}", exc_info=True)
-            continue
-    
-    logging.info("Daily sync process finished.")
+    for config_key, config in configs.items():
+        endpoint, schema = config_key.split('#')
+        bucket = config['bucket']
+        schema_type = config['schema_type'] # Use the schema from the config value
+        
+        logging.info(f"Starting batch sync for ALL cities using {endpoint} (schema: {schema_type}, bucket: {bucket})")
+        
+        sync_all_cities_for_date_range(
+            endpoint=endpoint,
+            cities=cities,
+            from_date=from_date,
+            to_date=to_date,
+            schema_type=schema_type,
+            s3_bucket=bucket
+        )
 
 if __name__ == '__main__':
     main() 

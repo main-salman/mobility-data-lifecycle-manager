@@ -229,4 +229,6 @@ Updated flask_app.py:
 
 [2024-06-20] Implemented a final, robust logging fix for `daily_sync.py`. The script now has a Python 3.7-compatible logging setup that prevents duplicate log entries. Additionally, the `get_endpoint_configs` function has been completely rewritten to be more transparent and resilient, providing detailed logs about how it parses environment variables. This two-part fix resolves the persistent sync and logging issues by making the script's behavior clear and correct.
 
+[2024-06-20] Fixed a critical bug in `daily_sync.py` and `sync_logic.py` that caused the `FULL` schema to be processed twice instead of processing `FULL` and `TRIPS` separately. The fix involved correcting a variable typo in the main loop of `daily_sync.py` and removing misleading, hardcoded log messages from `sync_logic.py`. A definitive, robust fix for the duplicated logging was also applied.
+
 --- 
