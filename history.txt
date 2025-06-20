@@ -223,4 +223,6 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed a critical logging issue in `daily_sync.py` that caused duplicated log entries and masked the underlying reason for failed syncs. The logging configuration has been made more robust to prevent duplicate handlers. This fix ensures that all configured schemas (e.g., `FULL` and `TRIPS`) are now processed correctly during the daily sync.
 
+[2024-06-20] Implemented a final, robust logging fix for `daily_sync.py` by replacing the custom logger setup with a standard `basicConfig` call at the top of the script, using `force=True` to guarantee a clean and correct configuration. This definitively resolves the duplicated log issue and ensures the script's behavior is transparent and reliable.
+
 --- 

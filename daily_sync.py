@@ -10,22 +10,18 @@ from sync_logic import sync_all_cities_for_date_range
 import argparse
 from utils import load_cities
 
-# --- Set up logging ---
-# A more robust setup to prevent duplicate handlers
-log = logging.getLogger()
-log.setLevel(logging.INFO)
-if log.hasHandlers():
-    log.handlers.clear()
-formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
-# File Handler
-fh = logging.FileHandler('app.log')
-fh.setFormatter(formatter)
-log.addHandler(fh)
-# Console Handler
-sh = logging.StreamHandler(sys.stdout)
-sh.setFormatter(formatter)
-log.addHandler(sh)
-# --- End logging setup ---
+# --- Clean Logging Setup ---
+# Do this once at the very top.
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler(sys.stdout)
+    ],
+    force=True  # Override any existing handlers
+)
+# --- End Logging Setup ---
 
 CITIES_FILE = 'cities.json'
 
@@ -124,12 +120,6 @@ def main():
 
     # Get endpoint configurations
     endpoint_configs = get_endpoint_configs()
-    
-    # --- TEMPORARY DEBUGGING ---
-    print(f"DEBUG: Loaded {len(endpoint_configs)} endpoint configurations:")
-    import pprint
-    pprint.pprint(endpoint_configs)
-    # --- END TEMPORARY DEBUGGING ---
     
     # Load cities
     cities = load_cities()
