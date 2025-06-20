@@ -231,4 +231,6 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed a critical bug in `daily_sync.py` and `sync_logic.py` that caused the `FULL` schema to be processed twice instead of processing `FULL` and `TRIPS` separately. The fix involved correcting a variable typo in the main loop of `daily_sync.py` and removing misleading, hardcoded log messages from `sync_logic.py`. A definitive, robust fix for the duplicated logging was also applied.
 
+[2024-06-20] Resolved a `NameError` in `sync_logic.py` by correctly initializing the logger. The entire file was rewritten to ensure correctness, also fixing a bug in the `build_sync_payload` function to properly handle batch city processing and removing other redundant code.
+
 --- 

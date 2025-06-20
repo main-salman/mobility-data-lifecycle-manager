@@ -6,33 +6,31 @@ import requests
 from datetime import datetime
 import logging
 from dotenv import load_dotenv
+import time
+from requests.exceptions import RequestException
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 REGION = 'us-west-2'
-SECRETS_NAME = 'veraset_api_key'  # Change if needed
+SECRETS_NAME = 'veraset_api_key'
 S3_BUCKET = os.getenv('S3_BUCKET')
-SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')  # Optional: can be set per city/email
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 API_ENDPOINT = "https://platform.prd.veraset.tech"
 AWS_CLI = '/usr/local/bin/aws'
 
-# Helper to get secret from .env
 def get_veraset_api_key():
     return os.environ.get('VERASET_API_KEY')
 
-# Helper to send SNS notification
 def send_sns_notification(email, subject, message):
     sns = boto3.client('sns', region_name=REGION)
-    # If using a topic, publish to topic; else, send email directly (if allowed)
     if SNS_TOPIC_ARN:
         sns.publish(TopicArn=SNS_TOPIC_ARN, Subject=subject, Message=message)
     else:
-        # Fallback: print to console
-        print(f"SNS notification to {email}: {subject}\n{message}")
+        print(f"SNS notification to {email}: {subject}\\n{message}")
 
-# Helper to build payload as in scripts
-def build_sync_payload(city, from_date, to_date, schema_type="FULL"):
-    # Accepts from_date and to_date as string (YYYY-MM-DD) or datetime
+def build_sync_payload(cities, from_date, to_date, schema_type="FULL"):
     if hasattr(from_date, 'strftime'):
         from_date_str = from_date.strftime('%Y-%m-%d')
     else:
@@ -41,26 +39,39 @@ def build_sync_payload(city, from_date, to_date, schema_type="FULL"):
         to_date_str = to_date.strftime('%Y-%m-%d')
     else:
         to_date_str = str(to_date)
+
     payload = {
-        "date_range": {
-            "from_date": from_date_str,
-            "to_date": to_date_str
-        },
+        "date_range": {"from_date": from_date_str, "to_date": to_date_str},
         "schema_type": schema_type
     }
-    if 'radius_meters' in city:
-        payload["geo_radius"] = [{
-            "poi_id": f"{city['city'].lower()}_center",
-            "latitude": float(city['latitude']),
-            "longitude": float(city['longitude']),
-            "distance_in_meters": float(city['radius_meters'])
-        }]
-    elif 'polygon_geojson' in city:
-        # The API expects geo_json to be an array of objects with poi_id and geo_json
-        payload["geo_json"] = [{
-            "poi_id": f"{city['city'].lower()}_polygon",
-            "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
-        }]
+    
+    geo_radius = []
+    geo_json = []
+
+    # Handle both single city object and list of cities
+    if not isinstance(cities, list):
+        cities = [cities]
+
+    for city in cities:
+        poi_id_city = city['city'].lower().replace(' ', '_')
+        if 'radius_meters' in city and city['radius_meters']:
+            geo_radius.append({
+                "poi_id": f"{poi_id_city}_center",
+                "latitude": float(city['latitude']),
+                "longitude": float(city['longitude']),
+                "distance_in_meters": int(city['radius_meters'])
+            })
+        elif 'polygon_geojson' in city and city['polygon_geojson']:
+            geo_json.append({
+                "poi_id": f"{poi_id_city}_polygon",
+                "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
+            })
+
+    if geo_radius:
+        payload["geo_radius"] = geo_radius
+    if geo_json:
+        payload["geo_json"] = geo_json
+        
     return payload
 
 def make_api_request(endpoint, method="POST", data=None):
@@ -70,13 +81,13 @@ def make_api_request(endpoint, method="POST", data=None):
         "X-API-Key": get_veraset_api_key()
     }
     if method == "POST":
-        logging.info(f"[API POST] Endpoint: {url}")
-        logging.info(f"[API POST] Headers: {headers}")
-        logging.info(f"[API POST] Payload: {json.dumps(data, indent=2)}")
+        logger.info(f"[API POST] Endpoint: {url}")
+        logger.info(f"[API POST] Headers: {headers}")
+        logger.info(f"[API POST] Payload: {json.dumps(data, indent=2)}")
     try:
         resp = requests.request(method, url, headers=headers, json=data)
-        logging.info(f"[API POST] Response Status: {resp.status_code}")
-        logging.info(f"[API POST] Response Text: {resp.text}")
+        logger.info(f"[API POST] Response Status: {resp.status_code}")
+        logger.info(f"[API POST] Response Text: {resp.text}")
         resp.raise_for_status()
         try:
             return resp.json()
@@ -95,7 +106,6 @@ def get_job_status(job_id):
     return make_api_request(f"job/{job_id}", method="GET")
 
 def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_callback=None):
-    import time
     for attempt in range(max_attempts):
         status = get_job_status(job_id)
         if status_callback:
@@ -112,15 +122,12 @@ def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_c
     return {"error": "Job timed out"}
 
 def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
-    import json
-    import logging
     source_bucket = "veraset-prd-platform-us-west-2"
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
-    # Use provided bucket or fall back to environment variable
     bucket = s3_bucket or os.getenv('S3_BUCKET')
     if not bucket:
         raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
-    # Build destination path: data/{country}/{state_province}/{city_name}/{date}
+    
     country = city['country'].strip().lower().replace(' ', '_')
     state = city.get('state_province', '').strip().lower().replace(' ', '_')
     city_name = city['city'].strip().lower().replace(' ', '_')
@@ -128,16 +135,15 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
         dest_prefix = f"data/{country}/{state}/{city_name}"
     else:
         dest_prefix = f"data/{country}/{city_name}"
-    # Remove leading slash if present
+
     source_path = s3_location['folder_path'].lstrip('/') if isinstance(s3_location, dict) else s3_location.lstrip('/')
-    # Ensure source_path ends with a slash
     if not source_path.endswith('/'):
         source_path += '/'
     src_s3 = f"s3://{source_bucket}/{source_path}"
     dst_s3 = f"s3://{bucket}/{dest_prefix}/"
-    logging.info(f"[S3 SYNC] Source: {src_s3}")
-    logging.info(f"[S3 SYNC] Destination: {dst_s3}")
-    # 1. Assume role to get temp credentials
+    logger.info(f"[S3 SYNC] Source: {src_s3}")
+    logger.info(f"[S3 SYNC] Destination: {dst_s3}")
+
     try:
         assume_role_cmd = [
             AWS_CLI, "sts", "assume-role",
@@ -148,13 +154,14 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
         result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
         credentials = json.loads(result.stdout)["Credentials"]
     except Exception as e:
-        logging.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}\n{getattr(e, 'stderr', '')}")
-        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}\n{getattr(e, 'stderr', '')}"}
-    # 2. Set temp credentials in env for sync
+        logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}")
+        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}"}
+
     env = os.environ.copy()
     env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
     env["AWS_SECRET_ACCESS_KEY"] = credentials["SecretAccessKey"]
     env["AWS_SESSION_TOKEN"] = credentials["SessionToken"]
+    
     sync_command = [
         AWS_CLI, "s3", "sync",
         "--copy-props", "none",
@@ -165,10 +172,9 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
         src_s3,
         dst_s3
     ]
-    logging.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
+    logger.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
     try:
         sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
-        # Filter aws s3 sync output: only log first 5 and last 5 copy lines, summarize omitted
         copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
         non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
         total_copies = len(copy_lines)
@@ -179,13 +185,12 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
             summary_lines.extend(copy_lines[-5:])
         else:
             summary_lines = copy_lines
-        log_output = '\n'.join(non_copy_lines + summary_lines)
-        logging.info(f"[S3 SYNC] stdout (filtered):\n{log_output}")
-        logging.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
-        # Check if any files were copied
+        log_output = '\\n'.join(non_copy_lines + summary_lines)
+        logger.info(f"[S3 SYNC] stdout (filtered):\\n{log_output}")
+        logger.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
         if total_copies == 0:
-            logging.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
-        # Enforce 10,000 line limit on app.log
+            logger.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
+        
         try:
             log_path = os.path.join(os.path.dirname(__file__), 'app.log')
             with open(log_path, 'r') as f:
@@ -196,63 +201,47 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
                 with open(log_path, 'w') as f:
                     f.writelines(lines[-10000:])
         except Exception as e:
-            logging.warning(f"[S3 SYNC] Log rotation failed: {e}")
+            logger.warning(f"[S3 SYNC] Log rotation failed: {e}")
         return {"success": True, "dest_prefix": dest_prefix}
     except subprocess.CalledProcessError as e:
-        logging.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
+        logger.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
 def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
-    """
-    Sync data for a city for a given date range.
-    
-    Args:
-        city (dict): City configuration dictionary
-        from_date (str): Start date in YYYY-MM-DD format
-        to_date (str): End date in YYYY-MM-DD format (optional, defaults to from_date)
-        schema_type (str): Schema type to use (FULL, TRIPS, or BASIC)
-        api_endpoint (str): API endpoint to use
-        s3_bucket (str): Optional S3 bucket name. If not provided, uses S3_BUCKET from env.
-    """
     try:
         if to_date is None:
             to_date = from_date
             
-        # Use provided bucket or fall back to environment variable
         bucket = s3_bucket or os.getenv('S3_BUCKET')
         if not bucket:
             raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
             
         payload = build_sync_payload(city, from_date, to_date, schema_type=schema_type)
         response = make_api_request(api_endpoint, data=payload)
+        
         if not response or 'error' in response:
             return {"success": False, "error": response.get('error', 'No response from API')}
         request_id = response.get("request_id")
         job_id = response.get("data", {}).get("job_id")
         if not request_id or not job_id:
             return {"success": False, "error": f"No request_id or job_id in response: {response}"}
+        
         status = wait_for_job_completion(job_id)
         if not status or 'error' in status:
             return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
-        # S3 sync step
+        
         sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=bucket)
         if not sync_result.get('success'):
             return {"success": False, "error": sync_result.get('error', 'Unknown error during S3 sync')}
+        
         return {"success": True, "s3_location": status.get('s3_location'), "dest_prefix": sync_result.get('dest_prefix')}
     except Exception as e:
+        logger.error(f"Error in sync_city_for_date for {city['city']}: {str(e)}", exc_info=True)
         return {"success": False, "error": str(e)}
 
 def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endpoint, s3_bucket):
-    """
-    Initiates a Veraset API job for a list of cities for a given date range and schema.
-    """
     logger.info(f"[Sync All] Starting sync for {len(cities)} cities from {from_date} to {to_date} using endpoint {endpoint}")
-    
-    # This function now correctly receives all necessary parameters, including the specific schema_type.
-    # The logging inside this function should be generic and not mention the schema,
-    # as the calling function (`daily_sync.py`) is now responsible for logging that detail.
 
-    # Build payload for a single batch job
     payload = build_sync_payload(
         cities=cities,
         from_date=from_date,
@@ -260,6 +249,32 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
         schema_type=schema_type
     )
 
-    # Example usage (for integration with Flask):
-    # from sync_logic import sync_city_for_date
-    # result = sync_city_for_date(city, date) 
+    response = make_api_request(endpoint, data=payload)
+    if not response or 'error' in response:
+        return {"success": False, "error": response.get('error', 'No response from API')}
+        
+    request_id = response.get("request_id")
+    job_id = response.get("data", {}).get("job_id")
+    if not request_id or not job_id:
+        return {"success": False, "error": f"No request_id or job_id in response: {response}"}
+        
+    status = wait_for_job_completion(job_id)
+    if not status or 'error' in status:
+        return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
+        
+    logger.info(f"[Sync All] Job {job_id} completed. Starting S3 sync for all cities.")
+    errors = []
+    
+    # Even in a batch job, we need to sync data per city to maintain the folder structure
+    for city in cities:
+        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=s3_bucket)
+        if not sync_result.get('success'):
+            errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
+
+    if errors:
+        return {"success": False, "error": "S3 sync failed for some cities.", "details": errors}
+        
+    return {"success": True, "s3_location": status.get('s3_location')}
+
+def assume_role(role_arn, role_session_name):
+    # ... existing code ... 
