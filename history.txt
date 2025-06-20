@@ -211,4 +211,6 @@ Updated flask_app.py:
 
 [2024-06-20] Made `troubleshoot.sh` more robust for on-instance execution by adding clear instructions, a pre-run check to ensure it is run from the correct directory, and stricter error handling (`set -e`, `set -o pipefail`) to make it more reliable and user-friendly.
 
+[2024-06-20] Fixed `troubleshoot.sh` to correctly diagnose environment issues on EC2. The script now activates the Python virtual environment *before* running any checks, ensuring that all commands use the correct interpreter and packages. This resolves the "pip: command not found" error and provides accurate diagnostic information.
+
 --- 
