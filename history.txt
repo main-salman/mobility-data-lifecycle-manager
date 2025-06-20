@@ -221,4 +221,6 @@ Updated flask_app.py:
 
 [2024-06-20] Removed a hardcoded default radius from the sync logic. The `sync_all_cities_for_date_range` function in `sync_logic.py` now correctly uses the `radius_meters` value defined for each city in `db/cities.json`, ensuring that all syncs respect the configuration set in the GUI.
 
+[2024-06-20] Fixed a critical logging issue in `daily_sync.py` that caused duplicated log entries and masked the underlying reason for failed syncs. The logging configuration has been made more robust to prevent duplicate handlers. This fix ensures that all configured schemas (e.g., `FULL` and `TRIPS`) are now processed correctly during the daily sync.
+
 --- 

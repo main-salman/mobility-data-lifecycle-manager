@@ -1398,7 +1398,7 @@ def view_logs():
         return redirect(url_for('login'))
     try:
         with open(LOG_FILE, 'r') as f:
-            lines = f.readlines()[-1000:]
+            lines = f.readlines()[-10000:]
     except Exception as e:
         lines = [f"Error reading log: {e}"]
     # If AJAX, just return logs as plain text
@@ -1406,7 +1406,7 @@ def view_logs():
         return ''.join(lines), 200, {'Content-Type': 'text/plain'}
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
-        <h2>Application Logs (last 1000 lines)</h2>
+        <h2>Application Logs (last 10000 lines)</h2>
         <button id="pauseBtn" onclick="togglePause()">Pause</button>
         <button onclick="refreshLogs()">Refresh</button>
         <pre id="logbox" style="background:#111;color:#eee;padding:1em;max-height:1000px;max-width:1400px;overflow:auto;font-size:13px;">{{logs}}</pre>
