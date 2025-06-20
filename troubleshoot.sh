@@ -1,80 +1,92 @@
 #!/bin/bash
-set -e
+# Troubleshooter for daily_sync.py on EC2
 
-# Usage: ./troubleshoot.sh [user@host] [ssh_key (optional)]
+echo "### Starting Troubleshooter for daily_sync.py ###"
+echo "This script will check the environment, configuration, and run the sync script manually."
 
-INSTANCE=ec2-user@3.228.4.143
-KEY=salman-dev.pem
-
-if [ -z "$INSTANCE" ]; then
-  echo "Usage: $0 [user@host] [ssh_key (optional)]"
-  exit 1
-fi
-
-REMOTE_SCRIPT="/tmp/remote_troubleshoot.sh"
-
-# Copy this script to the remote instance
-if [ -n "$KEY" ]; then
-  scp -i "$KEY" "$0" "$INSTANCE:$REMOTE_SCRIPT"
+# --- Basic Environment Checks ---
+echo ""
+echo "--- 1. Basic Environment Info ---"
+echo "Current User: $(whoami)"
+echo "Current Directory: $(pwd)"
+echo "Python version: $(python --version 2>&1)"
+if [ -f "requirements.txt" ]; then
+    echo "Checking installed packages against requirements.txt..."
+    pip check
 else
-  scp "$0" "$INSTANCE:$REMOTE_SCRIPT"
+    echo "requirements.txt not found, listing all packages:"
+    pip list
 fi
 
-# Run the script remotely
-if [ -n "$KEY" ]; then
-  ssh -i "$KEY" "$INSTANCE" "chmod +x $REMOTE_SCRIPT && sudo bash $REMOTE_SCRIPT"
+
+# --- File & Permission Checks ---
+echo ""
+echo "--- 2. File and Permission Checks ---"
+echo "Listing key files and permissions..."
+ls -la daily_sync.py .env db/cities.json
+
+if [ ! -f ".env" ]; then
+    echo "ERROR: .env file not found!"
+fi
+if [ ! -f "db/cities.json" ]; then
+    echo "ERROR: db/cities.json not found!"
+fi
+
+
+# --- Configuration Checks ---
+echo ""
+echo "--- 3. Configuration Checks ---"
+echo "Crontab for ec2-user:"
+sudo crontab -u ec2-user -l
+echo ""
+echo "Checking .env file (sensitive values are redacted)..."
+if [ -f ".env" ]; then
+    # Redact sensitive info for display
+    sed -e 's/admin_password=.*/admin_password=REDACTED/' \
+        -e 's/VERASET_API_KEY=.*/VERASET_API_KEY=REDACTED/' \
+        -e 's/AWS_SECRET_ACCESS_KEY=.*/AWS_SECRET_ACCESS_KEY=REDACTED/' \
+        .env
 else
-  ssh "$INSTANCE" "chmod +x $REMOTE_SCRIPT && sudo bash $REMOTE_SCRIPT"
+    echo ".env file not found."
 fi
 
-# Optionally clean up remote script (uncomment if desired)
-# if [ -n "$KEY" ]; then
-#   ssh -i "$KEY" "$INSTANCE" "rm -f $REMOTE_SCRIPT"
-# else
-#   ssh "$INSTANCE" "rm -f $REMOTE_SCRIPT"
-# fi
+# --- Manual Script Execution ---
+echo ""
+echo "--- 4. Manual Execution of daily_sync.py ---"
+echo "Attempting to run the script with the same environment as cron..."
+echo "This will use yesterday's date for the sync."
 
-# Print header
-echo "==== CloudWatch Agent Troubleshooting ===="
+# Activate venv
+if [ -d "venv" ]; then
+    echo "Activating virtual environment..."
+    source venv/bin/activate
+else
+    echo "WARNING: venv directory not found. Script may fail."
+fi
 
-# 1. Agent status
-echo "\n[1] CloudWatch Agent Status:"
-sudo systemctl status amazon-cloudwatch-agent || echo "CloudWatch agent not running."
+# Run the python script
+# The `set -a` command exports all variables created from this point onwards,
+# so `python-dotenv` in the script can pick them up.
+set -a
+if [ -f ".env" ]; then
+    source .env
+fi
+set +a
 
-# 2. Agent logs
-echo "\n[2] Last 30 lines of CloudWatch Agent Log:"
-sudo cat /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log | tail -30 || echo "No agent log found."
+echo "Running: python daily_sync.py"
+python daily_sync.py
 
-# 3. IAM Role (instance profile)
-echo "\n[3] IAM Role (Instance Profile):"
-curl -s http://169.254.169.254/latest/meta-data/iam/info || echo "Could not fetch IAM info."
+if [ $? -eq 0 ]; then
+    echo "SUCCESS: daily_sync.py executed without errors."
+else
+    echo "ERROR: daily_sync.py failed with exit code $?."
+fi
 
-# 4. Log file existence
-echo "\n[4] Log File Existence and Last 10 Lines:"
-for f in /var/log/messages /var/log/cloud-init.log; do
-  echo "\nFile: $f"
-  if [ -f "$f" ]; then
-    ls -lh "$f"
-    tail -10 "$f"
-  else
-    echo "File not found: $f"
-  fi
-done
-
-# 5. CloudWatch Agent Config
-echo "\n[5] CloudWatch Agent Config (/opt/aws/amazon-cloudwatch-agent/bin/config.json):"
-cat /opt/aws/amazon-cloudwatch-agent/bin/config.json || echo "No config found."
-
-# 6. Region
-echo "\n[6] AWS Region:"
-cat /etc/system-release || true
-curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region || echo "Could not fetch region."
-
-# 7. Try restarting agent
-echo "\n[7] Restarting CloudWatch Agent..."
-sudo systemctl restart amazon-cloudwatch-agent && echo "Agent restarted."
-sleep 5
-echo "\n[8] Agent status after restart:"
-sudo systemctl status amazon-cloudwatch-agent || echo "CloudWatch agent not running after restart."
-
-echo "\n==== End of Troubleshooting ====" 
+echo ""
+echo "### Troubleshooting Complete ###"
+echo "Review the output above for errors or warnings."
+echo "Key things to check:"
+echo "- Are all files present with correct permissions?"
+echo "- Is the crontab entry correct?"
+echo "- Does the .env file have the correct (non-quoted) values?"
+echo "- Did the manual execution show any Python errors?" 

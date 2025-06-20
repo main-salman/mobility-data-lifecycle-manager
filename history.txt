@@ -207,4 +207,6 @@ Updated flask_app.py:
 
 [2024-06-20] Made `daily_sync.py` more robust. The script now correctly handles quoted environment variables, uses the correct S3 bucket for each data type by incorporating the `S3_BUCKET_MAPPING` from the Flask app, and includes enhanced error logging for configuration issues. This will prevent silent failures and ensure the daily sync runs reliably on the EC2 instance.
 
+[2024-06-20] Created a comprehensive troubleshooting script (`troubleshoot.sh`) to diagnose issues with `daily_sync.py` on the EC2 instance. The script checks the environment, file permissions, configurations, and runs the sync manually to capture errors, providing a detailed report to help identify the root cause of any failures.
+
 --- 
