@@ -1637,7 +1637,7 @@ def sync_all():
                     from_date=start_date,
                     to_date=end_date,
                     schema_type=schema_type,
-                    api_endpoint=endpoint,
+                    endpoint=endpoint,
                     s3_bucket=s3_bucket
                 )
 

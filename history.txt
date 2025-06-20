@@ -239,4 +239,6 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed the duplicated logging issue by removing the redundant `StreamHandler` from the centralized logging configuration in `utils.py`. The logger now writes only to `app.log`, while the cron and Gunicorn environments handle redirecting other console output, which was the definitive root cause of the duplication.
 
+[2024-06-20] Resolved a `TypeError` in `flask_app.py` that caused the "Sync All" feature to crash. The error was due to an incorrect keyword argument (`api_endpoint` instead of `endpoint`) in the call to the refactored `sync_all_cities_for_date_range` function.
+
 --- 
