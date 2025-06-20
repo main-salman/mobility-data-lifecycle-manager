@@ -190,7 +190,7 @@ resource "aws_iam_instance_profile" "ec2_mobility_profile" {
 
 # --- Secrets Manager for .env ---
 resource "aws_secretsmanager_secret" "env_secret" {
-  name                    = "mobility-data-lifecycle-env2"
+  name                    = "mobility-data-lifecycle-env3"
   description             = ".env file for mobility-data-lifecycle-manager"
   recovery_window_in_days = 30
 }

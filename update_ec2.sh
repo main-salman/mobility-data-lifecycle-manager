@@ -23,7 +23,7 @@ echo ""
 
 # --- CONFIGURATION ---
 EC2_USER=ec2-user
-EC2_HOST=3.228.4.143
+EC2_HOST=44.201.35.100
 EC2_KEY=salman-dev.pem
 PROJECT_DIR=/home/ec2-user/mobility-data-lifecycle-manager/   # Change if your project is in a different location
 
