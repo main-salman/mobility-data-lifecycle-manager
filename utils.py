@@ -29,13 +29,14 @@ def setup_logging():
     if logger.hasHandlers():
         logger.handlers.clear()
 
-    # Configure new handlers
+    # Configure the logger to write ONLY to the app.log file.
+    # The StreamHandler is removed to prevent duplicate logs when
+    # the process output is redirected to the same file.
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s %(levelname)-8s %(message)s',
         handlers=[
-            logging.FileHandler("app.log"),
-            logging.StreamHandler(sys.stdout)
+            logging.FileHandler("app.log")
         ]
     )
     _logging_configured = True

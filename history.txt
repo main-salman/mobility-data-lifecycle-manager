@@ -237,4 +237,6 @@ Updated flask_app.py:
 
 [2024-06-20] Resolved the persistent duplicated logging issue by centralizing the entire logging configuration. A new, idempotent `setup_logging` function was created in `utils.py` to serve as the single source of truth for logging. Both `daily_sync.py` and `flask_app.py` were updated to call this function, removing their local logging configurations and finally eliminating the root cause of the duplicate logs.
 
+[2024-06-20] Fixed the duplicated logging issue by removing the redundant `StreamHandler` from the centralized logging configuration in `utils.py`. The logger now writes only to `app.log`, while the cron and Gunicorn environments handle redirecting other console output, which was the definitive root cause of the duplication.
+
 --- 
