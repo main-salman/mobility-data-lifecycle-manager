@@ -242,6 +242,75 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
+    """
+    Sync data for a list of cities for a given date range using a single Veraset job.
+    """
+    geo_radius = []
+    geo_json = []
+    for city in cities:
+        poi_id_city = city['city'].lower().replace(' ', '_')
+        if 'radius_meters' in city:
+            geo_radius.append({
+                "poi_id": f"{poi_id_city}_center",
+                "latitude": float(city['latitude']),
+                "longitude": float(city['longitude']),
+                "distance_in_meters": float(city['radius_meters'])
+            })
+        elif 'polygon_geojson' in city:
+            geo_json.append({
+                "poi_id": f"{poi_id_city}_polygon",
+                "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
+            })
+
+    payload = {
+        "date_range": {
+            "from_date": from_date,
+            "to_date": to_date
+        },
+        "schema_type": schema_type
+    }
+    if geo_radius:
+        payload["geo_radius"] = geo_radius
+    if geo_json:
+        payload["geo_json"] = geo_json
+    
+    bucket = s3_bucket or os.getenv('S3_BUCKET')
+    if not bucket:
+        raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
+
+    logging.info(f"[Sync All] Starting sync for {len(cities)} cities from {from_date} to {to_date} using endpoint {api_endpoint}")
+    
+    try:
+        response = make_api_request(api_endpoint, data=payload)
+        if not response or 'error' in response:
+            return {"success": False, "error": response.get('error', 'No response from API')}
+        
+        request_id = response.get("request_id")
+        job_id = response.get("data", {}).get("job_id")
+        if not request_id or not job_id:
+            return {"success": False, "error": f"No request_id or job_id in response: {response}"}
+        
+        status = wait_for_job_completion(job_id)
+        if not status or 'error' in status:
+            return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
+        
+        logging.info(f"[Sync All] Job {job_id} completed. Starting S3 sync for all cities.")
+        errors = []
+        for city in cities:
+            sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=bucket)
+            if not sync_result.get('success'):
+                errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
+
+        if errors:
+            return {"success": False, "error": "S3 sync failed for some cities.", "details": errors}
+            
+        return {"success": True, "s3_location": status.get('s3_location')}
+
+    except Exception as e:
+        logging.error(f"[Sync All] Exception: {e}", exc_info=True)
+        return {"success": False, "error": str(e)}
+
 # Example usage (for integration with Flask):
 # from sync_logic import sync_city_for_date
 # result = sync_city_for_date(city, date) 

@@ -217,4 +217,8 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed a critical bug in `troubleshoot.sh` that caused a "command not found" error. The script no longer attempts to `source` the `.env` file, which is unsafe due to special characters in passwords. Instead, it relies on the Python script's own robust `dotenv` handling, ensuring the environment is loaded correctly and safely.
 
+[2024-06-20] Unified the data sync logic across the application. The inefficient, city-by-city sync in `daily_sync.py` has been replaced with the more efficient batch-sync logic from the web application. This logic was centralized into a new `sync_all_cities_for_date_range` function in `sync_logic.py`. Both `daily_sync.py` and the "Sync All" feature in `flask_app.py` now use this unified function, ensuring consistent, efficient, and maintainable data synchronization. Additionally, `daily_sync.py` now has proper logging to provide visibility into API calls and other operations.
+
+[2024-06-20] Removed a hardcoded default radius from the sync logic. The `sync_all_cities_for_date_range` function in `sync_logic.py` now correctly uses the `radius_meters` value defined for each city in `db/cities.json`, ensuring that all syncs respect the configuration set in the GUI.
+
 --- 

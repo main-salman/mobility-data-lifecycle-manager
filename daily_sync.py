@@ -4,10 +4,22 @@ load_dotenv()
 print("VERASET_API_KEY:", os.environ.get("VERASET_API_KEY"), flush=True)
 import sys
 import json
+import logging
 from datetime import datetime, timedelta
-from sync_logic import sync_city_for_date
+from sync_logic import sync_all_cities_for_date_range
 import argparse
 from utils import load_cities
+
+# Set up logging to file and console
+LOG_FILE = 'app.log'
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 CITIES_FILE = 'cities.json'
 
@@ -109,34 +121,54 @@ def main():
     
     # Load cities
     cities = load_cities()
+    if not cities:
+        logging.warning("No cities found in db/cities.json. Exiting.")
+        return
     
     # Set dates
     if args.from_date:
         from_date = args.from_date
         to_date = args.to_date if args.to_date else from_date
     else:
-        yesterday = datetime.now() - timedelta(days=1)
-        from_date = yesterday.strftime('%Y-%m-%d')
+        # Per UI note, sync for 7 days prior
+        target_date = datetime.now() - timedelta(days=7)
+        from_date = target_date.strftime('%Y-%m-%d')
         to_date = from_date
 
-    # Sync each city for each configured endpoint+schema combination
-    for city in cities:
-        for endpoint_schema, config in endpoint_configs.items():
-            try:
-                # Split endpoint and schema
-                endpoint, schema = endpoint_schema.split('#')
-                print(f"Syncing {city['city']} using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
-                sync_city_for_date(
-                    city,
-                    from_date,
-                    to_date,
-                    schema_type=config['schema_type'],
-                    api_endpoint=endpoint,
-                    s3_bucket=config['bucket']
-                )
-            except Exception as e:
-                print(f"Error syncing {city['city']} with {endpoint_schema}: {str(e)}", file=sys.stderr)
+    logging.info(f"Starting daily sync for date range: {from_date} to {to_date}")
+
+    # Sync all cities for each configured endpoint+schema combination
+    for endpoint_schema, config in endpoint_configs.items():
+        try:
+            endpoint, schema = endpoint_schema.split('#')
+            if not config.get('bucket'):
+                logging.warning(f"Skipping {endpoint_schema} because S3 bucket is not configured.")
                 continue
+
+            logging.info(f"Starting batch sync for ALL cities using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
+            
+            result = sync_all_cities_for_date_range(
+                cities=cities,
+                from_date=from_date,
+                to_date=to_date,
+                schema_type=config['schema_type'],
+                api_endpoint=endpoint,
+                s3_bucket=config['bucket']
+            )
+            
+            if result.get('success'):
+                logging.info(f"Batch sync successful for {endpoint_schema}")
+            else:
+                logging.error(f"Batch sync failed for {endpoint_schema}: {result.get('error')}")
+                if result.get('details'):
+                    for detail in result['details']:
+                        logging.error(f"  - {detail}")
+
+        except Exception as e:
+            logging.error(f"Critical error during batch sync for {endpoint_schema}: {str(e)}", exc_info=True)
+            continue
+    
+    logging.info("Daily sync process finished.")
 
 if __name__ == '__main__':
     main() 

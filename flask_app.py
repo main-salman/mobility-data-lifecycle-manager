@@ -13,7 +13,7 @@ import uuid
 from flask import Flask, render_template_string, request, redirect, url_for, session, flash, send_from_directory, jsonify
 import boto3
 from dotenv import load_dotenv, set_key
-from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket, build_sync_payload, make_api_request
+from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket, build_sync_payload, make_api_request, sync_all_cities_for_date_range
 import requests
 import json
 import threading
@@ -73,7 +73,28 @@ S3_BUCKET_MAPPING = {
     'work/job/cohort#BASIC': 'S3_BUCKET_WORK_COHORT_BASIC',
     'work/job/cohort_by_device#FULL': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_FULL',
     'work/job/cohort_by_device#TRIPS': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_TRIPS',
-    'work/job/cohort_by_device#BASIC': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_BASIC'
+    'work/job/cohort_by_device#BASIC': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_BASIC',
+    'movement/job/trips#FULL': 'S3_BUCKET_MOVEMENT_TRIPS_FULL',
+    'movement/job/trips#TRIPS': 'S3_BUCKET_MOVEMENT_TRIPS_TRIPS',
+    'movement/job/trips#BASIC': 'S3_BUCKET_MOVEMENT_TRIPS_BASIC',
+    'work/job/aggregate#FULL': 'S3_BUCKET_WORK_AGGREGATE_FULL',
+    'work/job/aggregate#TRIPS': 'S3_BUCKET_WORK_AGGREGATE_TRIPS',
+    'work/job/aggregate#BASIC': 'S3_BUCKET_WORK_AGGREGATE_BASIC',
+    'work/job/devices#FULL': 'S3_BUCKET_WORK_DEVICES_FULL',
+    'work/job/devices#TRIPS': 'S3_BUCKET_WORK_DEVICES_TRIPS',
+    'work/job/devices#BASIC': 'S3_BUCKET_WORK_DEVICES_BASIC',
+    'movement/job/pings_by_ip#FULL': 'S3_BUCKET_MOVEMENT_PINGS_BY_IP_FULL',
+    'movement/job/pings_by_ip#TRIPS': 'S3_BUCKET_MOVEMENT_PINGS_BY_IP_TRIPS',
+    'movement/job/pings_by_ip#BASIC': 'S3_BUCKET_MOVEMENT_PINGS_BY_IP_BASIC',
+    "/v1/home/job/devices#FULL": "S3_BUCKET_HOME_DEVICES_FULL",
+    "/v1/home/job/devices#TRIPS": "S3_BUCKET_HOME_DEVICES_TRIPS",
+    "/v1/home/job/devices#BASIC": "S3_BUCKET_HOME_DEVICES_BASIC",
+    "/v1/home/job/aggregate#FULL": "S3_BUCKET_HOME_AGGREGATE_FULL",
+    "/v1/home/job/aggregate#TRIPS": "S3_BUCKET_HOME_AGGREGATE_TRIPS",
+    "/v1/home/job/aggregate#BASIC": "S3_BUCKET_HOME_AGGREGATE_BASIC",
+    "/v1/home/job/cohort#FULL": "S3_BUCKET_HOME_COHORT_FULL",
+    "/v1/home/job/cohort#TRIPS": "S3_BUCKET_HOME_COHORT_TRIPS",
+    "/v1/home/job/cohort#BASIC": "S3_BUCKET_HOME_COHORT_BASIC"
 }
 
 # Logging setup
@@ -1592,73 +1613,44 @@ def sync_all():
 
     def sync_all_thread():
         errors = []
-        geo_radius = []
-        geo_json = []
-        for city in cities:
-            if 'radius_meters' in city:
-                geo_radius.append({
-                    "poi_id": f"{city['city'].lower()}_center",
-                    "latitude": float(city['latitude']),
-                    "longitude": float(city['longitude']),
-                    "distance_in_meters": float(city.get('radius_meters', 50000))
-                })
-            elif 'polygon_geojson' in city:
-                geo_json.append({
-                    "poi_id": f"{city['city'].lower()}_polygon",
-                    "geo_json": city['polygon_geojson']['geometry'] if 'geometry' in city['polygon_geojson'] else city['polygon_geojson']
-                })
-        payload = {
-            "date_range": {
-                "from_date": start_date,
-                "to_date": end_date
-            },
-            "schema_type": schema_type
-        }
-        if geo_radius:
-            payload["geo_radius"] = geo_radius
-        if geo_json:
-            payload["geo_json"] = geo_json
-        api_key = os.environ.get('VERASET_API_KEY')
         logging.info(f"[Sync All] Starting sync for ALL cities from {start_date} to {end_date}")
-        logging.debug(f"[Sync All] VERASET_API_KEY: {api_key}")
-        logging.debug(f"[Sync All] Payload: {payload}")
         data_sync_progress[sync_id]['date'] = f"ALL ({len(cities)} cities)"
         data_sync_progress[sync_id]['status'] = f"syncing all cities"
+        
         try:
             for api_endpoint in api_endpoints_selected:
-                # Get the correct S3 bucket for this endpoint
-                bucket_env_var = S3_BUCKET_MAPPING.get(api_endpoint)
+                key = f"{api_endpoint}#{schema_type}"
+                bucket_env_var = S3_BUCKET_MAPPING.get(key)
                 s3_bucket = os.getenv(bucket_env_var) if bucket_env_var else os.getenv('S3_BUCKET')
                 
-                # Log which bucket we're using
-                logging.info(f"[Sync All] Using S3 bucket {s3_bucket} for endpoint {api_endpoint}")
+                logging.info(f"[Sync All] Using S3 bucket '{s3_bucket}' for endpoint {api_endpoint} with schema {schema_type}")
                 
-                # Normalize endpoint (strip leading /v1/ if present)
                 endpoint = api_endpoint.lstrip('/')
                 if endpoint.startswith('v1/'):
                     endpoint = endpoint[3:]
-                response = make_api_request(endpoint, data=payload)
-                if not response or 'error' in response:
-                    errors.append(response.get('error', 'No response from API'))
-                else:
-                    request_id = response.get("request_id")
-                    job_id = response.get("data", {}).get("job_id")
-                    if not request_id or not job_id:
-                        errors.append(f"No request_id or job_id in response: {response}")
-                    else:
-                        status = wait_for_job_completion(job_id)
-                        if not status or 'error' in status:
-                            errors.append(status.get('error', 'Unknown error during job status polling'))
-                        else:
-                            # S3 sync step with the correct bucket
-                            for city in cities:
-                                sync_result = sync_data_to_bucket(city, start_date, status.get('s3_location'), s3_bucket=s3_bucket)
-                                if not sync_result.get('success'):
-                                    errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
+                
+                result = sync_all_cities_for_date_range(
+                    cities=cities,
+                    from_date=start_date,
+                    to_date=end_date,
+                    schema_type=schema_type,
+                    api_endpoint=endpoint,
+                    s3_bucket=s3_bucket
+                )
+
+                if not result.get('success'):
+                    error_msg = result.get('error', 'Unknown error')
+                    if result.get('details'):
+                        error_msg += f" Details: {'; '.join(result['details'])}"
+                    errors.append(error_msg)
+            
         except Exception as e:
             errors.append(str(e))
+            logging.error(f"[Sync All] Exception: {e}", exc_info=True)
+        
         data_sync_progress[sync_id]['done'] = True
         data_sync_progress[sync_id]['errors'] = errors
+        
     threading.Thread(target=sync_all_thread, daemon=True).start()
     return redirect(url_for('sync_all_progress', sync_id=sync_id))
 
