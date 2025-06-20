@@ -6,30 +6,13 @@ import argparse
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from sync_logic import sync_all_cities_for_date_range
-from utils import load_cities
+from utils import load_cities, setup_logging
+
+# Centralized logging setup
+setup_logging()
 
 # Load .env first
 load_dotenv()
-
-# --- Definitive Logging Fix (Python 3.7 compatible) ---
-# Get the root logger.
-logger = logging.getLogger()
-
-# Remove all existing handlers from the root logger. This is the only
-# guaranteed way to prevent duplicate log entries in complex scenarios.
-if logger.hasHandlers():
-    logger.handlers.clear()
-
-# Now, configure the new handlers.
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)-8s %(message)s',
-    handlers=[
-        logging.FileHandler("app.log"),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-# --- End Logging Setup ---
 
 print("VERASET_API_KEY:", os.environ.get("VERASET_API_KEY"), flush=True)
 

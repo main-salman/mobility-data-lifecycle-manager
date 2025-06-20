@@ -23,9 +23,12 @@ import time
 from datetime import datetime, timedelta
 import shutil
 from glob import glob
-from utils import load_cities, save_cities
+from utils import load_cities, save_cities, setup_logging
 import geojson  # Add this import at the top
 import subprocess
+
+# Centralized logging setup
+setup_logging()
 
 # Load credentials
 load_dotenv()

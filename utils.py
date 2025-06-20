@@ -4,12 +4,41 @@ import threading
 from datetime import datetime
 from glob import glob
 from dotenv import load_dotenv
+import logging
+import sys
 
 # Load environment variables
 load_dotenv()
 
 CITIES_FILE = os.path.join('db', 'cities.json')
 cities_lock = threading.Lock()
+_logging_configured = False
+
+def setup_logging():
+    """
+    Sets up a centralized, idempotent logger.
+    """
+    global _logging_configured
+    if _logging_configured:
+        return
+
+    # Get the root logger
+    logger = logging.getLogger()
+    
+    # Clear any existing handlers
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    # Configure new handlers
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        handlers=[
+            logging.FileHandler("app.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+    _logging_configured = True
 
 def load_cities():
     if not os.path.exists(CITIES_FILE):

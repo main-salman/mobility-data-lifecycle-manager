@@ -235,4 +235,6 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed a `SyntaxError` in `sync_logic.py` caused by a corrupted file from a failed automated edit. The file was deleted and recreated with the correct content to resolve the issue, which was causing the Flask application to crash and resulting in a 502 Bad Gateway error. A final typo in a function call within the new file was also corrected.
 
+[2024-06-20] Resolved the persistent duplicated logging issue by centralizing the entire logging configuration. A new, idempotent `setup_logging` function was created in `utils.py` to serve as the single source of truth for logging. Both `daily_sync.py` and `flask_app.py` were updated to call this function, removing their local logging configurations and finally eliminating the root cause of the duplicate logs.
+
 --- 
