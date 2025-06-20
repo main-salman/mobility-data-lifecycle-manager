@@ -1,27 +1,33 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
-print("VERASET_API_KEY:", os.environ.get("VERASET_API_KEY"), flush=True)
 import sys
 import json
 import logging
-from datetime import datetime, timedelta
-from sync_logic import sync_all_cities_for_date_range
 import argparse
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from sync_logic import sync_all_cities_for_date_range
 from utils import load_cities
 
-# --- Clean Logging Setup ---
-# Do this once at the very top.
+# Load .env first
+load_dotenv()
+
+# --- Clean Logging Setup (Python 3.7 compatible) ---
+# Manually remove all handlers from the root logger
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+# Now, configure the new handlers
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)-8s %(message)s',
     handlers=[
         logging.FileHandler("app.log"),
         logging.StreamHandler(sys.stdout)
-    ],
-    force=True  # Override any existing handlers
+    ]
 )
 # --- End Logging Setup ---
+
+print("VERASET_API_KEY:", os.environ.get("VERASET_API_KEY"), flush=True)
 
 CITIES_FILE = 'cities.json'
 

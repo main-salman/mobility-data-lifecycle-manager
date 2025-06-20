@@ -225,4 +225,6 @@ Updated flask_app.py:
 
 [2024-06-20] Implemented a final, robust logging fix for `daily_sync.py` by replacing the custom logger setup with a standard `basicConfig` call at the top of the script, using `force=True` to guarantee a clean and correct configuration. This definitively resolves the duplicated log issue and ensures the script's behavior is transparent and reliable.
 
+[2024-06-20] Corrected the logging configuration in `daily_sync.py` to be compatible with Python 3.7. The script now manually clears existing log handlers instead of using the `force=True` argument (which requires Python 3.8+), resolving the `ValueError` and ensuring the script runs correctly on the EC2 instance.
+
 --- 
