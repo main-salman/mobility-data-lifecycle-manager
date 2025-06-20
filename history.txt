@@ -209,4 +209,6 @@ Updated flask_app.py:
 
 [2024-06-20] Created a comprehensive troubleshooting script (`troubleshoot.sh`) to diagnose issues with `daily_sync.py` on the EC2 instance. The script checks the environment, file permissions, configurations, and runs the sync manually to capture errors, providing a detailed report to help identify the root cause of any failures.
 
+[2024-06-20] Made `troubleshoot.sh` more robust for on-instance execution by adding clear instructions, a pre-run check to ensure it is run from the correct directory, and stricter error handling (`set -e`, `set -o pipefail`) to make it more reliable and user-friendly.
+
 --- 
