@@ -14,7 +14,6 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 REGION = 'us-west-2'
-SECRETS_NAME = 'veraset_api_key'
 S3_BUCKET = os.getenv('S3_BUCKET')
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 API_ENDPOINT = "https://platform.prd.veraset.tech"
@@ -48,7 +47,6 @@ def build_sync_payload(cities, from_date, to_date, schema_type="FULL"):
     geo_radius = []
     geo_json = []
 
-    # Handle both single city object and list of cities
     if not isinstance(cities, list):
         cities = [cities]
 
@@ -274,7 +272,4 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
     if errors:
         return {"success": False, "error": "S3 sync failed for some cities.", "details": errors}
         
-    return {"success": True, "s3_location": status.get('s3_location')}
-
-def assume_role(role_arn, role_session_name):
-    # ... existing code ... 
+    return {"success": True, "s3_location": status.get('s3_location')} 
