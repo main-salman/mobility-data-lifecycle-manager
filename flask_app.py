@@ -51,16 +51,30 @@ app.secret_key = os.urandom(24)
 
 # Define API endpoints globally since they're used in multiple routes
 api_endpoints = [
-    ("movement/job/pings", "Pings (default)"),
-    ("movement/job/pings_by_device", "Pings by Device"),
-    ("work/job/cohort", "Work Cohort"),
-    ("work/job/aggregate", "Work Aggregate"),
-    ("work/job/devices", "Work Devices"),
-    ("movement/job/pings_by_ip", "Pings by IP"),
-    ("/v1/home/job/devices", "Home Devices"),
-    ("/v1/home/job/aggregate", "Home Aggregate"),
-    ("/v1/home/job/cohort", "Home Cohort")
+    ('movement/job/pings', 'Movement Pings'),
+    ('movement/job/pings_by_device', 'Movement Pings by Device'),
+    ('work/job/cohort', 'Work Cohort'),
+    ('work/job/cohort_by_device', 'Work Cohort by Device')
 ]
+
+# Schema types for Veraset API
+SCHEMA_TYPES = ['FULL', 'TRIPS', 'BASIC']
+
+# Mapping of endpoint#schema combinations to their S3 bucket environment variables
+S3_BUCKET_MAPPING = {
+    'movement/job/pings#FULL': 'S3_BUCKET_MOVEMENT_PINGS_FULL',
+    'movement/job/pings#TRIPS': 'S3_BUCKET_MOVEMENT_PINGS_TRIPS',
+    'movement/job/pings#BASIC': 'S3_BUCKET_MOVEMENT_PINGS_BASIC',
+    'movement/job/pings_by_device#FULL': 'S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_FULL',
+    'movement/job/pings_by_device#TRIPS': 'S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_TRIPS',
+    'movement/job/pings_by_device#BASIC': 'S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_BASIC',
+    'work/job/cohort#FULL': 'S3_BUCKET_WORK_COHORT_FULL',
+    'work/job/cohort#TRIPS': 'S3_BUCKET_WORK_COHORT_TRIPS',
+    'work/job/cohort#BASIC': 'S3_BUCKET_WORK_COHORT_BASIC',
+    'work/job/cohort_by_device#FULL': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_FULL',
+    'work/job/cohort_by_device#TRIPS': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_TRIPS',
+    'work/job/cohort_by_device#BASIC': 'S3_BUCKET_WORK_COHORT_BY_DEVICE_BASIC'
+}
 
 # Logging setup
 LOG_FILE = 'app.log'
@@ -206,12 +220,18 @@ pre#logbox {
 </style>'''
 
 SYNC_TIME_ENV_KEY = 'SYNC_TIME'
-def get_sync_time():
+def get_sync_time_tuple():
+    """Get the current sync time as (hour, minute) tuple"""
     sync_time = os.getenv(SYNC_TIME_ENV_KEY)
     if sync_time and ':' in sync_time:
         hour, minute = sync_time.split(':')
         return int(hour), int(minute)
     return 2, 0  # Default 2:00am
+
+def get_sync_time():
+    """Get the current sync time in HH:MM format"""
+    hour, minute = get_sync_time_tuple()
+    return f"{hour:02d}:{minute:02d}"
 
 def set_sync_time(hour, minute):
     time_str = f"{int(hour):02d}:{int(minute):02d}"
@@ -371,174 +391,225 @@ def logout():
     return redirect(url_for('login'))
 
 # Add this after the existing API_ENDPOINTS list
+SCHEMA_TYPES = ["FULL", "TRIPS", "BASIC"]
+
+# Update the S3_BUCKET_MAPPING to use endpoint#schema combinations
 S3_BUCKET_MAPPING = {
-    "movement/job/pings": "S3_BUCKET_MOVEMENT_PINGS",
-    "movement/job/pings_by_device": "S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE",
-    "work/job/cohort": "S3_BUCKET_WORK_COHORT",
-    "work/job/aggregate": "S3_BUCKET_WORK_AGGREGATE",
-    "work/job/devices": "S3_BUCKET_WORK_DEVICES",
-    "movement/job/pings_by_ip": "S3_BUCKET_MOVEMENT_PINGS_BY_IP",
-    "/v1/home/job/devices": "S3_BUCKET_HOME_DEVICES",
-    "/v1/home/job/aggregate": "S3_BUCKET_HOME_AGGREGATE",
-    "/v1/home/job/cohort": "S3_BUCKET_HOME_COHORT"
+    "movement/job/pings#FULL": "S3_BUCKET_MOVEMENT_PINGS_FULL",
+    "movement/job/pings#TRIPS": "S3_BUCKET_MOVEMENT_PINGS_TRIPS",
+    "movement/job/pings#BASIC": "S3_BUCKET_MOVEMENT_PINGS_BASIC",
+    "movement/job/pings_by_device#FULL": "S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_FULL",
+    "movement/job/pings_by_device#TRIPS": "S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_TRIPS",
+    "movement/job/pings_by_device#BASIC": "S3_BUCKET_MOVEMENT_PINGS_BY_DEVICE_BASIC",
+    "work/job/cohort#FULL": "S3_BUCKET_WORK_COHORT_FULL",
+    "work/job/cohort#TRIPS": "S3_BUCKET_WORK_COHORT_TRIPS",
+    "work/job/cohort#BASIC": "S3_BUCKET_WORK_COHORT_BASIC",
+    "work/job/cohort_by_device#FULL": "S3_BUCKET_WORK_COHORT_BY_DEVICE_FULL",
+    "work/job/cohort_by_device#TRIPS": "S3_BUCKET_WORK_COHORT_BY_DEVICE_TRIPS",
+    "work/job/cohort_by_device#BASIC": "S3_BUCKET_WORK_COHORT_BY_DEVICE_BASIC",
+    "movement/job/trips#FULL": "S3_BUCKET_MOVEMENT_TRIPS_FULL",
+    "movement/job/trips#TRIPS": "S3_BUCKET_MOVEMENT_TRIPS_TRIPS",
+    "movement/job/trips#BASIC": "S3_BUCKET_MOVEMENT_TRIPS_BASIC",
+    "work/job/aggregate#FULL": "S3_BUCKET_WORK_AGGREGATE_FULL",
+    "work/job/aggregate#TRIPS": "S3_BUCKET_WORK_AGGREGATE_TRIPS",
+    "work/job/aggregate#BASIC": "S3_BUCKET_WORK_AGGREGATE_BASIC",
+    "work/job/devices#FULL": "S3_BUCKET_WORK_DEVICES_FULL",
+    "work/job/devices#TRIPS": "S3_BUCKET_WORK_DEVICES_TRIPS",
+    "work/job/devices#BASIC": "S3_BUCKET_WORK_DEVICES_BASIC",
+    "movement/job/pings_by_ip#FULL": "S3_BUCKET_MOVEMENT_PINGS_BY_IP_FULL",
+    "movement/job/pings_by_ip#TRIPS": "S3_BUCKET_MOVEMENT_PINGS_BY_IP_TRIPS",
+    "movement/job/pings_by_ip#BASIC": "S3_BUCKET_MOVEMENT_PINGS_BY_IP_BASIC",
+    "/v1/home/job/devices#FULL": "S3_BUCKET_HOME_DEVICES_FULL",
+    "/v1/home/job/devices#TRIPS": "S3_BUCKET_HOME_DEVICES_TRIPS",
+    "/v1/home/job/devices#BASIC": "S3_BUCKET_HOME_DEVICES_BASIC",
+    "/v1/home/job/aggregate#FULL": "S3_BUCKET_HOME_AGGREGATE_FULL",
+    "/v1/home/job/aggregate#TRIPS": "S3_BUCKET_HOME_AGGREGATE_TRIPS",
+    "/v1/home/job/aggregate#BASIC": "S3_BUCKET_HOME_AGGREGATE_BASIC",
+    "/v1/home/job/cohort#FULL": "S3_BUCKET_HOME_COHORT_FULL",
+    "/v1/home/job/cohort#TRIPS": "S3_BUCKET_HOME_COHORT_TRIPS",
+    "/v1/home/job/cohort#BASIC": "S3_BUCKET_HOME_COHORT_BASIC"
 }
 
-@app.route('/daily_sync_config', methods=['GET', 'POST'])
+@app.route('/daily_sync_config')
 def daily_sync_config():
     if not is_logged_in():
         return redirect(url_for('login'))
-    
-    # Get current daily sync settings
-    current_endpoints = os.getenv('DAILY_SYNC_ENDPOINTS', 'movement/job/pings').split(',')
+
+    # Force reloading of .env file to get the latest settings
+    load_dotenv(override=True)
+
+    # Get current endpoint configurations
+    endpoints_str = os.getenv('DAILY_SYNC_ENDPOINTS', '')
+    current_endpoints = endpoints_str.split(',') if endpoints_str else []
     endpoint_configs = json.loads(os.getenv('DAILY_SYNC_ENDPOINT_CONFIGS', '{}'))
     
-    # Get current S3 bucket settings
-    bucket_settings = {endpoint: os.getenv(S3_BUCKET_MAPPING[endpoint], '') 
-                      for endpoint in S3_BUCKET_MAPPING}
-    
-    # Get cities backup bucket setting
+    # Get current cities backup bucket
     cities_backup_bucket = os.getenv('CITIES_BACKUP_BUCKET', '')
-    
-    # Get sync time
-    sync_hour, sync_minute = get_sync_time()
-    
+
     return render_template_string(APPLE_STYLE + '''
         <div class="container">
         <h2>S3 Buckets and Daily Sync Configuration</h2>
         
         <!-- Sync Time Configuration -->
         <div style="margin-bottom:2em;padding:1em;background:#f5f5f7;border-radius:8px;">
-            <form method="post" action="{{ url_for('index') }}">
-                <label>Daily Sync Time (24h, UTC):
-                    <input type="time" name="sync_time" value="{{'%02d:%02d' % (sync_hour, sync_minute)}}">
+            <h3 style="margin-top:0;">Daily Sync Schedule</h3>
+            <form action="{{ url_for('update_sync_time') }}" method="post" style="margin-bottom:1em;">
+                <label>
+                    <input type="checkbox" name="enable_sync" {% if sync_enabled %}checked{% endif %}>
+                    Enable Daily Sync
                 </label>
-                <input type="submit" value="Update Sync Time">
-                <button type="submit" name="disable_sync" value="1" style="background:#ccc;color:#222;">Disable Daily Sync</button>
+                <br><br>
+                <label>
+                    Sync Time (UTC):
+                    <input type="time" name="sync_time" value="{{ current_sync_time }}" required>
+                </label>
+                <br><br>
+                <button type="submit" class="button">Update Sync Time</button>
             </form>
         </div>
-        
-        <!-- Daily Sync Settings -->
-        <div style="margin-bottom:2em;padding:1.5em;background:#f5f5f7;border-radius:12px;">
-            <form method="post" action="{{ url_for('update_daily_sync') }}">
-                <!-- Cities Backup Configuration -->
-                <div style="margin-bottom:2em;padding:1em;border:1px solid #ddd;border-radius:8px;">
-                    <label style="font-weight:500;">Cities Database Backup Configuration:</label>
-                    <div style="margin:0.5em 0 0 1.5em;">
-                        <label>S3 Bucket for cities.json backup:
-                            <input type="text" 
-                                   name="cities_backup_bucket"
-                                   value="{{cities_backup_bucket}}"
-                                   placeholder="S3 bucket for cities.json backup"
-                                   style="width:300px;">
-                        </label>
+
+        <!-- Cities Backup Bucket Configuration -->
+        <div style="margin-bottom:2em;padding:1em;background:#f5f5f7;border-radius:8px;">
+            <h3 style="margin-top:0;">Cities Backup Configuration</h3>
+            <form action="{{ url_for('update_daily_sync') }}" method="post">
+                <label>
+                    Cities Backup S3 Bucket:
+                    <input type="text" name="cities_backup_bucket" value="{{ cities_backup_bucket }}" style="width:100%;max-width:400px;">
+                </label>
+                <br><br>
+
+                <!-- API Endpoints Configuration -->
+                <h3>API Endpoints Configuration</h3>
+                {% for endpoint, endpoint_name in api_endpoints %}
+                <div style="margin-bottom:2em;padding:1em;background:white;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                    <label style="display:block;margin-bottom:1em;">
+                        <input type="checkbox" name="endpoint_{{ endpoint.replace('/', '_') }}_enabled"
+                               {% if endpoint in current_endpoints %}checked{% endif %}>
+                        <strong>{{ endpoint_name }}</strong> ({{ endpoint }})
+                    </label>
+
+                    <!-- Schema Types for this Endpoint -->
+                    <div style="margin-left:2em;">
+                        <h4 style="margin-top:0;">Schema Types:</h4>
+                        {% for schema in schema_types %}
+                        <div style="margin-bottom:1em;padding:0.5em;background:#f8f8f8;border-radius:4px;">
+                            <label style="display:block;margin-bottom:0.5em;">
+                                <input type="checkbox" name="schema_{{ endpoint.replace('/', '_') }}_{{ schema }}_enabled"
+                                       {% if schema in endpoint_configs.get(endpoint, {}).get('enabled_schemas', []) %}checked{% endif %}>
+                                {{ schema }}
+                            </label>
+                            <label style="display:block;margin-left:2em;">
+                                S3 Bucket for {{ schema }}:
+                                <input type="text" name="bucket_{{ endpoint.replace('/', '_') }}_{{ schema }}"
+                                       value="{{ get_env_var(S3_BUCKET_MAPPING.get(endpoint + '#' + schema, '')) }}"
+                                       style="width:100%;max-width:400px;">
+                            </label>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                
-                <div style="margin-bottom:1em;">
-                    <b>API Endpoints for Daily Sync:</b><br>
-                    {% for val, label in api_endpoints %}
-                        <div style="margin:1em 0;padding:1em;border:1px solid #ddd;border-radius:8px;">
-                            <label style="font-weight:500;">
-                                <input type="checkbox" 
-                                       name="endpoint_{{val.replace('/', '_')}}_enabled"
-                                       value="1"
-                                       {% if val in current_endpoints %}checked{% endif %}
-                                       onchange="toggleEndpointConfig(this, '{{val.replace('/', '_')}}')"> 
-                                {{label}}
-                            </label>
-                            <div id="config_{{val.replace('/', '_')}}" 
-                                 style="margin-left:1.5em;margin-top:0.5em;
-                                        {% if val not in current_endpoints %}display:none;{% endif %}">
-                                <div style="margin-bottom:0.5em;">
-                                    <label>Schema Type:
-                                        <select name="schema_{{val.replace('/', '_')}}">
-                                            <option value="FULL" 
-                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'FULL' %}selected{% endif %}>
-                                                FULL
-                                            </option>
-                                            <option value="TRIPS"
-                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'TRIPS' %}selected{% endif %}>
-                                                TRIPS
-                                            </option>
-                                            <option value="BASIC"
-                                                {% if endpoint_configs.get(val, {}).get('schema_type') == 'BASIC' %}selected{% endif %}>
-                                                BASIC
-                                            </option>
-                                        </select>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label>S3 Bucket:
-                                        <input type="text" 
-                                               name="bucket_{{val.replace('/', '_')}}"
-                                               value="{{bucket_settings[val]}}"
-                                               placeholder="S3 bucket for {{label}}"
-                                               style="width:300px;">
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                
-                <button type="submit">Update Daily Sync Settings</button>
+                {% endfor %}
+
+                <button type="submit" class="button">Save Configuration</button>
             </form>
         </div>
-        
-        <script>
-        function toggleEndpointConfig(checkbox, endpoint) {
-            const configDiv = document.getElementById('config_' + endpoint);
-            configDiv.style.display = checkbox.checked ? 'block' : 'none';
-        }
-        </script>
-        
-        <a href="{{ url_for('index') }}" class="button">Back to Main Page</a>
+
+        <div style="margin-top:2em;">
+            <a href="{{ url_for('index') }}" class="button" style="text-decoration:none;color:#007AFF;">Back to Main Page</a>
         </div>
-    ''', sync_hour=sync_hour, sync_minute=sync_minute,
-         api_endpoints=api_endpoints, current_endpoints=current_endpoints,
-         endpoint_configs=endpoint_configs, bucket_settings=bucket_settings,
-         cities_backup_bucket=cities_backup_bucket)
+        </div>
+    ''', sync_enabled=is_daily_sync_enabled(),
+        current_sync_time=get_sync_time(),
+        api_endpoints=api_endpoints,
+        schema_types=SCHEMA_TYPES,
+        current_endpoints=current_endpoints,
+        endpoint_configs=endpoint_configs,
+        cities_backup_bucket=cities_backup_bucket,
+        get_env_var=lambda x: os.getenv(x, '') if x else '',
+        S3_BUCKET_MAPPING=S3_BUCKET_MAPPING)
+
+@app.route('/update_sync_time', methods=['POST'])
+def update_sync_time():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    
+    # Get form data
+    enable_sync = request.form.get('enable_sync') == 'on'
+    sync_time = request.form.get('sync_time')
+    
+    if enable_sync and sync_time:
+        # Parse the time
+        try:
+            hour, minute = sync_time.split(':')
+            hour, minute = int(hour), int(minute)
+            
+            # Update sync time in .env
+            set_sync_time(hour, minute)
+            
+            # Update crontab with new time
+            time_str = f"{hour:02d}:{minute:02d}"
+            update_crontab_for_sync_time(time_str)
+            
+            flash(f"Daily sync enabled and scheduled for {time_str} UTC")
+        except Exception as e:
+            flash(f"Error updating sync time: {str(e)}", 'error')
+    else:
+        # Disable sync by removing cron job
+        success, message = update_crontab(action='disable')
+        if success:
+            flash(message)
+        else:
+            flash(message, 'error')
+    
+    return redirect(url_for('daily_sync_config'))
 
 @app.route('/update_daily_sync', methods=['POST'])
 def update_daily_sync():
     if not is_logged_in():
         return redirect(url_for('login'))
     
-    # Update daily sync settings in .env
     selected_endpoints = []
     endpoint_configs = {}
     
     # Process each endpoint's configuration
     for endpoint, _ in api_endpoints:
-        if request.form.get(f"endpoint_{endpoint.replace('/', '_')}_enabled"):
+        endpoint_key = f"endpoint_{endpoint.replace('/', '_')}_enabled"
+        if request.form.get(endpoint_key):
             selected_endpoints.append(endpoint)
-            endpoint_configs[endpoint] = {
-                'schema_type': request.form.get(f"schema_{endpoint.replace('/', '_')}", 'FULL'),
-                'bucket': request.form.get(f"bucket_{endpoint.replace('/', '_')}")
-            }
-    
+            endpoint_configs[endpoint] = {'enabled_schemas': []}
+            
+            # Process each schema type for this endpoint
+            for schema in SCHEMA_TYPES:
+                schema_key = f"schema_{endpoint.replace('/', '_')}_{schema}_enabled"
+                if request.form.get(schema_key):
+                    endpoint_configs[endpoint]['enabled_schemas'].append(schema)
+                    
+                # Update S3 bucket regardless of whether schema is checked
+                bucket_key = f"{endpoint}#{schema}"
+                bucket_env_var = S3_BUCKET_MAPPING.get(bucket_key)
+                if bucket_env_var:
+                    bucket_form_key = f"bucket_{endpoint.replace('/', '_')}_{schema}"
+                    bucket_value = request.form.get(bucket_form_key)
+                    if bucket_value is not None:
+                        set_key('.env', bucket_env_var, bucket_value)
+                        os.environ[bucket_env_var] = bucket_value
+
     # Save endpoint configurations as JSON in .env
-    set_key('.env', 'DAILY_SYNC_ENDPOINTS', ','.join(selected_endpoints))
-    set_key('.env', 'DAILY_SYNC_ENDPOINT_CONFIGS', json.dumps(endpoint_configs))
-    
-    # Update S3 bucket mappings
-    for endpoint in S3_BUCKET_MAPPING.keys():
-        bucket_key = S3_BUCKET_MAPPING[endpoint]
-        bucket_value = request.form.get(f"bucket_{endpoint.replace('/', '_')}")
-        if bucket_value:
-            set_key('.env', bucket_key, bucket_value)
-            # Update environment variable immediately
-            os.environ[bucket_key] = bucket_value
+    endpoints_str = ','.join(selected_endpoints)
+    set_key('.env', 'DAILY_SYNC_ENDPOINTS', endpoints_str)
+    os.environ['DAILY_SYNC_ENDPOINTS'] = endpoints_str
+
+    configs_str = json.dumps(endpoint_configs)
+    set_key('.env', 'DAILY_SYNC_ENDPOINT_CONFIGS', configs_str)
+    os.environ['DAILY_SYNC_ENDPOINT_CONFIGS'] = configs_str
     
     # Update cities backup bucket
     cities_backup_bucket = request.form.get('cities_backup_bucket')
-    if cities_backup_bucket:
+    if cities_backup_bucket is not None:
         set_key('.env', 'CITIES_BACKUP_BUCKET', cities_backup_bucket)
-        # Update environment variable immediately
         os.environ['CITIES_BACKUP_BUCKET'] = cities_backup_bucket
     
     flash('Daily sync settings updated successfully')
-    # Redirect back to the daily sync configuration page
     return redirect(url_for('daily_sync_config'))
 
 def is_running_on_ec2():
@@ -592,7 +663,7 @@ def index():
     if not is_logged_in():
         return redirect(url_for('login'))
     
-    sync_hour, sync_minute = get_sync_time()
+    sync_hour, sync_minute = get_sync_time_tuple()
     
     if request.method == 'POST':
         if 'disable_sync' in request.form:
@@ -1671,6 +1742,31 @@ def city_boundary():
         )
     except Exception as e:
         return {'error': str(e)}, 500
+
+def is_daily_sync_enabled():
+    """Check if daily sync is enabled by looking for daily_sync.py in crontab"""
+    try:
+        # Check if we're on EC2 or local
+        on_ec2 = is_running_on_ec2()
+        
+        if on_ec2:
+            # EC2 environment - use sudo and ec2-user
+            try:
+                current_crontab = subprocess.check_output(['sudo', 'crontab', '-u', 'ec2-user', '-l'], text=True)
+            except subprocess.CalledProcessError:
+                current_crontab = ''
+        else:
+            # Local environment - use current user's crontab
+            try:
+                current_crontab = subprocess.check_output(['crontab', '-l'], text=True)
+            except subprocess.CalledProcessError:
+                current_crontab = ''
+        
+        # Check if daily_sync.py exists in crontab
+        return 'daily_sync.py' in current_crontab
+    except Exception as e:
+        logging.error(f"Error checking daily sync status: {str(e)}")
+        return False
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 

@@ -159,4 +159,43 @@ Updated flask_app.py:
 [2024-06-17] Fixed sync_city in flask_app.py to make a single API call per endpoint for the full date range (start_date to end_date), not one per day. This matches Veraset API best practices and reduces API calls.
 
 2025-06-17: Added S3 backup functionality to save_cities() in utils.py. Now, every update to cities.json is also backed up to S3 using the bucket specified by CITIES_BACKUP_BUCKET in .env. Backups are timestamped and stored in the cities-backup/ folder in the bucket.
+
+[2024-06-10] Added is_daily_sync_enabled function to flask_app.py to fix NameError on /daily_sync_config page:
+- Function checks if daily sync cron job is enabled by looking for daily_sync.py in crontab
+- Works in both EC2 (using ec2-user's crontab) and local environments
+- Handles errors gracefully and logs them
+- Used by daily_sync_config page to show correct sync enabled/disabled state
+
+[2024-06-10] Added update_sync_time route to flask_app.py to fix BuildError on /daily_sync_config page:
+- New route handles enabling/disabling daily sync and updating sync time
+- Updates both .env file and crontab when sync time is changed
+- Properly handles form submission from daily sync configuration page
+- Shows success/error messages using flash
+
+[2024-06-10] Added SCHEMA_TYPES and S3_BUCKET_MAPPING constants to flask_app.py:
+- SCHEMA_TYPES defines available schema types (FULL, TRIPS, BASIC)
+- S3_BUCKET_MAPPING maps endpoint#schema combinations to their S3 bucket environment variables
+- Used by daily_sync_config page to show and configure S3 buckets for each endpoint/schema combination
+- Simplified API endpoints to focus on movement/job/pings and movement/job/trips
+
+[2024-06-10] Fixed S3_BUCKET_MAPPING undefined error in daily_sync_config template:
+- Added S3_BUCKET_MAPPING to template context in daily_sync_config route
+- Now properly shows S3 bucket environment variables for each endpoint/schema combination
+- Fixed template rendering error on /daily_sync_config page
+
+[2024-06-10] Fixed sync time handling in flask_app.py:
+- Split get_sync_time into get_sync_time_tuple() and get_sync_time()
+- get_sync_time_tuple() returns (hour, minute) for internal use
+- get_sync_time() returns formatted "HH:MM" for HTML time input
+- Fixed ValueError in index route by using get_sync_time_tuple()
+- Properly formats time in daily_sync_config page
+
+[2024-06-10] Updated API endpoints and S3 bucket mapping to match OpenAPI spec and environment variables:
+- Updated api_endpoints list to include all available endpoints:
+  * movement/job/pings
+  * movement/job/pings_by_device
+  * work/job/cohort
+  * work/job/cohort_by_device
+- Updated S3_BUCKET_MAPPING to use correct environment variable names for each endpoint/schema combination
+- Aligned GUI configuration page with actual available endpoints and bucket names
 --- 

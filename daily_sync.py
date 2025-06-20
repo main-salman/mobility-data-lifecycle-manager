@@ -20,10 +20,21 @@ def get_endpoint_configs():
     configs = {}
     for endpoint in endpoints:
         endpoint = endpoint.strip()
-        configs[endpoint] = {
-            'schema_type': endpoint_configs.get(endpoint, {}).get('schema_type', 'FULL'),
-            'bucket': endpoint_configs.get(endpoint, {}).get('bucket', os.getenv('S3_BUCKET'))
-        }
+        # Get enabled schemas for this endpoint
+        enabled_schemas = endpoint_configs.get(endpoint, {}).get('enabled_schemas', ['FULL'])
+        
+        # Create a config for each enabled schema
+        for schema in enabled_schemas:
+            # Get the bucket for this endpoint+schema combination
+            bucket_env_var = f"{endpoint}#{schema}"
+            bucket = os.getenv(bucket_env_var, os.getenv('S3_BUCKET'))
+            
+            # Add to configs with endpoint#schema as key
+            configs[f"{endpoint}#{schema}"] = {
+                'schema_type': schema,
+                'bucket': bucket
+            }
+    
     return configs
 
 def main():
@@ -47,11 +58,13 @@ def main():
         from_date = yesterday.strftime('%Y-%m-%d')
         to_date = from_date
 
-    # Sync each city for each configured endpoint
+    # Sync each city for each configured endpoint+schema combination
     for city in cities:
-        for endpoint, config in endpoint_configs.items():
+        for endpoint_schema, config in endpoint_configs.items():
             try:
-                print(f"Syncing {city['name']} using {endpoint} (schema: {config['schema_type']}, bucket: {config['bucket']})")
+                # Split endpoint and schema
+                endpoint, schema = endpoint_schema.split('#')
+                print(f"Syncing {city['name']} using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
                 sync_city_for_date(
                     city,
                     from_date,
@@ -61,7 +74,7 @@ def main():
                     s3_bucket=config['bucket']
                 )
             except Exception as e:
-                print(f"Error syncing {city['name']} with {endpoint}: {str(e)}", file=sys.stderr)
+                print(f"Error syncing {city['name']} with {endpoint_schema}: {str(e)}", file=sys.stderr)
                 continue
 
 if __name__ == '__main__':
