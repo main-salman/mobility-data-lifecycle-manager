@@ -5,6 +5,7 @@
 # 1. Place this script in the project root directory (e.g., /home/ec2-user/mobility-data-lifecycle-manager).
 # 2. Make it executable: chmod +x troubleshoot.sh
 # 3. Run it from the project root: ./troubleshoot.sh
+#TEST
 
 set -e
 set -o pipefail
