@@ -12,11 +12,11 @@ from utils import load_cities
 load_dotenv()
 
 # --- Clean Logging Setup (Python 3.7 compatible) ---
-# Manually remove all handlers from the root logger
+# Manually remove all handlers from the root logger before configuring new ones.
+# This is the correct, backward-compatible way to prevent duplicate log entries.
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
-# Now, configure the new handlers
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -69,54 +69,73 @@ S3_BUCKET_MAPPING = {
 }
 
 def get_endpoint_configs():
-    """Get configured endpoints and their settings from environment variables"""
-    endpoints_str = os.getenv('DAILY_SYNC_ENDPOINTS', 'movement/job/pings')
+    """Get configured endpoints and their settings from environment variables with detailed logging."""
+    logging.info("--- Parsing Daily Sync Configuration ---")
+    
+    endpoints_str = os.getenv('DAILY_SYNC_ENDPOINTS', '')
+    logging.info(f"Loaded DAILY_SYNC_ENDPOINTS: '{endpoints_str}'")
     if endpoints_str.startswith("'") and endpoints_str.endswith("'"):
         endpoints_str = endpoints_str[1:-1]
-    endpoints = endpoints_str.split(',')
-
+        logging.info(f"Stripped quotes, result: '{endpoints_str}'")
+    
     configs_str = os.getenv('DAILY_SYNC_ENDPOINT_CONFIGS', '{}')
+    logging.info(f"Loaded DAILY_SYNC_ENDPOINT_CONFIGS: '{configs_str}'")
     if configs_str.startswith("'") and configs_str.endswith("'"):
         configs_str = configs_str[1:-1]
+        logging.info(f"Stripped quotes, result: '{configs_str}'")
+
+    if not endpoints_str:
+        logging.warning("DAILY_SYNC_ENDPOINTS is not set. No sync will be performed.")
+        return {}
+        
+    endpoints = [e.strip() for e in endpoints_str.split(',')]
     
     try:
-        endpoint_configs = json.loads(configs_str)
+        endpoint_schema_map = json.loads(configs_str)
+        logging.info(f"Successfully parsed JSON config: {endpoint_schema_map}")
     except json.JSONDecodeError as e:
-        print(f"Error: Could not parse DAILY_SYNC_ENDPOINT_CONFIGS. Invalid JSON: {configs_str}", file=sys.stderr)
-        print(f"JSONDecodeError: {e}", file=sys.stderr)
+        logging.error(f"FATAL: Could not parse DAILY_SYNC_ENDPOINT_CONFIGS. Invalid JSON. Error: {e}")
         return {}
-    
-    # Ensure default values for each endpoint
-    configs = {}
+
+    final_configs = {}
     for endpoint in endpoints:
-        endpoint = endpoint.strip()
-        # Get enabled schemas for this endpoint
-        enabled_schemas = endpoint_configs.get(endpoint, {}).get('enabled_schemas', ['FULL'])
+        # Get the schemas configured for this specific endpoint from the JSON map
+        schemas_for_endpoint = endpoint_schema_map.get(endpoint, {}).get('enabled_schemas', [])
         
-        # Create a config for each enabled schema
-        for schema in enabled_schemas:
-            endpoint_schema_key = f"{endpoint}#{schema}"
-            bucket_env_var = S3_BUCKET_MAPPING.get(endpoint_schema_key)
+        if not schemas_for_endpoint:
+            logging.warning(f"No enabled schemas found for endpoint '{endpoint}' in config. Skipping.")
+            continue
             
-            bucket = None
-            if bucket_env_var:
-                bucket = os.getenv(bucket_env_var)
+        logging.info(f"Found {len(schemas_for_endpoint)} enabled schemas for endpoint '{endpoint}': {schemas_for_endpoint}")
 
-            # Fallback to default S3_BUCKET if specific one is not defined or empty
-            if not bucket:
-                bucket = os.getenv('S3_BUCKET')
-
-            # Strip quotes from bucket name if they exist
-            if bucket and bucket.startswith("'") and bucket.endswith("'"):
-                bucket = bucket[1:-1]
+        for schema in schemas_for_endpoint:
+            config_key = f"{endpoint}#{schema}"
+            bucket_env_var = S3_BUCKET_MAPPING.get(config_key)
             
-            # Add to configs with endpoint#schema as key
-            configs[endpoint_schema_key] = {
+            bucket_name = os.getenv(bucket_env_var) if bucket_env_var else None
+
+            # Fallback to the main S3_BUCKET if the specific one is not defined or is an empty string
+            if not bucket_name:
+                logging.warning(f"S3 bucket for '{config_key}' ('{bucket_env_var}') is not set or empty. Falling back to default S3_BUCKET.")
+                bucket_name = os.getenv('S3_BUCKET')
+
+            # Final check to ensure we have a bucket
+            if not bucket_name:
+                logging.error(f"No bucket found for '{config_key}'. Neither '{bucket_env_var}' nor 'S3_BUCKET' are set. Skipping this schema.")
+                continue
+                
+            # Remove quotes from the final bucket name, just in case
+            if bucket_name.startswith("'") and bucket_name.endswith("'"):
+                bucket_name = bucket_name[1:-1]
+
+            logging.info(f"Configuration for '{config_key}': bucket is '{bucket_name}'")
+            final_configs[config_key] = {
                 'schema_type': schema,
-                'bucket': bucket
+                'bucket': bucket_name
             }
-    
-    return configs
+            
+    logging.info(f"--- Finished Parsing Config. Found {len(final_configs)} total configurations to run. ---")
+    return final_configs
 
 def main():
     parser = argparse.ArgumentParser()
