@@ -84,10 +84,9 @@ echo "--- 4. Manual Execution of daily_sync.py ---"
 echo "Attempting to run the script with the same environment as cron..."
 echo "This will use yesterday's date for the sync."
 
-# The venv is already activated. We just need to load the .env variables.
-set -a
-source .env
-set +a
+# The venv is already activated. The python script will load .env itself.
+# We do not `source .env` here because it can fail if values contain special characters.
+# The python script handles this safely using the `python-dotenv` library.
 
 echo "Running: python daily_sync.py"
 python daily_sync.py

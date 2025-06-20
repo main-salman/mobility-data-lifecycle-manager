@@ -215,4 +215,6 @@ Updated flask_app.py:
 
 [2024-06-20] Updated `update_ec2.sh` to streamline the development workflow. The script now automatically stages, commits, and pushes local Git changes before initiating the remote EC2 update, ensuring that the latest code is always deployed.
 
+[2024-06-20] Fixed a critical bug in `troubleshoot.sh` that caused a "command not found" error. The script no longer attempts to `source` the `.env` file, which is unsafe due to special characters in passwords. Instead, it relies on the Python script's own robust `dotenv` handling, ensuring the environment is loaded correctly and safely.
+
 --- 
