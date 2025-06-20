@@ -64,7 +64,7 @@ def main():
             try:
                 # Split endpoint and schema
                 endpoint, schema = endpoint_schema.split('#')
-                print(f"Syncing {city['name']} using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
+                print(f"Syncing {city['city']} using {endpoint} (schema: {schema}, bucket: {config['bucket']})")
                 sync_city_for_date(
                     city,
                     from_date,
@@ -74,7 +74,7 @@ def main():
                     s3_bucket=config['bucket']
                 )
             except Exception as e:
-                print(f"Error syncing {city['name']} with {endpoint_schema}: {str(e)}", file=sys.stderr)
+                print(f"Error syncing {city['city']} with {endpoint_schema}: {str(e)}", file=sys.stderr)
                 continue
 
 if __name__ == '__main__':

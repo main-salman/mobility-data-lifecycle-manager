@@ -198,4 +198,7 @@ Updated flask_app.py:
   * work/job/cohort_by_device
 - Updated S3_BUCKET_MAPPING to use correct environment variable names for each endpoint/schema combination
 - Aligned GUI configuration page with actual available endpoints and bucket names
+
+[2024-06-20] Fixed KeyError in daily_sync.py: The script was trying to access `city['name']` but the city objects from `db/cities.json` use the key `city`. Updated the print statements in `daily_sync.py` to use `city['city']` instead of `city['name']`.
+
 --- 
