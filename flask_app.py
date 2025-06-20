@@ -235,7 +235,7 @@ def get_sync_time():
 
 def set_sync_time(hour, minute):
     time_str = f"{int(hour):02d}:{int(minute):02d}"
-    set_key('.env', SYNC_TIME_ENV_KEY, time_str)
+    set_key('.env', SYNC_TIME_ENV_KEY, time_str, quote_mode='never')
     os.environ[SYNC_TIME_ENV_KEY] = time_str
     # Fix permissions after update
     try:
@@ -591,22 +591,22 @@ def update_daily_sync():
                     bucket_form_key = f"bucket_{endpoint.replace('/', '_')}_{schema}"
                     bucket_value = request.form.get(bucket_form_key)
                     if bucket_value is not None:
-                        set_key('.env', bucket_env_var, bucket_value)
+                        set_key('.env', bucket_env_var, bucket_value, quote_mode='never')
                         os.environ[bucket_env_var] = bucket_value
 
     # Save endpoint configurations as JSON in .env
     endpoints_str = ','.join(selected_endpoints)
-    set_key('.env', 'DAILY_SYNC_ENDPOINTS', endpoints_str)
+    set_key('.env', 'DAILY_SYNC_ENDPOINTS', endpoints_str, quote_mode='never')
     os.environ['DAILY_SYNC_ENDPOINTS'] = endpoints_str
 
     configs_str = json.dumps(endpoint_configs)
-    set_key('.env', 'DAILY_SYNC_ENDPOINT_CONFIGS', configs_str)
+    set_key('.env', 'DAILY_SYNC_ENDPOINT_CONFIGS', configs_str, quote_mode='never')
     os.environ['DAILY_SYNC_ENDPOINT_CONFIGS'] = configs_str
     
     # Update cities backup bucket
     cities_backup_bucket = request.form.get('cities_backup_bucket')
     if cities_backup_bucket is not None:
-        set_key('.env', 'CITIES_BACKUP_BUCKET', cities_backup_bucket)
+        set_key('.env', 'CITIES_BACKUP_BUCKET', cities_backup_bucket, quote_mode='never')
         os.environ['CITIES_BACKUP_BUCKET'] = cities_backup_bucket
     
     flash('Daily sync settings updated successfully')

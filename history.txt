@@ -201,4 +201,8 @@ Updated flask_app.py:
 
 [2024-06-20] Fixed KeyError in daily_sync.py: The script was trying to access `city['name']` but the city objects from `db/cities.json` use the key `city`. Updated the print statements in `daily_sync.py` to use `city['city']` instead of `city['name']`.
 
+[2024-06-20] Fixed daily_sync.py from stopping silently. Removed quotes from `DAILY_SYNC_ENDPOINTS` and `DAILY_SYNC_ENDPOINT_CONFIGS` in `.env` file to prevent parsing issues in cron environments.
+
+[2024-06-20] Updated flask_app.py to prevent `python-dotenv` from adding quotes to environment variables when saving the `.env` file. All calls to `set_key` now use `quote_mode='never'` to ensure that values are written without quotes, resolving issues with cron job parsing.
+
 --- 
