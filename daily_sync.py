@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from sync_logic import sync_all_cities_for_date_range
 from utils import load_cities, setup_logging
+import concurrent.futures
 
 # Centralized logging setup
 setup_logging()
@@ -145,21 +146,40 @@ def main():
 
     configs = get_endpoint_configs()
 
-    for config_key, config in configs.items():
-        endpoint, schema = config_key.split('#')
-        bucket = config['bucket']
-        schema_type = config['schema_type'] # Use the schema from the config value
-        
-        logging.info(f"Starting batch sync for ALL cities using {endpoint} (schema: {schema_type}, bucket: {bucket})")
-        
-        sync_all_cities_for_date_range(
-            endpoint=endpoint,
-            cities=cities,
-            from_date=from_date,
-            to_date=to_date,
-            schema_type=schema_type,
-            s3_bucket=bucket
-        )
+    # Parallel execution for all endpoint+schema configs
+    results = {}
+    errors = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(8, len(configs))) as executor:
+        future_to_key = {}
+        for config_key, config in configs.items():
+            endpoint, schema = config_key.split('#')
+            bucket = config['bucket']
+            schema_type = config['schema_type']
+            logging.info(f"Submitting batch sync for ALL cities using {endpoint} (schema: {schema_type}, bucket: {bucket})")
+            future = executor.submit(
+                sync_all_cities_for_date_range,
+                endpoint=endpoint,
+                cities=cities,
+                from_date=from_date,
+                to_date=to_date,
+                schema_type=schema_type,
+                s3_bucket=bucket
+            )
+            future_to_key[future] = (endpoint, schema_type)
+        for future in concurrent.futures.as_completed(future_to_key):
+            endpoint, schema_type = future_to_key[future]
+            try:
+                result = future.result()
+                results[(endpoint, schema_type)] = result
+                if not result.get('success'):
+                    errors[(endpoint, schema_type)] = result.get('error', 'Unknown error')
+            except Exception as exc:
+                errors[(endpoint, schema_type)] = str(exc)
+                logging.error(f"Exception in sync for {endpoint} ({schema_type}): {exc}")
+    if errors:
+        logging.error(f"Some syncs failed: {errors}")
+    else:
+        logging.info("All syncs completed successfully.")
 
 if __name__ == '__main__':
     main() 

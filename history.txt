@@ -241,4 +241,6 @@ Updated flask_app.py:
 
 [2024-06-20] Resolved a `TypeError` in `flask_app.py` that caused the "Sync All" feature to crash. The error was due to an incorrect keyword argument (`api_endpoint` instead of `endpoint`) in the call to the refactored `sync_all_cities_for_date_range` function.
 
+2024-06-24: Refactored daily_sync.py to run all endpoint+schema syncs in parallel using ThreadPoolExecutor, so all batch API calls (movement/job/pings, work/job/cohort, etc) are launched concurrently. Updated flask_app.py and the GUI to expose all supported batch endpoints (including movement/job/pings_by_ip, movement/job/trips, movement/job/aggregate, work/job/aggregate, work/job/devices, /v1/home/job/devices, /v1/home/job/aggregate, /v1/home/job/cohort) in all relevant forms and backend logic.
+
 --- 

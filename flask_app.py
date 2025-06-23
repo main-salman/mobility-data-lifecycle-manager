@@ -56,8 +56,16 @@ app.secret_key = os.urandom(24)
 api_endpoints = [
     ('movement/job/pings', 'Movement Pings'),
     ('movement/job/pings_by_device', 'Movement Pings by Device'),
+    ('movement/job/pings_by_ip', 'Movement Pings by IP'),
+    ('movement/job/trips', 'Movement Trips'),
+    ('movement/job/aggregate', 'Movement Aggregate'),
     ('work/job/cohort', 'Work Cohort'),
-    ('work/job/cohort_by_device', 'Work Cohort by Device')
+    ('work/job/cohort_by_device', 'Work Cohort by Device'),
+    ('work/job/aggregate', 'Work Aggregate'),
+    ('work/job/devices', 'Work Devices'),
+    ('/v1/home/job/devices', 'Home Devices'),
+    ('/v1/home/job/aggregate', 'Home Aggregate'),
+    ('/v1/home/job/cohort', 'Home Cohort'),
 ]
 
 # Schema types for Veraset API
