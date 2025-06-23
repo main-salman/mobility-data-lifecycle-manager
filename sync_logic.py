@@ -73,6 +73,10 @@ def build_sync_payload(cities, from_date, to_date, schema_type="FULL"):
     return payload
 
 def make_api_request(endpoint, method="POST", data=None):
+    # Normalize endpoint to avoid double /v1/
+    endpoint = endpoint.lstrip('/')
+    if endpoint.startswith('v1/'):
+        endpoint = endpoint[3:]
     url = f"{API_ENDPOINT}/v1/{endpoint}"
     headers = {
         "Content-Type": "application/json",
