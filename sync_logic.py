@@ -234,30 +234,35 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
 
         # Split into 31-day chunks
         date_chunks = split_date_range(from_date, to_date, max_days=31)
+        logger.debug(f"[SYNC DEBUG] Chunks to process for {city['city']}: " + ', '.join([f"{s.strftime('%Y-%m-%d')} to {e.strftime('%Y-%m-%d')}" for s, e in date_chunks]))
         all_results = []
         errors = []
 
         def process_chunk(chunk_start, chunk_end):
-            payload = build_sync_payload(city, chunk_start, chunk_end, schema_type=schema_type)
-            response = make_api_request(api_endpoint, data=payload)
-            if not response or 'error' in response:
-                return {"error": response.get('error', 'No response from API')}
-            request_id = response.get("request_id")
-            job_id = response.get("data", {}).get("job_id")
-            if not request_id or not job_id:
-                return {"error": f"No request_id or job_id in response: {response}"}
-            status = wait_for_job_completion(job_id)
-            if not status or 'error' in status:
-                return {"error": status.get('error', 'Unknown error during job status polling')}
-            sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=bucket)
-            if not sync_result.get('success'):
-                return {"error": sync_result.get('error', 'Unknown error during S3 sync')}
-            return {
-                "success": True,
-                "s3_location": status.get('s3_location'),
-                "dest_prefix": sync_result.get('dest_prefix'),
-                "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
-            }
+            try:
+                payload = build_sync_payload(city, chunk_start, chunk_end, schema_type=schema_type)
+                response = make_api_request(api_endpoint, data=payload)
+                if not response or 'error' in response:
+                    return {"error": response.get('error', 'No response from API')}
+                request_id = response.get("request_id")
+                job_id = response.get("data", {}).get("job_id")
+                if not request_id or not job_id:
+                    return {"error": f"No request_id or job_id in response: {response}"}
+                status = wait_for_job_completion(job_id)
+                if not status or 'error' in status:
+                    return {"error": status.get('error', 'Unknown error during job status polling')}
+                sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=bucket)
+                if not sync_result.get('success'):
+                    return {"error": sync_result.get('error', 'Unknown error during S3 sync')}
+                return {
+                    "success": True,
+                    "s3_location": status.get('s3_location'),
+                    "dest_prefix": sync_result.get('dest_prefix'),
+                    "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
+                }
+            except Exception as e:
+                logger.error(f"[SYNC DEBUG] Exception in chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
+                return {"error": f"Exception: {str(e)}"}
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_chunk = {
@@ -273,7 +278,9 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
                     else:
                         errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: {result.get('error')}")
                 except Exception as e:
+                    logger.error(f"[SYNC DEBUG] Exception retrieving future for chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
                     errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: Exception: {str(e)}")
+        logger.debug(f"[SYNC DEBUG] Finished processing {len(date_chunks)} chunks for {city['city']}. Results: {len(all_results)}, Errors: {len(errors)}")
         if errors and not all_results:
             return {"success": False, "error": "; ".join(errors)}
         return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results}
