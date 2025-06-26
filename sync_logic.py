@@ -3,7 +3,7 @@ import subprocess
 import json
 import boto3
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from dotenv import load_dotenv
 import time
@@ -209,34 +209,60 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
         logger.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
         return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
 
+# Helper to split a date range into 31-day chunks
+def split_date_range(from_date, to_date, max_days=31):
+    if isinstance(from_date, str):
+        from_date = datetime.strptime(from_date, "%Y-%m-%d")
+    if isinstance(to_date, str):
+        to_date = datetime.strptime(to_date, "%Y-%m-%d")
+    ranges = []
+    current = from_date
+    while current <= to_date:
+        range_end = min(current + timedelta(days=max_days - 1), to_date)
+        ranges.append((current, range_end))
+        current = range_end + timedelta(days=1)
+    return ranges
+
 def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
     try:
         if to_date is None:
             to_date = from_date
-            
         bucket = s3_bucket or os.getenv('S3_BUCKET')
         if not bucket:
             raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
-            
-        payload = build_sync_payload(city, from_date, to_date, schema_type=schema_type)
-        response = make_api_request(api_endpoint, data=payload)
-        
-        if not response or 'error' in response:
-            return {"success": False, "error": response.get('error', 'No response from API')}
-        request_id = response.get("request_id")
-        job_id = response.get("data", {}).get("job_id")
-        if not request_id or not job_id:
-            return {"success": False, "error": f"No request_id or job_id in response: {response}"}
-        
-        status = wait_for_job_completion(job_id)
-        if not status or 'error' in status:
-            return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
-        
-        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=bucket)
-        if not sync_result.get('success'):
-            return {"success": False, "error": sync_result.get('error', 'Unknown error during S3 sync')}
-        
-        return {"success": True, "s3_location": status.get('s3_location'), "dest_prefix": sync_result.get('dest_prefix')}
+
+        # Split into 31-day chunks
+        date_chunks = split_date_range(from_date, to_date, max_days=31)
+        all_results = []
+        errors = []
+        for chunk_start, chunk_end in date_chunks:
+            payload = build_sync_payload(city, chunk_start, chunk_end, schema_type=schema_type)
+            response = make_api_request(api_endpoint, data=payload)
+            if not response or 'error' in response:
+                errors.append(response.get('error', 'No response from API'))
+                continue
+            request_id = response.get("request_id")
+            job_id = response.get("data", {}).get("job_id")
+            if not request_id or not job_id:
+                errors.append(f"No request_id or job_id in response: {response}")
+                continue
+            status = wait_for_job_completion(job_id)
+            if not status or 'error' in status:
+                errors.append(status.get('error', 'Unknown error during job status polling'))
+                continue
+            sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=bucket)
+            if not sync_result.get('success'):
+                errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
+                continue
+            all_results.append({
+                "success": True,
+                "s3_location": status.get('s3_location'),
+                "dest_prefix": sync_result.get('dest_prefix'),
+                "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
+            })
+        if errors and not all_results:
+            return {"success": False, "error": "; ".join(errors)}
+        return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results}
     except Exception as e:
         logger.error(f"Error in sync_city_for_date for {city['city']}: {str(e)}", exc_info=True)
         return {"success": False, "error": str(e)}
@@ -244,36 +270,43 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
 def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endpoint, s3_bucket):
     logger.info(f"[Sync All] Starting sync for {len(cities)} cities from {from_date} to {to_date} using endpoint {endpoint}")
 
-    payload = build_sync_payload(
-        cities=cities,
-        from_date=from_date,
-        to_date=to_date,
-        schema_type=schema_type
-    )
-
-    response = make_api_request(endpoint, data=payload)
-    if not response or 'error' in response:
-        return {"success": False, "error": response.get('error', 'No response from API')}
-        
-    request_id = response.get("request_id")
-    job_id = response.get("data", {}).get("job_id")
-    if not request_id or not job_id:
-        return {"success": False, "error": f"No request_id or job_id in response: {response}"}
-        
-    status = wait_for_job_completion(job_id)
-    if not status or 'error' in status:
-        return {"success": False, "error": status.get('error', 'Unknown error during job status polling')}
-        
-    logger.info(f"[Sync All] Job {job_id} completed. Starting S3 sync for all cities.")
+    # Split into 31-day chunks
+    date_chunks = split_date_range(from_date, to_date, max_days=31)
+    all_results = []
     errors = []
-    
-    # Even in a batch job, we need to sync data per city to maintain the folder structure
-    for city in cities:
-        sync_result = sync_data_to_bucket(city, from_date, status.get('s3_location'), s3_bucket=s3_bucket)
-        if not sync_result.get('success'):
-            errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
-
-    if errors:
-        return {"success": False, "error": "S3 sync failed for some cities.", "details": errors}
-        
-    return {"success": True, "s3_location": status.get('s3_location')} 
+    for chunk_start, chunk_end in date_chunks:
+        payload = build_sync_payload(
+            cities=cities,
+            from_date=chunk_start,
+            to_date=chunk_end,
+            schema_type=schema_type
+        )
+        response = make_api_request(endpoint, data=payload)
+        if not response or 'error' in response:
+            errors.append(response.get('error', 'No response from API'))
+            continue
+        request_id = response.get("request_id")
+        job_id = response.get("data", {}).get("job_id")
+        if not request_id or not job_id:
+            errors.append(f"No request_id or job_id in response: {response}")
+            continue
+        status = wait_for_job_completion(job_id)
+        if not status or 'error' in status:
+            errors.append(status.get('error', 'Unknown error during job status polling'))
+            continue
+        logger.info(f"[Sync All] Job {job_id} completed. Starting S3 sync for all cities.")
+        chunk_errors = []
+        for city in cities:
+            sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=s3_bucket)
+            if not sync_result.get('success'):
+                chunk_errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
+        if chunk_errors:
+            errors.extend(chunk_errors)
+        all_results.append({
+            "success": True,
+            "s3_location": status.get('s3_location'),
+            "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
+        })
+    if errors and not all_results:
+        return {"success": False, "error": "; ".join(errors)}
+    return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results} 
