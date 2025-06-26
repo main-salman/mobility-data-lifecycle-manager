@@ -233,8 +233,22 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
             raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
 
         # Split into 31-day chunks
-        date_chunks = split_date_range(from_date, to_date, max_days=31)
-        logger.debug(f"[SYNC DEBUG] Chunks to process for {city['city']}: " + ', '.join([f"{s.strftime('%Y-%m-%d')} to {e.strftime('%Y-%m-%d')}" for s, e in date_chunks]))
+        try:
+            date_chunks = split_date_range(from_date, to_date, max_days=31)
+            num_chunks = len(date_chunks)
+            if num_chunks == 0:
+                logger.error(f"[SYNC DEBUG] No date chunks generated for {city['city']} from {from_date} to {to_date}")
+                return {"success": False, "error": "No date chunks generated"}
+            if num_chunks > 20:
+                logger.error(f"[SYNC DEBUG] Too many date chunks ({num_chunks}) for {city['city']} from {from_date} to {to_date}. Aborting to prevent runaway processing.")
+                return {"success": False, "error": f"Too many date chunks ({num_chunks}), aborting."}
+            first_chunk = date_chunks[0]
+            last_chunk = date_chunks[-1]
+            logger.debug(f"[SYNC DEBUG] {num_chunks} chunks to process for {city['city']}. First: {first_chunk[0].strftime('%Y-%m-%d')} to {first_chunk[1].strftime('%Y-%m-%d')}, Last: {last_chunk[0].strftime('%Y-%m-%d')} to {last_chunk[1].strftime('%Y-%m-%d')}")
+        except Exception as e:
+            logger.error(f"[SYNC DEBUG] Exception during chunking/logging: {e}", exc_info=True)
+            return {"success": False, "error": f"Exception during chunking: {str(e)}"}
+
         all_results = []
         errors = []
 
@@ -280,7 +294,7 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
                 except Exception as e:
                     logger.error(f"[SYNC DEBUG] Exception retrieving future for chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
                     errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: Exception: {str(e)}")
-        logger.debug(f"[SYNC DEBUG] Finished processing {len(date_chunks)} chunks for {city['city']}. Results: {len(all_results)}, Errors: {len(errors)}")
+        logger.debug(f"[SYNC DEBUG] Finished processing {num_chunks} chunks for {city['city']}. Results: {len(all_results)}, Errors: {len(errors)}")
         if errors and not all_results:
             return {"success": False, "error": "; ".join(errors)}
         return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results}
