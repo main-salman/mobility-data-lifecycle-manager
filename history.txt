@@ -243,4 +243,10 @@ Updated flask_app.py:
 
 2024-06-24: Refactored daily_sync.py to run all endpoint+schema syncs in parallel using ThreadPoolExecutor, so all batch API calls (movement/job/pings, work/job/cohort, etc) are launched concurrently. Updated flask_app.py and the GUI to expose all supported batch endpoints (including movement/job/pings_by_ip, movement/job/trips, movement/job/aggregate, work/job/aggregate, work/job/devices, /v1/home/job/devices, /v1/home/job/aggregate, /v1/home/job/cohort) in all relevant forms and backend logic.
 
+[2024-06-21] Moved the 'Add City' and 'View Logs' links above the list of cities on the main page in flask_app.py for improved UI clarity.
+
+[2024-06-21] Added a 'Centre Map' button to the Add City form in flask_app.py, allowing users to center the map on the inputted latitude and longitude values.
+
+[2024-06-21] The Add City form now defaults to 'polygon' AOI and preselects the polygon tool for drawing on map load, making it ready for immediate use.
+
 --- 

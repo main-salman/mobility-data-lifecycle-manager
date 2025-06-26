@@ -749,6 +749,12 @@ def index():
             </fieldset>
             <button type="submit">Sync All Cities</button>
         </form>
+        <!-- Move Add City and View Logs links here -->
+        <div style="margin-bottom:1em;">
+            <a href="{{ url_for('add_city') }}">Add City</a>
+            &nbsp;|&nbsp;
+            <a href="{{ url_for('view_logs') }}">View Logs</a>
+        </div>
         <div style="overflow-x:auto;">
           <table border=1 cellpadding=5>
               <tr><th>Country</th><th>State/Province</th><th>City</th><th>Latitude</th><th>Longitude</th><th>Email</th><th>Radius (m)</th><th>Actions</th></tr>
@@ -770,9 +776,8 @@ def index():
               {% endfor %}
           </table>
         </div>
-        <br><a href="{{ url_for('add_city') }}">Add City</a>
-        <br><a href="{{ url_for('view_logs') }}">View Logs</a>
-        </div>
+        <!-- Remove the old links below the table -->
+    </div>
     ''', cities=cities, api_endpoints=api_endpoints)
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -818,12 +823,13 @@ def add_city():
             City: <input name="city" id="city"><br>
             Latitude: <input name="latitude" id="latitude"><br>
             Longitude: <input name="longitude" id="longitude"><br>
-            <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
+            <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button>
+            <button type="button" onclick="centreMapOnInput()">Centre Map</button><br>
             Notification Email: <input name="notification_email"><br>
             <div style="margin:1em 0;">
                 <b>Area of Interest (AOI):</b><br>
-                <label><input type="radio" name="aoi_type" value="radius" checked onchange="toggleAOI()"> Radius</label>
-                <label><input type="radio" name="aoi_type" value="polygon" onchange="toggleAOI()"> Polygon</label>
+                <label><input type="radio" name="aoi_type" value="radius" onchange="toggleAOI()"> Radius</label>
+                <label><input type="radio" name="aoi_type" value="polygon" checked onchange="toggleAOI()"> Polygon</label>
             </div>
             <div id="radiusControls">
                 Radius Meters: <input name="radius_meters" id="radius_meters" type="number" value="10000" min="1" step="1" onchange="updateRadius()"><br>
@@ -868,6 +874,9 @@ def add_city():
         document.addEventListener('DOMContentLoaded', function() {
             populateCountries();
             document.getElementById('country').addEventListener('change', populateStates);
+            // Preselect polygon AOI and trigger polygon tool
+            document.querySelector('input[name="aoi_type"][value="polygon"]').checked = true;
+            toggleAOI();
         });
         function geocodeCity() {
             const city = document.getElementById('city').value;
@@ -915,7 +924,7 @@ def add_city():
         }
         // --- Leaflet Map and AOI Logic ---
         let map, marker, circle, drawnItems, drawControl;
-        let currentAOI = 'radius';
+        let currentAOI = 'polygon';
         function setMapCenter(lat, lon) {
             if (map) {
                 map.setView([lat, lon], 12);
@@ -977,7 +986,8 @@ def add_city():
                 document.getElementById('longitude').value = pos.lng;
                 if (circle) circle.setLatLng(pos);
             });
-            circle = L.circle([lat, lon], {radius: parseFloat(document.getElementById('radius_meters').value) || 10000, color:'#3388ff'}).addTo(map);
+            circle = L.circle([lat, lon], {radius: parseFloat(document.getElementById('radius_meters').value) || 10000, color:'#3388ff'});
+            if (currentAOI === 'radius') circle.addTo(map);
             circle.on('edit', function(e) {
                 document.getElementById('radius_meters').value = circle.getRadius();
             });
@@ -1014,7 +1024,28 @@ def add_city():
             });
             // AOI toggle
             document.querySelectorAll('input[name="aoi_type"]').forEach(r => r.addEventListener('change', toggleAOI));
+            // Trigger polygon tool if polygon is selected by default
+            triggerPolygonDrawTool();
         });
+        // After map and drawControl are initialized, trigger polygon tool if AOI is polygon
+        function triggerPolygonDrawTool() {
+            if (currentAOI === 'polygon' && drawControl && map) {
+                // Find the polygon button and simulate a click
+                setTimeout(function() {
+                    const polygonBtn = document.querySelector('.leaflet-draw-draw-polygon');
+                    if (polygonBtn) polygonBtn.click();
+                }, 500);
+            }
+        }
+        function centreMapOnInput() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+            if (!isNaN(lat) && !isNaN(lon)) {
+                setMapCenter(lat, lon);
+            } else {
+                alert('Please enter valid latitude and longitude values.');
+            }
+        }
         </script>
         </div>
     ''')
