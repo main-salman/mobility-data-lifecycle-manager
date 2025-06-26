@@ -251,4 +251,6 @@ Updated flask_app.py:
 
 [2024-06-26] Updated sync_city_for_date and sync_all_cities_for_date_range in sync_logic.py to split requests into 31-day chunks if the date range exceeds 31 days, making multiple API calls as needed to comply with the API's 31-day limit.
 
+[2024-06-26] Refactored sync_city_for_date in sync_logic.py to process 31-day chunks in parallel using ThreadPoolExecutor, enabling concurrent API calls and S3 syncs for large date ranges.
+
 --- 

@@ -8,6 +8,7 @@ import logging
 from dotenv import load_dotenv
 import time
 from requests.exceptions import RequestException
+import concurrent.futures
 
 load_dotenv()
 
@@ -223,7 +224,7 @@ def split_date_range(from_date, to_date, max_days=31):
         current = range_end + timedelta(days=1)
     return ranges
 
-def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
+def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None, max_workers=4):
     try:
         if to_date is None:
             to_date = from_date
@@ -235,31 +236,44 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
         date_chunks = split_date_range(from_date, to_date, max_days=31)
         all_results = []
         errors = []
-        for chunk_start, chunk_end in date_chunks:
+
+        def process_chunk(chunk_start, chunk_end):
             payload = build_sync_payload(city, chunk_start, chunk_end, schema_type=schema_type)
             response = make_api_request(api_endpoint, data=payload)
             if not response or 'error' in response:
-                errors.append(response.get('error', 'No response from API'))
-                continue
+                return {"error": response.get('error', 'No response from API')}
             request_id = response.get("request_id")
             job_id = response.get("data", {}).get("job_id")
             if not request_id or not job_id:
-                errors.append(f"No request_id or job_id in response: {response}")
-                continue
+                return {"error": f"No request_id or job_id in response: {response}"}
             status = wait_for_job_completion(job_id)
             if not status or 'error' in status:
-                errors.append(status.get('error', 'Unknown error during job status polling'))
-                continue
+                return {"error": status.get('error', 'Unknown error during job status polling')}
             sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=bucket)
             if not sync_result.get('success'):
-                errors.append(sync_result.get('error', 'Unknown error during S3 sync'))
-                continue
-            all_results.append({
+                return {"error": sync_result.get('error', 'Unknown error during S3 sync')}
+            return {
                 "success": True,
                 "s3_location": status.get('s3_location'),
                 "dest_prefix": sync_result.get('dest_prefix'),
                 "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
-            })
+            }
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_chunk = {
+                executor.submit(process_chunk, chunk_start, chunk_end): (chunk_start, chunk_end)
+                for chunk_start, chunk_end in date_chunks
+            }
+            for future in concurrent.futures.as_completed(future_to_chunk):
+                chunk_start, chunk_end = future_to_chunk[future]
+                try:
+                    result = future.result()
+                    if result.get('success'):
+                        all_results.append(result)
+                    else:
+                        errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: {result.get('error')}")
+                except Exception as e:
+                    errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: Exception: {str(e)}")
         if errors and not all_results:
             return {"success": False, "error": "; ".join(errors)}
         return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results}
