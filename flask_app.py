@@ -1376,7 +1376,10 @@ def sync_city(city_id):
                 endpoint = api_endpoint.lstrip('/')
                 if endpoint.startswith('v1/'):
                     endpoint = endpoint[3:]
-                sync_result = sync_city_for_date(city, start_date, end_date, schema_type=schema_type, api_endpoint=endpoint)
+                key = f"{api_endpoint}#{schema_type}"
+                bucket_env_var = S3_BUCKET_MAPPING.get(key)
+                s3_bucket = os.getenv(bucket_env_var) if bucket_env_var else None
+                sync_result = sync_city_for_date(city, start_date, end_date, schema_type=schema_type, api_endpoint=endpoint, s3_bucket=s3_bucket)
                 # Update progress/errors as before (omitted for brevity)
         threading.Thread(target=sync_and_check, daemon=True).start()
         return redirect(url_for('sync_all_progress', sync_id=sync_id))
