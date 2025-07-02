@@ -127,9 +127,8 @@ def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_c
 def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
     source_bucket = "veraset-prd-platform-us-west-2"
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
-    bucket = s3_bucket or os.getenv('S3_BUCKET')
-    if not bucket:
-        raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
+    if not s3_bucket:
+        raise ValueError("No S3 bucket specified. s3_bucket must be provided explicitly to sync_data_to_bucket.")
     
     country = city['country'].strip().lower().replace(' ', '_')
     state = city.get('state_province', '').strip().lower().replace(' ', '_')
@@ -143,7 +142,7 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
     if not source_path.endswith('/'):
         source_path += '/'
     src_s3 = f"s3://{source_bucket}/{source_path}"
-    dst_s3 = f"s3://{bucket}/{dest_prefix}/"
+    dst_s3 = f"s3://{s3_bucket}/{dest_prefix}/"
     logger.info(f"[S3 SYNC] Source: {src_s3}")
     logger.info(f"[S3 SYNC] Destination: {dst_s3}")
 
@@ -228,9 +227,8 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
     try:
         if to_date is None:
             to_date = from_date
-        bucket = s3_bucket or os.getenv('S3_BUCKET')
-        if not bucket:
-            raise ValueError("No S3 bucket specified and S3_BUCKET not set in environment")
+        if not s3_bucket:
+            raise ValueError("No S3 bucket specified. s3_bucket must be provided explicitly to sync_city_for_date.")
 
         # Split into 31-day chunks
         try:
@@ -265,7 +263,7 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
                 status = wait_for_job_completion(job_id)
                 if not status or 'error' in status:
                     return {"error": status.get('error', 'Unknown error during job status polling')}
-                sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=bucket)
+                sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=s3_bucket)
                 if not sync_result.get('success'):
                     return {"error": sync_result.get('error', 'Unknown error during S3 sync')}
                 return {
