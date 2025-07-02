@@ -754,6 +754,8 @@ def index():
             <a href="{{ url_for('add_city') }}">Add City</a>
             &nbsp;|&nbsp;
             <a href="{{ url_for('view_logs') }}">View Logs</a>
+            &nbsp;|&nbsp;
+            <a href="{{ url_for('job_status') }}">Check Job Status</a>
         </div>
         <div style="overflow-x:auto;">
           <table border=1 cellpadding=5>
@@ -770,7 +772,8 @@ def index():
                   <td>
                       <a href="{{ url_for('edit_city', city_id=city['city_id']) }}">Edit</a> |
                       <a href="{{ url_for('delete_city', city_id=city['city_id']) }}" onclick="return confirm('Delete this city?')">Delete</a> |
-                      <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">Sync</a>
+                      <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">Sync</a> |
+                      <a href="{{ url_for('job_status') }}" title="Check Veraset Job Status">Check Status</a>
                   </td>
               </tr>
               {% endfor %}
@@ -1801,6 +1804,51 @@ def is_daily_sync_enabled():
     except Exception as e:
         logging.error(f"Error checking daily sync status: {str(e)}")
         return False
+
+@app.route('/job_status', methods=['GET', 'POST'])
+def job_status():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    status_result = None
+    job_id = ''
+    error = None
+    if request.method == 'POST':
+        job_id = request.form.get('job_id', '').strip()
+        if not job_id:
+            error = 'Please enter a job ID.'
+        else:
+            try:
+                api_key = os.environ.get('VERASET_API_KEY')
+                if not api_key:
+                    error = 'API key not configured.'
+                else:
+                    url = f"https://platform.prd.veraset.tech/v1/job/{job_id}"
+                    headers = {
+                        "Content-Type": "application/json",
+                        "X-API-Key": api_key
+                    }
+                    resp = requests.get(url, headers=headers, timeout=30)
+                    if resp.status_code == 200:
+                        status_result = resp.json()
+                    else:
+                        error = f"API error: {resp.status_code} {resp.text}"
+            except Exception as e:
+                error = str(e)
+    return render_template_string(APPLE_STYLE + '''
+        <div class="container">
+        <h2>Check Veraset Job Status</h2>
+        <form method="post">
+            <label>Job ID: <input name="job_id" value="{{job_id}}" style="width:400px;" required></label>
+            <button type="submit">Check Status</button>
+        </form>
+        {% if error %}<div class="error">{{error}}</div>{% endif %}
+        {% if status_result %}
+        <h3>Job Status Result</h3>
+        <pre style="background:#222;color:#eee;padding:1em;border-radius:8px;">{{status_result|tojson(indent=2)}}</pre>
+        {% endif %}
+        <a href="{{ url_for('index') }}">Back</a>
+        </div>
+    ''', job_id=job_id, status_result=status_result, error=error)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 
