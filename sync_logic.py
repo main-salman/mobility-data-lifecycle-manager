@@ -276,22 +276,13 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
                 logger.error(f"[SYNC DEBUG] Exception in chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
                 return {"error": f"Exception: {str(e)}"}
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_to_chunk = {
-                executor.submit(process_chunk, chunk_start, chunk_end): (chunk_start, chunk_end)
-                for chunk_start, chunk_end in date_chunks
-            }
-            for future in concurrent.futures.as_completed(future_to_chunk):
-                chunk_start, chunk_end = future_to_chunk[future]
-                try:
-                    result = future.result()
-                    if result.get('success'):
-                        all_results.append(result)
-                    else:
-                        errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: {result.get('error')}")
-                except Exception as e:
-                    logger.error(f"[SYNC DEBUG] Exception retrieving future for chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
-                    errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: Exception: {str(e)}")
+        # Sequential processing of chunks (prevents server overload)
+        for chunk_start, chunk_end in date_chunks:
+            result = process_chunk(chunk_start, chunk_end)
+            if result.get('success'):
+                all_results.append(result)
+            else:
+                errors.append(f"{chunk_start.strftime('%Y-%m-%d')} to {chunk_end.strftime('%Y-%m-%d')}: {result.get('error')}")
         logger.debug(f"[SYNC DEBUG] Finished processing {num_chunks} chunks for {city['city']}. Results: {len(all_results)}, Errors: {len(errors)}")
         if errors and not all_results:
             return {"success": False, "error": "; ".join(errors)}
