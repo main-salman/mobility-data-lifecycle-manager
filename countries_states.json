@@ -1923,6 +1923,37 @@
     ]
   },
   {
+    "name": "Cabo Verde",
+    "states": [
+      {
+        "name": "Santo Antão"
+      },
+      {
+        "name": "São Vicente"
+      },
+      {
+        "name": "São Nicolau"
+      },
+      {
+        "name": "Sal"
+      },
+      {
+        "name": "Boa Vista"
+      },
+      {
+        "name": "Maio"
+      },
+      {
+        "name": "Santiago"
+      },
+      {
+        "name": "Fogo"
+      },
+      {
+        "name": "Brava"
+      }
+  },
+  {
     "name": "Cambodia",
     "states": [
       {
@@ -1996,6 +2027,9 @@
       },
       {
         "name": "Takeo"
+      },
+      {
+        "name": "Tboung Khmum"
       }
     ]
   },
@@ -2079,87 +2113,25 @@
     ]
   },
   {
-    "name": "Cape Verde",
-    "states": [
-      {
-        "name": "Barlavento Islands"
-      },
-      {
-        "name": "Boa Vista"
-      },
-      {
-        "name": "Brava"
-      },
-      {
-        "name": "Maio"
-      },
-      {
-        "name": "Mosteiros"
-      },
-      {
-        "name": "Paul"
-      },
-      {
-        "name": "Porto Novo"
-      },
-      {
-        "name": "Praia"
-      },
-      {
-        "name": "Ribeira Brava"
-      },
-      {
-        "name": "Ribeira Grande"
-      },
-      {
-        "name": "Ribeira Grande de Santiago"
-      },
-      {
-        "name": "Sal"
-      },
-      {
-        "name": "Santa Catarina"
-      },
-      {
-        "name": "Santa Catarina do Fogo"
-      },
-      {
-        "name": "Santa Cruz"
-      },
-      {
-        "name": "São Domingos"
-      },
-      {
-        "name": "São Filipe"
-      },
-      {
-        "name": "São Lourenço dos Órgãos"
-      },
-      {
-        "name": "São Miguel"
-      },
-      {
-        "name": "São Vicente"
-      },
-      {
-        "name": "Sotavento Islands"
-      },
-      {
-        "name": "Tarrafal"
-      },
-      {
-        "name": "Tarrafal de São Nicolau"
-      }
-    ]
-  },
-  {
     "name": "Cayman Islands",
     "states": [
       {
-        "name": "Cayman Brac"
+        "name": "Bodden Town"
       },
       {
-        "name": "Grand Cayman"
+        "name": "East End"
+      },
+      {
+        "name": "George Town"
+      },
+      {
+        "name": "North Side"
+      },
+      {
+        "name": "West Bay"
+      },
+      {
+        "name": "Cayman Brac"
       },
       {
         "name": "Little Cayman"
@@ -2171,9 +2143,6 @@
     "states": [
       {
         "name": "Bamingui-Bangoran"
-      },
-      {
-        "name": "Bangui"
       },
       {
         "name": "Basse-Kotto"
@@ -2188,7 +2157,13 @@
         "name": "Kémo"
       },
       {
+        "name": "Lim-Pendé"
+      },
+      {
         "name": "Lobaye"
+      },
+      {
+        "name": "Mambéré"
       },
       {
         "name": "Mambéré-Kadéï"
@@ -2210,6 +2185,9 @@
       },
       {
         "name": "Ouham"
+      },
+      {
+        "name": "Ouham-Fafa"
       },
       {
         "name": "Ouham-Pendé"
@@ -2299,50 +2277,170 @@
   {
     "name": "Chile",
     "states": [
-      {
-        "name": "Aisén del General Carlos Ibañez del Campo"
+            {
+        "name": "Antártica Chilena"
       },
       {
         "name": "Antofagasta"
       },
       {
-        "name": "Arica y Parinacota"
+        "name": "Arauco"
       },
       {
-        "name": "Atacama"
+        "name": "Arica"
+      },
+      {
+        "name": "Aysén"
       },
       {
         "name": "Biobío"
       },
       {
-        "name": "Coquimbo"
+        "name": "Cachapoal"
       },
       {
-        "name": "La Araucanía"
+        "name": "Capitán Prat"
       },
       {
-        "name": "Libertador General Bernardo O'Higgins"
+        "name": "Cardenal Caro"
       },
       {
-        "name": "Los Lagos"
+        "name": "Cauquenes"
       },
       {
-        "name": "Los Ríos"
+        "name": "Cautin"
       },
       {
-        "name": "Magallanes y de la Antártica Chilena"
+        "name": "Chacabuco"
       },
       {
-        "name": "Maule"
+        "name": "Chañaral"
       },
       {
-        "name": "Ñuble"
+        "name": "Chiloé"
       },
       {
-        "name": "Región Metropolitana de Santiago"
+        "name": "Choapa"
       },
       {
-        "name": "Tarapacá"
+        "name": "Colchagua"
+      },
+      {
+        "name": "Concepción"
+      },
+      {
+        "name": "Copiapó"
+      },
+      {
+        "name": "Cordillera"
+      },
+      {
+        "name": "Coyhaique"
+      },
+      {
+        "name": "Curicó"
+      },
+      {
+        "name": "Diguillín"
+      },
+      {
+        "name": "El Loa"
+      },
+      {
+        "name": "El Ranco"
+      },
+      {
+        "name": "Elqui"
+      },
+      {
+        "name": "General Carrera"
+      },
+      {
+        "name": "Huasco"
+      },
+      {
+        "name": "Iquique"
+      },
+      {
+        "name": "Isla de Pascua"
+      },
+      {
+        "name": "Itata"
+      },
+      {
+        "name": "Limarí"
+      },
+      {
+        "name": "Linares"
+      },
+      {
+        "name": "Llanquihue"
+      },
+      {
+        "name": "Los Andes"
+      },
+      {
+        "name": "Magallanes"
+      },
+      {
+        "name": "Maipo"
+      },
+      {
+        "name": "Malleco"
+      },
+      {
+        "name": "Marga Marga"
+      },
+      {
+        "name": "Melipilla"
+      },
+      {
+        "name": "Osorno"
+      },
+      {
+        "name": "Palena"
+      },
+      {
+        "name": "Parinacota"
+      },
+      {
+        "name": "Petorca"
+      },
+      {
+        "name": "Punilla"
+      },
+      {
+        "name": "Quillota"
+      },
+      {
+        "name": "San Antonio"
+      },
+      {
+        "name": "San Felipe de Aconcagua"
+      },
+      {
+        "name": "Santiago"
+      },
+      {
+        "name": "Talagante"
+      },
+      {
+        "name": "Talca"
+      },
+      {
+        "name": "Tamarugal"
+      },
+      {
+        "name": "Tierra del Fuego"
+      },
+      {
+        "name": "Tocopilla"
+      },
+      {
+        "name": "Última Esperanza"
+      },
+      {
+        "name": "Valdivia"
       },
       {
         "name": "Valparaíso"
@@ -2389,7 +2487,7 @@
         "name": "Henan"
       },
       {
-        "name": "Hong Kong SAR"
+        "name": "Hong Kong"
       },
       {
         "name": "Hubei"
@@ -2413,7 +2511,7 @@
         "name": "Liaoning"
       },
       {
-        "name": "Macau SAR"
+        "name": "Macau"
       },
       {
         "name": "Ningxia Huizu"
@@ -2437,9 +2535,6 @@
         "name": "Sichuan"
       },
       {
-        "name": "Taiwan"
-      },
-      {
         "name": "Tianjin"
       },
       {
@@ -2457,14 +2552,6 @@
     ]
   },
   {
-    "name": "Christmas Island",
-    "states": []
-  },
-  {
-    "name": "Cocos (Keeling) Islands",
-    "states": []
-  },
-  {
     "name": "Colombia",
     "states": [
       {
@@ -2480,7 +2567,7 @@
         "name": "Atlántico"
       },
       {
-        "name": "Bogotá D.C."
+        "name": "Bogotá"
       },
       {
         "name": "Bolívar"
@@ -2546,7 +2633,7 @@
         "name": "Risaralda"
       },
       {
-        "name": "San Andrés, Providencia y Santa Catalina"
+        "name": "San Andrés and Providencia"
       },
       {
         "name": "Santander"
@@ -2586,599 +2673,7 @@
     "name": "Congo",
     "states": [
       {
-        "name": "Bouenza"
-      },
-      {
-        "name": "Brazzaville"
-      },
-      {
-        "name": "Cuvette"
-      },
-      {
-        "name": "Cuvette-Ouest"
-      },
-      {
-        "name": "Kouilou"
-      },
-      {
-        "name": "Lékoumou"
-      },
-      {
-        "name": "Likouala"
-      },
-      {
-        "name": "Niari"
-      },
-      {
-        "name": "Plateaux"
-      },
-      {
-        "name": "Pointe-Noire"
-      },
-      {
-        "name": "Pool"
-      },
-      {
-        "name": "Sangha"
-      }
-    ]
-  },
-  {
-    "name": "Cook Islands",
-    "states": []
-  },
-  {
-    "name": "Costa Rica",
-    "states": [
-      {
-        "name": "Alajuela"
-      },
-      {
-        "name": "Cartago"
-      },
-      {
-        "name": "Guanacaste"
-      },
-      {
-        "name": "Heredia"
-      },
-      {
-        "name": "Limón"
-      },
-      {
-        "name": "Puntarenas"
-      },
-      {
-        "name": "San José"
-      }
-    ]
-  },
-  {
-    "name": "Cote D'Ivoire (Ivory Coast)",
-    "states": [
-      {
-        "name": "Abidjan"
-      },
-      {
-        "name": "Agnéby"
-      },
-      {
-        "name": "Bafing"
-      },
-      {
-        "name": "Bas-Sassandra"
-      },
-      {
-        "name": "Bas-Sassandra"
-      },
-      {
-        "name": "Comoé"
-      },
-      {
-        "name": "Denguélé"
-      },
-      {
-        "name": "Denguélé"
-      },
-      {
-        "name": "Dix-Huit Montagnes"
-      },
-      {
-        "name": "Fromager"
-      },
-      {
-        "name": "Gôh-Djiboua"
-      },
-      {
-        "name": "Haut-Sassandra"
-      },
-      {
-        "name": "Lacs"
-      },
-      {
-        "name": "Lacs"
-      },
-      {
-        "name": "Lagunes"
-      },
-      {
-        "name": "Lagunes"
-      },
-      {
-        "name": "Marahoué"
-      },
-      {
-        "name": "Montagnes"
-      },
-      {
-        "name": "Moyen-Cavally"
-      },
-      {
-        "name": "Moyen-Comoé"
-      },
-      {
-        "name": "N'zi-Comoé"
-      },
-      {
-        "name": "Sassandra-Marahoué"
-      },
-      {
-        "name": "Savanes"
-      },
-      {
-        "name": "Sud-Bandama"
-      },
-      {
-        "name": "Sud-Comoé"
-      },
-      {
-        "name": "Vallée du Bandama"
-      },
-      {
-        "name": "Vallée du Bandama"
-      },
-      {
-        "name": "Woroba"
-      },
-      {
-        "name": "Worodougou"
-      },
-      {
-        "name": "Yamoussoukro"
-      },
-      {
-        "name": "Zanzan"
-      }
-    ]
-  },
-  {
-    "name": "Croatia",
-    "states": [
-      {
-        "name": "Bjelovar-Bilogora"
-      },
-      {
-        "name": "Brod-Posavina"
-      },
-      {
-        "name": "Dubrovnik-Neretva"
-      },
-      {
-        "name": "Istria"
-      },
-      {
-        "name": "Karlovac"
-      },
-      {
-        "name": "Koprivnica-Križevci"
-      },
-      {
-        "name": "Krapina-Zagorje"
-      },
-      {
-        "name": "Lika-Senj"
-      },
-      {
-        "name": "Međimurje"
-      },
-      {
-        "name": "Osijek-Baranja"
-      },
-      {
-        "name": "Požega-Slavonia"
-      },
-      {
-        "name": "Primorje-Gorski Kotar"
-      },
-      {
-        "name": "Šibenik-Knin"
-      },
-      {
-        "name": "Sisak-Moslavina"
-      },
-      {
-        "name": "Split-Dalmatia"
-      },
-      {
-        "name": "Varaždin"
-      },
-      {
-        "name": "Virovitica-Podravina"
-      },
-      {
-        "name": "Vukovar-Syrmia"
-      },
-      {
-        "name": "Zadar"
-      },
-      {
-        "name": "Zagreb"
-      },
-      {
-        "name": "Zagreb"
-      }
-    ]
-  },
-  {
-    "name": "Cuba",
-    "states": [
-      {
-        "name": "Artemisa"
-      },
-      {
-        "name": "Camagüey"
-      },
-      {
-        "name": "Ciego de Ávila"
-      },
-      {
-        "name": "Cienfuegos"
-      },
-      {
-        "name": "Granma"
-      },
-      {
-        "name": "Guantánamo"
-      },
-      {
-        "name": "Havana"
-      },
-      {
-        "name": "Holguín"
-      },
-      {
-        "name": "Isla de la Juventud"
-      },
-      {
-        "name": "Las Tunas"
-      },
-      {
-        "name": "Matanzas"
-      },
-      {
-        "name": "Mayabeque"
-      },
-      {
-        "name": "Pinar del Río"
-      },
-      {
-        "name": "Sancti Spíritus"
-      },
-      {
-        "name": "Santiago de Cuba"
-      },
-      {
-        "name": "Villa Clara"
-      }
-    ]
-  },
-  {
-    "name": "Curaçao",
-    "states": []
-  },
-  {
-    "name": "Cyprus",
-    "states": [
-      {
-        "name": "Famagusta (Mağusa)"
-      },
-      {
-        "name": "Kyrenia (Keryneia)"
-      },
-      {
-        "name": "Larnaca (Larnaka)"
-      },
-      {
-        "name": "Limassol (Leymasun)"
-      },
-      {
-        "name": "Nicosia (Lefkoşa)"
-      },
-      {
-        "name": "Paphos (Pafos)"
-      }
-    ]
-  },
-  {
-    "name": "Czech Republic",
-    "states": [
-      {
-        "name": "Benešov"
-      },
-      {
-        "name": "Beroun"
-      },
-      {
-        "name": "Blansko"
-      },
-      {
-        "name": "Břeclav"
-      },
-      {
-        "name": "Brno-město"
-      },
-      {
-        "name": "Brno-venkov"
-      },
-      {
-        "name": "Bruntál"
-      },
-      {
-        "name": "Česká Lípa"
-      },
-      {
-        "name": "České Budějovice"
-      },
-      {
-        "name": "Český Krumlov"
-      },
-      {
-        "name": "Cheb"
-      },
-      {
-        "name": "Chomutov"
-      },
-      {
-        "name": "Chrudim"
-      },
-      {
-        "name": "Děčín"
-      },
-      {
-        "name": "Domažlice"
-      },
-      {
-        "name": "Frýdek-Místek"
-      },
-      {
-        "name": "Havlíčkův Brod"
-      },
-      {
-        "name": "Hodonín"
-      },
-      {
-        "name": "Hradec Králové"
-      },
-      {
-        "name": "Jablonec nad Nisou"
-      },
-      {
-        "name": "Jeseník"
-      },
-      {
-        "name": "Jičín"
-      },
-      {
-        "name": "Jihlava"
-      },
-      {
-        "name": "Jihočeský kraj"
-      },
-      {
-        "name": "Jihomoravský kraj"
-      },
-      {
-        "name": "Jindřichův Hradec"
-      },
-      {
-        "name": "Karlovarský kraj"
-      },
-      {
-        "name": "Karlovy Vary"
-      },
-      {
-        "name": "Karviná"
-      },
-      {
-        "name": "Kladno"
-      },
-      {
-        "name": "Klatovy"
-      },
-      {
-        "name": "Kolín"
-      },
-      {
-        "name": "Kraj Vysočina"
-      },
-      {
-        "name": "Královéhradecký kraj"
-      },
-      {
-        "name": "Kroměříž"
-      },
-      {
-        "name": "Kutná Hora"
-      },
-      {
-        "name": "Liberec"
-      },
-      {
-        "name": "Liberecký kraj"
-      },
-      {
-        "name": "Litoměřice"
-      },
-      {
-        "name": "Louny"
-      },
-      {
-        "name": "Mělník"
-      },
-      {
-        "name": "Mladá Boleslav"
-      },
-      {
-        "name": "Moravskoslezský kraj"
-      },
-      {
-        "name": "Most"
-      },
-      {
-        "name": "Náchod"
-      },
-      {
-        "name": "Nový Jičín"
-      },
-      {
-        "name": "Nymburk"
-      },
-      {
-        "name": "Olomouc"
-      },
-      {
-        "name": "Olomoucký kraj"
-      },
-      {
-        "name": "Opava"
-      },
-      {
-        "name": "Ostrava-město"
-      },
-      {
-        "name": "Pardubice"
-      },
-      {
-        "name": "Pardubický kraj"
-      },
-      {
-        "name": "Pelhřimov"
-      },
-      {
-        "name": "Písek"
-      },
-      {
-        "name": "Plzeň-jih"
-      },
-      {
-        "name": "Plzeň-město"
-      },
-      {
-        "name": "Plzeň-sever"
-      },
-      {
-        "name": "Plzeňský kraj"
-      },
-      {
-        "name": "Prachatice"
-      },
-      {
-        "name": "Praha-východ"
-      },
-      {
-        "name": "Praha-západ"
-      },
-      {
-        "name": "Praha, Hlavní město"
-      },
-      {
-        "name": "Přerov"
-      },
-      {
-        "name": "Příbram"
-      },
-      {
-        "name": "Prostějov"
-      },
-      {
-        "name": "Rakovník"
-      },
-      {
-        "name": "Rokycany"
-      },
-      {
-        "name": "Rychnov nad Kněžnou"
-      },
-      {
-        "name": "Semily"
-      },
-      {
-        "name": "Sokolov"
-      },
-      {
-        "name": "Strakonice"
-      },
-      {
-        "name": "Středočeský kraj"
-      },
-      {
-        "name": "Šumperk"
-      },
-      {
-        "name": "Svitavy"
-      },
-      {
-        "name": "Tábor"
-      },
-      {
-        "name": "Tachov"
-      },
-      {
-        "name": "Teplice"
-      },
-      {
-        "name": "Třebíč"
-      },
-      {
-        "name": "Trutnov"
-      },
-      {
-        "name": "Uherské Hradiště"
-      },
-      {
-        "name": "Ústecký kraj"
-      },
-      {
-        "name": "Ústí nad Labem"
-      },
-      {
-        "name": "Ústí nad Orlicí"
-      },
-      {
-        "name": "Vsetín"
-      },
-      {
-        "name": "Vyškov"
-      },
-      {
-        "name": "Žďár nad Sázavou"
-      },
-      {
-        "name": "Zlín"
-      },
-      {
-        "name": "Zlínský kraj"
-      },
-      {
-        "name": "Znojmo"
-      }
-    ]
-  },
-  {
-    "name": "Democratic Republic of the Congo",
-    "states": [
-      {
-        "name": "Bas-Uélé"
+        "name": "Bas-Uele"
       },
       {
         "name": "Équateur"
@@ -3190,19 +2685,19 @@
         "name": "Haut-Lomami"
       },
       {
-        "name": "Haut-Uélé"
+        "name": "Haut-Uele"
       },
       {
         "name": "Ituri"
       },
       {
-        "name": "Kasaï"
+        "name": "Kasai"
       },
       {
-        "name": "Kasaï Central"
+        "name": "Kasai-Central"
       },
       {
-        "name": "Kasaï Oriental"
+        "name": "Kasai-Oriental"
       },
       {
         "name": "Kinshasa"
@@ -3258,22 +2753,368 @@
     ]
   },
   {
+    "name": "Cook Islands",
+    "states": [
+      {
+        "name": "Aitutaki"
+      },
+      {
+        "name": "Atiu"
+      },
+      {
+        "name": "Mangaia"
+      },
+      {
+        "name": "Manihiki"
+      },
+      {
+        "name": "Manuae"
+      },
+      {
+        "name": "Mauke"
+      },
+      {
+        "name": "Mitiaro"
+      },
+      {
+        "name": "Nassau"
+      },
+      {
+        "name": "Penrhyn (Tongareva)"
+      },
+      {
+        "name": "Pukapuka"
+      },
+      {
+        "name": "Rakahanga"
+      },
+      {
+        "name": "Rarotonga"
+      },
+      {
+        "name": "Suwarrow"
+      }
+    ]
+  },
+  {
+    "name": "Costa Rica",
+    "states": [
+      {
+        "name": "Alajuela"
+      },
+      {
+        "name": "Cartago"
+      },
+      {
+        "name": "Guanacaste"
+      },
+      {
+        "name": "Heredia"
+      },
+      {
+        "name": "Limón"
+      },
+      {
+        "name": "Puntarenas"
+      },
+      {
+        "name": "San José"
+      }
+    ]
+  },
+  {
+    "name": "Côte d’Ivoire",
+    "states": [
+      {
+        "name": "Abidjan"
+      },
+      {
+        "name": "Agnéby-Tiassa"
+      },
+      {
+        "name": "Bafing"
+      },
+      {
+        "name": "Bagoué"
+      },
+      {
+        "name": "Bélier Region"
+      },
+      {
+        "name": "Béré"
+      },
+      {
+        "name": "Bounkani"
+      },
+      {
+        "name": "Cavally"
+      },
+      {
+        "name": "Folon"
+      },
+      {
+        "name": "Gbêkê"
+      },
+      {
+        "name": "Gbôklé"
+      },
+      {
+        "name": "Gôh"
+      },
+      {
+        "name": "Gontougo"
+      },
+      {
+        "name": "Grands-Ponts"
+      },
+      {
+        "name": "Guémon"
+      },
+      {
+        "name": "Hambol"
+      },
+      {
+        "name": "Haut-Sassandra"
+      },
+      {
+        "name": "Iffou"
+      },
+      {
+        "name": "Indénié-Djuablin"
+      },
+      {
+        "name": "Kabadougou"
+      },
+      {
+        "name": "La Mé"
+      },
+      {
+        "name": "Lôh-Djiboua"
+      },
+      {
+        "name": "Marahoué"
+      },
+      {
+        "name": "Moronou"
+      },
+      {
+        "name": "Nawa"
+      },
+      {
+        "name": "N'Zi"
+      },
+      {
+        "name": "Poro"
+      },
+      {
+        "name": "San-Pédro"
+      },
+      {
+        "name": "Sud-Comoé"
+      },
+      {
+        "name": "Tchologo"
+      },
+      {
+        "name": "Tonkpi"
+      },
+      {
+        "name": "Yamoussoukro"
+      },
+      {
+        "name": "Worodougou"
+      }
+    ]
+  },
+  {
+    "name": "Croatia",
+    "states": [
+      {
+        "name": "Dalmatia"
+      },
+      {
+        "name": "Istria"
+      },
+      {
+        "name": "Kvarner"
+      },
+      {
+        "name": "Central Croatia"
+      },
+      {
+        "name": "Slavonia"
+      }
+    ]
+  },
+  {
+    "name": "Cuba",
+    "states": [
+      {
+        "name": "Artemisa"
+      },
+      {
+        "name": "Camagüey"
+      },
+      {
+        "name": "Ciego de Ávila"
+      },
+      {
+        "name": "Cienfuegos"
+      },
+      {
+        "name": "Granma"
+      },
+      {
+        "name": "Guantánamo"
+      },
+      {
+        "name": "Holguín"
+      },
+      {
+        "name": "La Habana"
+      },
+      {
+        "name": "Las Tunas"
+      },
+      {
+        "name": "Matanzas"
+      },
+      {
+        "name": "Mayabeque"
+      },
+      {
+        "name": "Pinar del Río"
+      },
+      {
+        "name": "Sancti Spíritus"
+      },
+      {
+        "name": "Santiago de Cuba"
+      },
+      {
+        "name": "Villa Clara"
+      }
+    ]
+  },
+  {
+    "name": "Curaçao",
+    "states": [
+      {
+        "name": "Bandabou"
+      },
+      {
+        "name": "Bandariba"
+      },
+      {
+        "name": "Willemstad"
+      }
+    ]
+  },
+  {
+    "name": "Cyprus",
+    "states": [
+      {
+        "name": "Famagusta"
+      },
+      {
+        "name": "Kyrenia"
+      },
+      {
+        "name": "Larnaca"
+      },
+      {
+        "name": "Limassol"
+      },
+      {
+        "name": "Nicosia"
+      },
+      {
+        "name": "Paphos"
+      }
+    ]
+  },
+  {
+    "name": "Czech Republic",
+    "states": [
+      {
+        "name": "Central Bohemian"
+      },
+      {
+        "name": "Hradec Králové"
+      },
+      {
+        "name": "Karlovy Vary"
+      },
+      {
+        "name": "Liberec"
+      },
+      {
+        "name": "Moravian-Silesian"
+      },
+      {
+        "name": "Olomouc"
+      },
+      {
+        "name": "Pardubice"
+      },
+      {
+        "name": "Plzeň"
+      },
+      {
+        "name": "Prague"
+      },
+      {
+        "name": "South Bohemian"
+      },
+      {
+        "name": "South Moravian"
+      },
+      {
+        "name": "Ústí nad Labem"
+      },
+      {
+        "name": "Vysočina"
+      },
+      {
+        "name": "Zlín"
+      }
+    ]
+  },
+  {
     "name": "Denmark",
     "states": [
       {
-        "name": "Central Denmark"
+        "name": "Bornholm"
       },
       {
-        "name": "Denmark"
+        "name": "Copenhagen City"
       },
       {
-        "name": "North Denmark"
+        "name": "Copenhagen Surroundings"
       },
       {
-        "name": "Southern Denmark"
+        "name": "East Jutland"
       },
       {
-        "name": "Zealand"
+        "name": "East Zealand"
+      },
+      {
+        "name": "Funen"
+      },
+      {
+        "name": "North Jutland"
+      },
+      {
+        "name": "North Zealand"
+      },
+      {
+        "name": "South Jutland"
+      },
+      {
+        "name": "West and South Zealand"
+      },
+      {
+        "name": "West Jutland"
       }
     ]
   },
@@ -3430,6 +3271,50 @@
       },
       {
         "name": "Valverde"
+      }
+    ]
+  },
+  {
+    "name": "East Timor",
+    "states": [
+      {
+        "name": "Aileu"
+      },
+      {
+        "name": "Ainaro"
+      },
+      {
+        "name": "Baucau"
+      },
+      {
+        "name": "Bobonaro"
+      },
+      {
+        "name": "Cova Lima"
+      },
+      {
+        "name": "Dili"
+      },
+      {
+        "name": "Ermera"
+      },
+      {
+        "name": "Lautém"
+      },
+      {
+        "name": "Liquiçá"
+      },
+      {
+        "name": "Manatuto"
+      },
+      {
+        "name": "Manufahi"
+      },
+      {
+        "name": "Oecusse"
+      },
+      {
+        "name": "Viqueque"
       }
     ]
   },
@@ -3688,7 +3573,7 @@
         "name": "Gash-Barka"
       },
       {
-        "name": "Maekel"
+        "name": "Ma'akel"
       },
       {
         "name": "Northern Red Sea"
@@ -3784,6 +3669,9 @@
         "name": "Dire Dawa"
       },
       {
+        "name": "Central Ethiopia"
+      },
+      {
         "name": "Gambela"
       },
       {
@@ -3796,7 +3684,10 @@
         "name": "Somali"
       },
       {
-        "name": "Southern Nations, Nationalities, and Peoples'"
+        "name": "South Ethiopia"
+      },
+      {
+        "name": "Southwest Ethiopia"
       },
       {
         "name": "Tigray"
@@ -10932,6 +10823,56 @@
       },
       {
         "name": "Umm Salal"
+      }
+    ]
+  },
+  {
+    "name": "Republic of Congo",
+    "states": [
+      {
+        "name": "Brazzaville"
+      },
+      {
+        "name": "Bouenza"
+      },
+      {
+        "name": "Congo-Oubangui"
+      },
+      {
+        "name": "Cuvette"
+      },
+      {
+        "name": "Cuvette-Ouest"
+      },
+      {
+        "name": "Djoué-Léfini"
+      },
+      {
+        "name": "Kouilou"
+      },
+      {
+        "name": "Lékoumou"
+      },
+      {
+        "name": "Likouala"
+      },
+      {
+        "name": "Niari"
+      },
+      {
+        "name": "Nkéni-Alima"
+      },
+      {
+        "name": "Plateaux"
+      },
+      {
+        "name": "Pointe-Noire"
+      },
+      {
+        "name": "Pool"
+      },
+      {
+        "name": "Sangha"
       }
     ]
   },
