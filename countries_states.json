@@ -1,5 +1,31 @@
 [
   {
+    "name": "Abkhazia",
+    "states": [
+      {
+        "name": "Gagra"
+      },
+      {
+        "name": "Gudauta"
+      },
+      {
+        "name": "Gali"
+      },
+      {
+        "name": "Gulripshi"
+      },
+      {
+        "name": "Ochamchira"
+      },
+      {
+        "name": "Sukhumi"
+      },
+      {
+        "name": "Tkvarcheli"
+      }
+    ]
+  },
+  {
     "name": "Afghanistan",
     "states": [
       {
@@ -107,7 +133,7 @@
     ]
   },
   {
-    "name": "Aland Islands",
+    "name": "Åland",
     "states": [
       {
         "name": "Brändö"
@@ -482,53 +508,6 @@
     ]
   },
   {
-    "name": "Anguilla",
-    "states": [
-      {
-        "name": "Blowing Point"
-      },
-      {
-        "name": "East End"
-      },
-      {
-        "name": "George Hill"
-      },
-      {
-        "name": "Island Harbour"
-      },
-      {
-        "name": "North Hill"
-      },
-      {
-        "name": "North Side"
-      },
-      {
-        "name": "Sandy Ground"
-      },
-      {
-        "name": "Sandy Hill"
-      },
-      {
-        "name": "South Hill"
-      },
-      {
-        "name": "Stoney Ground"
-      },
-      {
-        "name": "The Farrington"
-      },
-      {
-        "name": "The Quarter"
-      },
-      {
-        "name": "The Valley"
-      },
-      {
-        "name": "West End"
-      }
-    ]
-  },
-  {
     "name": "Antarctica",
     "states": []
   },
@@ -673,35 +652,6 @@
       },
       {
         "name": "Yerevan"
-      }
-    ]
-  },
-  {
-    "name": "Aruba",
-    "states": [
-      {
-        "name": "Noord"
-      },
-      {
-        "name": "Oranjestad East"
-      },
-      {
-        "name": "Oranjestad West"
-      },
-      {
-        "name": "Paradera"
-      },
-      {
-        "name": "San Nicolas North"
-      },
-      {
-        "name": "San Nicolas South"
-      },
-      {
-        "name": "Santa Cruz"
-      },
-      {
-        "name": "Savaneta"
       }
     ]
   },
@@ -1310,38 +1260,6 @@
     ]
   },
   {
-    "name": "Bermuda",
-    "states": [
-      {
-        "name": "Devonshire"
-      },
-      {
-        "name": "Hamilton"
-      },
-      {
-        "name": "Paget"
-      },
-      {
-        "name": "Pembroke"
-      },
-      {
-        "name": "Saint George's"
-      },
-      {
-        "name": "Sandys"
-      },
-      {
-        "name": "Smith's"
-      },
-      {
-        "name": "Southampton"
-      },
-      {
-        "name": "Warwick"
-      }
-    ]
-  },
-  {
     "name": "Bhutan",
     "states": [
       {
@@ -1597,23 +1515,6 @@
       },
       {
         "name": "Tocantins"
-      }
-    ]
-  },
-  {
-    "name": "British Virgin Islands",
-    "states": [
-      {
-        "name": "Tortola"
-      },
-      {
-        "name": "Virgin Gorda"
-      },
-      {
-        "name": "Anegada"
-      },
-      {
-        "name": "Jost Van Dyke"
       }
     ]
   },
@@ -1923,37 +1824,6 @@
     ]
   },
   {
-    "name": "Cabo Verde",
-    "states": [
-      {
-        "name": "Santo Antão"
-      },
-      {
-        "name": "São Vicente"
-      },
-      {
-        "name": "São Nicolau"
-      },
-      {
-        "name": "Sal"
-      },
-      {
-        "name": "Boa Vista"
-      },
-      {
-        "name": "Maio"
-      },
-      {
-        "name": "Santiago"
-      },
-      {
-        "name": "Fogo"
-      },
-      {
-        "name": "Brava"
-      }
-  },
-  {
     "name": "Cambodia",
     "states": [
       {
@@ -2113,30 +1983,35 @@
     ]
   },
   {
-    "name": "Cayman Islands",
+    "name": "Capo Verde",
     "states": [
       {
-        "name": "Bodden Town"
+        "name": "Santo Antão"
       },
       {
-        "name": "East End"
+        "name": "São Vicente"
       },
       {
-        "name": "George Town"
+        "name": "São Nicolau"
       },
       {
-        "name": "North Side"
+        "name": "Sal"
       },
       {
-        "name": "West Bay"
+        "name": "Boa Vista"
       },
       {
-        "name": "Cayman Brac"
+        "name": "Maio"
       },
       {
-        "name": "Little Cayman"
+        "name": "Santiago"
+      },
+      {
+        "name": "Fogo"
+      },
+      {
+        "name": "Brava"
       }
-    ]
   },
   {
     "name": "Central African Republic",
@@ -2342,6 +2217,9 @@
       },
       {
         "name": "Diguillín"
+      },
+      {
+        "name": "Easter Island"
       },
       {
         "name": "El Loa"
@@ -2670,89 +2548,6 @@
     ]
   },
   {
-    "name": "Congo",
-    "states": [
-      {
-        "name": "Bas-Uele"
-      },
-      {
-        "name": "Équateur"
-      },
-      {
-        "name": "Haut-Katanga"
-      },
-      {
-        "name": "Haut-Lomami"
-      },
-      {
-        "name": "Haut-Uele"
-      },
-      {
-        "name": "Ituri"
-      },
-      {
-        "name": "Kasai"
-      },
-      {
-        "name": "Kasai-Central"
-      },
-      {
-        "name": "Kasai-Oriental"
-      },
-      {
-        "name": "Kinshasa"
-      },
-      {
-        "name": "Kongo Central"
-      },
-      {
-        "name": "Kwango"
-      },
-      {
-        "name": "Kwilu"
-      },
-      {
-        "name": "Lomami"
-      },
-      {
-        "name": "Lualaba"
-      },
-      {
-        "name": "Mai-Ndombe"
-      },
-      {
-        "name": "Maniema"
-      },
-      {
-        "name": "Mongala"
-      },
-      {
-        "name": "Nord-Kivu"
-      },
-      {
-        "name": "Nord-Ubangi"
-      },
-      {
-        "name": "Sankuru"
-      },
-      {
-        "name": "Sud-Kivu"
-      },
-      {
-        "name": "Sud-Ubangi"
-      },
-      {
-        "name": "Tanganyika"
-      },
-      {
-        "name": "Tshopo"
-      },
-      {
-        "name": "Tshuapa"
-      }
-    ]
-  },
-  {
     "name": "Cook Islands",
     "states": [
       {
@@ -2819,110 +2614,6 @@
       },
       {
         "name": "San José"
-      }
-    ]
-  },
-  {
-    "name": "Côte d’Ivoire",
-    "states": [
-      {
-        "name": "Abidjan"
-      },
-      {
-        "name": "Agnéby-Tiassa"
-      },
-      {
-        "name": "Bafing"
-      },
-      {
-        "name": "Bagoué"
-      },
-      {
-        "name": "Bélier Region"
-      },
-      {
-        "name": "Béré"
-      },
-      {
-        "name": "Bounkani"
-      },
-      {
-        "name": "Cavally"
-      },
-      {
-        "name": "Folon"
-      },
-      {
-        "name": "Gbêkê"
-      },
-      {
-        "name": "Gbôklé"
-      },
-      {
-        "name": "Gôh"
-      },
-      {
-        "name": "Gontougo"
-      },
-      {
-        "name": "Grands-Ponts"
-      },
-      {
-        "name": "Guémon"
-      },
-      {
-        "name": "Hambol"
-      },
-      {
-        "name": "Haut-Sassandra"
-      },
-      {
-        "name": "Iffou"
-      },
-      {
-        "name": "Indénié-Djuablin"
-      },
-      {
-        "name": "Kabadougou"
-      },
-      {
-        "name": "La Mé"
-      },
-      {
-        "name": "Lôh-Djiboua"
-      },
-      {
-        "name": "Marahoué"
-      },
-      {
-        "name": "Moronou"
-      },
-      {
-        "name": "Nawa"
-      },
-      {
-        "name": "N'Zi"
-      },
-      {
-        "name": "Poro"
-      },
-      {
-        "name": "San-Pédro"
-      },
-      {
-        "name": "Sud-Comoé"
-      },
-      {
-        "name": "Tchologo"
-      },
-      {
-        "name": "Tonkpi"
-      },
-      {
-        "name": "Yamoussoukro"
-      },
-      {
-        "name": "Worodougou"
       }
     ]
   },
@@ -3081,6 +2772,89 @@
     ]
   },
   {
+    "name": "Democratic Republic of the Congo",
+    "states": [
+      {
+        "name": "Bas-Uele"
+      },
+      {
+        "name": "Équateur"
+      },
+      {
+        "name": "Haut-Katanga"
+      },
+      {
+        "name": "Haut-Lomami"
+      },
+      {
+        "name": "Haut-Uele"
+      },
+      {
+        "name": "Ituri"
+      },
+      {
+        "name": "Kasai"
+      },
+      {
+        "name": "Kasai-Central"
+      },
+      {
+        "name": "Kasai-Oriental"
+      },
+      {
+        "name": "Kinshasa"
+      },
+      {
+        "name": "Kongo Central"
+      },
+      {
+        "name": "Kwango"
+      },
+      {
+        "name": "Kwilu"
+      },
+      {
+        "name": "Lomami"
+      },
+      {
+        "name": "Lualaba"
+      },
+      {
+        "name": "Mai-Ndombe"
+      },
+      {
+        "name": "Maniema"
+      },
+      {
+        "name": "Mongala"
+      },
+      {
+        "name": "Nord-Kivu"
+      },
+      {
+        "name": "Nord-Ubangi"
+      },
+      {
+        "name": "Sankuru"
+      },
+      {
+        "name": "Sud-Kivu"
+      },
+      {
+        "name": "Sud-Ubangi"
+      },
+      {
+        "name": "Tanganyika"
+      },
+      {
+        "name": "Tshopo"
+      },
+      {
+        "name": "Tshuapa"
+      }
+    ]
+  },
+  {
     "name": "Denmark",
     "states": [
       {
@@ -3099,7 +2873,13 @@
         "name": "East Zealand"
       },
       {
+        "name": "Faroe Islands"
+      },
+      {
         "name": "Funen"
+      },
+      {
+        "name": "Greenland"
       },
       {
         "name": "North Jutland"
@@ -3695,34 +3475,7 @@
     ]
   },
   {
-    "name": "Falkland Islands",
-    "states": []
-  },
-  {
-    "name": "Faroe Islands",
-    "states": [
-      {
-        "name": "Eysturoy"
-      },
-      {
-        "name": "Northern Isles"
-      },
-      {
-        "name": "Sandoy"
-      },
-      {
-        "name": "Streymoy"
-      },
-      {
-        "name": "Suðuroy"
-      },
-      {
-        "name": "Vágar"
-      }
-    ]
-  },
-  {
-    "name": "Fiji Islands",
+    "name": "Fiji",
     "states": [
       {
         "name": "Ba"
@@ -4220,34 +3973,6 @@
     ]
   },
   {
-    "name": "French Guiana",
-    "states": []
-  },
-  {
-    "name": "French Polynesia",
-    "states": [
-      {
-        "name": "Austral Islands"
-      },
-      {
-        "name": "Leeward Islands"
-      },
-      {
-        "name": "Marquesas Islands"
-      },
-      {
-        "name": "Tuamotu-Gambier"
-      },
-      {
-        "name": "Windward Islands"
-      }
-    ]
-  },
-  {
-    "name": "French Southern Territories",
-    "states": []
-  },
-  {
     "name": "Gabon",
     "states": [
       {
@@ -4277,6 +4002,11 @@
       {
         "name": "Woleu-Ntem"
       }
+    ]
+  },
+  {
+    "name": "Gambria",
+    "states": [
     ]
   },
   {
@@ -4427,146 +4157,8 @@
     ]
   },
   {
-    "name": "Gibraltar",
-    "states": []
-  },
-  {
     "name": "Greece",
     "states": [
-      {
-        "name": "Achaea"
-      },
-      {
-        "name": "Aetolia-Acarnania"
-      },
-      {
-        "name": "Arcadia"
-      },
-      {
-        "name": "Argolis"
-      },
-      {
-        "name": "Attica"
-      },
-      {
-        "name": "Boeotia"
-      },
-      {
-        "name": "Central Greece"
-      },
-      {
-        "name": "Central Macedonia"
-      },
-      {
-        "name": "Chania"
-      },
-      {
-        "name": "Corfu"
-      },
-      {
-        "name": "Corinthia"
-      },
-      {
-        "name": "Crete"
-      },
-      {
-        "name": "Drama"
-      },
-      {
-        "name": "East Attica"
-      },
-      {
-        "name": "East Macedonia and Thrace"
-      },
-      {
-        "name": "Epirus"
-      },
-      {
-        "name": "Euboea"
-      },
-      {
-        "name": "Grevena"
-      },
-      {
-        "name": "Imathia "
-      },
-      {
-        "name": "Ioannina"
-      },
-      {
-        "name": "Ionian Islands"
-      },
-      {
-        "name": "Karditsa"
-      },
-      {
-        "name": "Kastoria"
-      },
-      {
-        "name": "Kefalonia"
-      },
-      {
-        "name": "Kilkis"
-      },
-      {
-        "name": "Kozani"
-      },
-      {
-        "name": "Laconia"
-      },
-      {
-        "name": "Larissa"
-      },
-      {
-        "name": "Lefkada"
-      },
-      {
-        "name": "Pella"
-      },
-      {
-        "name": "Peloponnese"
-      },
-      {
-        "name": "Phthiotis"
-      },
-      {
-        "name": "Preveza"
-      },
-      {
-        "name": "Serres"
-      },
-      {
-        "name": "South Aegean"
-      },
-      {
-        "name": "Thessaloniki"
-      },
-      {
-        "name": "West Greece"
-      },
-      {
-        "name": "West Macedonia"
-      }
-    ]
-  },
-  {
-    "name": "Greenland",
-    "states": [
-      {
-        "name": "Avannaata"
-      },
-      {
-        "name": "Kujalleq"
-      },
-      {
-        "name": "Qeqertalik"
-      },
-      {
-        "name": "Qeqqata"
-      },
-      {
-        "name": "Sermersooq"
-      }
     ]
   },
   {
@@ -4592,79 +4184,6 @@
       },
       {
         "name": "Saint Patrick"
-      }
-    ]
-  },
-  {
-    "name": "Guadeloupe",
-    "states": [
-      {
-        "name": "Basse-Terre"
-      },
-      {
-        "name": "Pointe-à-Pitre"
-      }
-    ]
-  },
-  {
-    "name": "Guam",
-    "states": [
-      {
-        "name": "Agana Heights"
-      },
-      {
-        "name": "Asan-Maina"
-      },
-      {
-        "name": "Barrigada"
-      },
-      {
-        "name": "Chalan Pago-Ordot"
-      },
-      {
-        "name": "Dededo"
-      },
-      {
-        "name": "Hågat"
-      },
-      {
-        "name": "Hagåtña"
-      },
-      {
-        "name": "Inarajan (Inalåhan)"
-      },
-      {
-        "name": "Mangilao"
-      },
-      {
-        "name": "Merizo (Malesso)"
-      },
-      {
-        "name": "Mongmong-Toto-Maite"
-      },
-      {
-        "name": "Piti"
-      },
-      {
-        "name": "Santa Rita (Sånta Rita-Sumai)"
-      },
-      {
-        "name": "Sinajana"
-      },
-      {
-        "name": "Talofofo (Talo'fo'fo)"
-      },
-      {
-        "name": "Tamuning"
-      },
-      {
-        "name": "Umatac (Humåtak)"
-      },
-      {
-        "name": "Yigo"
-      },
-      {
-        "name": "Yona"
       }
     ]
   },
@@ -4736,47 +4255,6 @@
       },
       {
         "name": "Zacapa"
-      }
-    ]
-  },
-  {
-    "name": "Guernsey",
-    "states": [
-      {
-        "name": "Alderney"
-      },
-      {
-        "name": "Castel"
-      },
-      {
-        "name": "Forest"
-      },
-      {
-        "name": "Sark"
-      },
-      {
-        "name": "St Andrew"
-      },
-      {
-        "name": "St Martin"
-      },
-      {
-        "name": "St Peter Port"
-      },
-      {
-        "name": "St Pierre du Bois"
-      },
-      {
-        "name": "St Sampson"
-      },
-      {
-        "name": "St Saviour"
-      },
-      {
-        "name": "Torteval"
-      },
-      {
-        "name": "Vale"
       }
     ]
   },
@@ -5017,10 +4495,6 @@
     ]
   },
   {
-    "name": "Heard Island and McDonald Islands",
-    "states": []
-  },
-  {
     "name": "Honduras",
     "states": [
       {
@@ -5076,65 +4550,6 @@
       },
       {
         "name": "Yoro"
-      }
-    ]
-  },
-  {
-    "name": "Hong Kong S.A.R.",
-    "states": [
-      {
-        "name": "Central and Western"
-      },
-      {
-        "name": "Eastern"
-      },
-      {
-        "name": "Islands"
-      },
-      {
-        "name": "Kowloon City"
-      },
-      {
-        "name": "Kwai Tsing"
-      },
-      {
-        "name": "Kwun Tong"
-      },
-      {
-        "name": "North"
-      },
-      {
-        "name": "Sai Kung"
-      },
-      {
-        "name": "Sha Tin"
-      },
-      {
-        "name": "Sham Shui Po"
-      },
-      {
-        "name": "Southern"
-      },
-      {
-        "name": "Tai Po"
-      },
-      {
-        "name": "Tsuen Wan"
-      },
-      {
-        "name": "Tuen Mun"
-      },
-      {
-        "name": "Wan Chai"
-      },
-      {
-        "name": "Wong Tai Sin"
-      },
-      {
-        "name": "Yau Tsim Mong"
-      },
-      {
-        "name": "Yuen Long"
       }
     ]
   },
@@ -6147,6 +5562,110 @@
     ]
   },
   {
+    "name": "Ivory Coast",
+    "states": [
+      {
+        "name": "Abidjan"
+      },
+      {
+        "name": "Agnéby-Tiassa"
+      },
+      {
+        "name": "Bafing"
+      },
+      {
+        "name": "Bagoué"
+      },
+      {
+        "name": "Bélier Region"
+      },
+      {
+        "name": "Béré"
+      },
+      {
+        "name": "Bounkani"
+      },
+      {
+        "name": "Cavally"
+      },
+      {
+        "name": "Folon"
+      },
+      {
+        "name": "Gbêkê"
+      },
+      {
+        "name": "Gbôklé"
+      },
+      {
+        "name": "Gôh"
+      },
+      {
+        "name": "Gontougo"
+      },
+      {
+        "name": "Grands-Ponts"
+      },
+      {
+        "name": "Guémon"
+      },
+      {
+        "name": "Hambol"
+      },
+      {
+        "name": "Haut-Sassandra"
+      },
+      {
+        "name": "Iffou"
+      },
+      {
+        "name": "Indénié-Djuablin"
+      },
+      {
+        "name": "Kabadougou"
+      },
+      {
+        "name": "La Mé"
+      },
+      {
+        "name": "Lôh-Djiboua"
+      },
+      {
+        "name": "Marahoué"
+      },
+      {
+        "name": "Moronou"
+      },
+      {
+        "name": "Nawa"
+      },
+      {
+        "name": "N'Zi"
+      },
+      {
+        "name": "Poro"
+      },
+      {
+        "name": "San-Pédro"
+      },
+      {
+        "name": "Sud-Comoé"
+      },
+      {
+        "name": "Tchologo"
+      },
+      {
+        "name": "Tonkpi"
+      },
+      {
+        "name": "Yamoussoukro"
+      },
+      {
+        "name": "Worodougou"
+      }
+    ]
+  },
+  {
     "name": "Jamaica",
     "states": [
       {
@@ -6336,47 +5855,6 @@
       },
       {
         "name": "Yamanashi"
-      }
-    ]
-  },
-  {
-    "name": "Jersey",
-    "states": [
-      {
-        "name": "Grouville"
-      },
-      {
-        "name": "St Brelade"
-      },
-      {
-        "name": "St Clement"
-      },
-      {
-        "name": "St Helier"
-      },
-      {
-        "name": "St John"
-      },
-      {
-        "name": "St Lawrence"
-      },
-      {
-        "name": "St Martin"
-      },
-      {
-        "name": "St Mary"
-      },
-      {
-        "name": "St Ouen"
-      },
-      {
-        "name": "St Peter"
-      },
-      {
-        "name": "St Saviour"
-      },
-      {
-        "name": "Trinity"
       }
     ]
   },
@@ -7388,10 +6866,6 @@
     ]
   },
   {
-    "name": "Macau S.A.R.",
-    "states": []
-  },
-  {
     "name": "Madagascar",
     "states": [
       {
@@ -7890,29 +7364,6 @@
     ]
   },
   {
-    "name": "Man (Isle of)",
-    "states": [
-      {
-        "name": "Ayre"
-      },
-      {
-        "name": "Garff"
-      },
-      {
-        "name": "Glenfaba"
-      },
-      {
-        "name": "Michael"
-      },
-      {
-        "name": "Middle"
-      },
-      {
-        "name": "Rushen"
-      }
-    ]
-  },
-  {
     "name": "Marshall Islands",
     "states": [
       {
@@ -7920,23 +7371,6 @@
       },
       {
         "name": "Ratak"
-      }
-    ]
-  },
-  {
-    "name": "Martinique",
-    "states": [
-      {
-        "name": "Fort-de-France"
-      },
-      {
-        "name": "La Trinité"
-      },
-      {
-        "name": "Le Marin"
-      },
-      {
-        "name": "Saint-Pierre"
       }
     ]
   },
@@ -8028,62 +7462,6 @@
       },
       {
         "name": "Savanne"
-      }
-    ]
-  },
-  {
-    "name": "Mayotte",
-    "states": [
-      {
-        "name": "Acoua"
-      },
-      {
-        "name": "Bandraboua"
-      },
-      {
-        "name": "Bandrélé"
-      },
-      {
-        "name": "Boueni"
-      },
-      {
-        "name": "Chiconi"
-      },
-      {
-        "name": "Chirongui"
-      },
-      {
-        "name": "Dembeni"
-      },
-      {
-        "name": "Dzaoudzi"
-      },
-      {
-        "name": "Kani Keli"
-      },
-      {
-        "name": "Koungou"
-      },
-      {
-        "name": "M'Tsangamouji"
-      },
-      {
-        "name": "Mamoudzou"
-      },
-      {
-        "name": "Mtsamboro"
-      },
-      {
-        "name": "Ouangani"
-      },
-      {
-        "name": "Pamandzi"
-      },
-      {
-        "name": "Sada"
-      },
-      {
-        "name": "Tsingoni"
       }
     ]
   },
@@ -8468,20 +7846,6 @@
       },
       {
         "name": "Žabljak"
-      }
-    ]
-  },
-  {
-    "name": "Montserrat",
-    "states": [
-      {
-        "name": "Saint Anthony"
-      },
-      {
-        "name": "Saint Georges"
-      },
-      {
-        "name": "Saint Peter"
       }
     ]
   },
@@ -9010,20 +8374,6 @@
     ]
   },
   {
-    "name": "New Caledonia",
-    "states": [
-      {
-        "name": "Loyalty Islands Province"
-      },
-      {
-        "name": "North Province"
-      },
-      {
-        "name": "South Province"
-      }
-    ]
-  },
-  {
     "name": "New Zealand",
     "states": [
       {
@@ -9325,10 +8675,6 @@
     ]
   },
   {
-    "name": "Norfolk Island",
-    "states": []
-  },
-  {
     "name": "North Korea",
     "states": [
       {
@@ -9624,7 +8970,7 @@
     ]
   },
   {
-    "name": "Northern Mariana Islands",
+    "name": "Northern Cyprus",
     "states": []
   },
   {
@@ -9798,7 +9144,7 @@
     ]
   },
   {
-    "name": "Palestinian Territory Occupied",
+    "name": "Palestine",
     "states": [
       {
         "name": "Bethlehem"
@@ -10407,10 +9753,6 @@
     ]
   },
   {
-    "name": "Pitcairn Island",
-    "states": []
-  },
-  {
     "name": "Poland",
     "states": [
       {
@@ -10529,275 +9871,6 @@
     ]
   },
   {
-    "name": "Puerto Rico",
-    "states": [
-      {
-        "name": "Adjuntas"
-      },
-      {
-        "name": "Aguada"
-      },
-      {
-        "name": "Aguadilla"
-      },
-      {
-        "name": "Aguas Buenas"
-      },
-      {
-        "name": "Aibonito"
-      },
-      {
-        "name": "Añasco"
-      },
-      {
-        "name": "Arecibo"
-      },
-      {
-        "name": "Arecibo"
-      },
-      {
-        "name": "Arroyo"
-      },
-      {
-        "name": "Barceloneta"
-      },
-      {
-        "name": "Barranquitas"
-      },
-      {
-        "name": "Bayamon"
-      },
-      {
-        "name": "Bayamón"
-      },
-      {
-        "name": "Cabo Rojo"
-      },
-      {
-        "name": "Caguas"
-      },
-      {
-        "name": "Caguas"
-      },
-      {
-        "name": "Camuy"
-      },
-      {
-        "name": "Canóvanas"
-      },
-      {
-        "name": "Carolina"
-      },
-      {
-        "name": "Carolina"
-      },
-      {
-        "name": "Cataño"
-      },
-      {
-        "name": "Cayey"
-      },
-      {
-        "name": "Ceiba"
-      },
-      {
-        "name": "Ciales"
-      },
-      {
-        "name": "Cidra"
-      },
-      {
-        "name": "Coamo"
-      },
-      {
-        "name": "Comerío"
-      },
-      {
-        "name": "Corozal"
-      },
-      {
-        "name": "Culebra"
-      },
-      {
-        "name": "Dorado"
-      },
-      {
-        "name": "Fajardo"
-      },
-      {
-        "name": "Florida"
-      },
-      {
-        "name": "Guánica"
-      },
-      {
-        "name": "Guayama"
-      },
-      {
-        "name": "Guayanilla"
-      },
-      {
-        "name": "Guaynabo"
-      },
-      {
-        "name": "Guaynabo"
-      },
-      {
-        "name": "Gurabo"
-      },
-      {
-        "name": "Hatillo"
-      },
-      {
-        "name": "Hormigueros"
-      },
-      {
-        "name": "Humacao"
-      },
-      {
-        "name": "Isabela"
-      },
-      {
-        "name": "Jayuya"
-      },
-      {
-        "name": "Juana Díaz"
-      },
-      {
-        "name": "Juncos"
-      },
-      {
-        "name": "Lajas"
-      },
-      {
-        "name": "Lares"
-      },
-      {
-        "name": "Las Marías"
-      },
-      {
-        "name": "Las Piedras"
-      },
-      {
-        "name": "Loíza"
-      },
-      {
-        "name": "Luquillo"
-      },
-      {
-        "name": "Manatí"
-      },
-      {
-        "name": "Maricao"
-      },
-      {
-        "name": "Maunabo"
-      },
-      {
-        "name": "Mayagüez"
-      },
-      {
-        "name": "Mayagüez"
-      },
-      {
-        "name": "Moca"
-      },
-      {
-        "name": "Morovis"
-      },
-      {
-        "name": "Naguabo"
-      },
-      {
-        "name": "Naranjito"
-      },
-      {
-        "name": "Orocovis"
-      },
-      {
-        "name": "Patillas"
-      },
-      {
-        "name": "Peñuelas"
-      },
-      {
-        "name": "Ponce"
-      },
-      {
-        "name": "Ponce"
-      },
-      {
-        "name": "Quebradillas"
-      },
-      {
-        "name": "Rincón"
-      },
-      {
-        "name": "Río Grande"
-      },
-      {
-        "name": "Sabana Grande"
-      },
-      {
-        "name": "Salinas"
-      },
-      {
-        "name": "San Germán"
-      },
-      {
-        "name": "San Juan"
-      },
-      {
-        "name": "San Juan"
-      },
-      {
-        "name": "San Lorenzo"
-      },
-      {
-        "name": "San Sebastián"
-      },
-      {
-        "name": "Santa Isabel"
-      },
-      {
-        "name": "Toa Alta"
-      },
-      {
-        "name": "Toa Baja"
-      },
-      {
-        "name": "Toa Baja"
-      },
-      {
-        "name": "Trujillo Alto"
-      },
-      {
-        "name": "Trujillo Alto"
-      },
-      {
-        "name": "Utuado"
-      },
-      {
-        "name": "Vega Alta"
-      },
-      {
-        "name": "Vega Baja"
-      },
-      {
-        "name": "Vieques"
-      },
-      {
-        "name": "Villalba"
-      },
-      {
-        "name": "Yabucoa"
-      },
-      {
-        "name": "Yauco"
-      }
-    ]
-  },
-  {
     "name": "Qatar",
     "states": [
       {
@@ -10827,7 +9900,7 @@
     ]
   },
   {
-    "name": "Republic of Congo",
+    "name": "Republic of the Congo",
     "states": [
       {
         "name": "Brazzaville"
@@ -10873,23 +9946,6 @@
       },
       {
         "name": "Sangha"
-      }
-    ]
-  },
-  {
-    "name": "Reunion",
-    "states": [
-      {
-        "name": "Saint-Benoît"
-      },
-      {
-        "name": "Saint-Denis"
-      },
-      {
-        "name": "Saint-Paul"
-      },
-      {
-        "name": "Saint-Pierre"
       }
     ]
   },
@@ -11299,35 +10355,6 @@
     ]
   },
   {
-    "name": "Saint Helena",
-    "states": [
-      {
-        "name": "Alarm Forest"
-      },
-      {
-        "name": "Blue Hill"
-      },
-      {
-        "name": "Half Tree Hollow"
-      },
-      {
-        "name": "Jamestown"
-      },
-      {
-        "name": "Levelwood"
-      },
-      {
-        "name": "Longwood"
-      },
-      {
-        "name": "Saint Paul's"
-      },
-      {
-        "name": "Sandy Bay"
-      }
-    ]
-  },
-  {
     "name": "Saint Kitts and Nevis",
     "states": [
       {
@@ -11422,10 +10449,6 @@
     ]
   },
   {
-    "name": "Saint Pierre and Miquelon",
-    "states": []
-  },
-  {
     "name": "Saint Vincent and the Grenadines",
     "states": [
       {
@@ -11447,14 +10470,6 @@
         "name": "Saint Patrick"
       }
     ]
-  },
-  {
-    "name": "Saint-Barthelemy",
-    "states": []
-  },
-  {
-    "name": "Saint-Martin (French part)",
-    "states": []
   },
   {
     "name": "Samoa",
@@ -11824,10 +10839,6 @@
         "name": "South West"
       }
     ]
-  },
-  {
-    "name": "Sint Maarten (Dutch part)",
-    "states": []
   },
   {
     "name": "Slovakia",
@@ -12617,10 +11628,6 @@
     ]
   },
   {
-    "name": "South Georgia",
-    "states": []
-  },
-  {
     "name": "South Korea",
     "states": [
       {
@@ -12674,6 +11681,11 @@
       {
         "name": "Ulsan"
       }
+    ]
+  },
+  {
+    "name": "South Ossetia",
+    "states": [
     ]
   },
   {
@@ -13123,10 +12135,6 @@
         "name": "Wanica"
       }
     ]
-  },
-  {
-    "name": "Svalbard and Jan Mayen Islands",
-    "states": []
   },
   {
     "name": "Sweden",
@@ -13883,29 +12891,6 @@
     ]
   },
   {
-    "name": "The Gambia ",
-    "states": [
-      {
-        "name": "Banjul"
-      },
-      {
-        "name": "Central River"
-      },
-      {
-        "name": "Lower River"
-      },
-      {
-        "name": "North Bank"
-      },
-      {
-        "name": "Upper River"
-      },
-      {
-        "name": "West Coast"
-      }
-    ]
-  },
-  {
     "name": "Timor-Leste",
     "states": [
       {
@@ -13965,10 +12950,6 @@
         "name": "Savanes"
       }
     ]
-  },
-  {
-    "name": "Tokelau",
-    "states": []
   },
   {
     "name": "Tonga",
@@ -14388,29 +13369,6 @@
       },
       {
         "name": "Mary"
-      }
-    ]
-  },
-  {
-    "name": "Turks and Caicos Islands",
-    "states": [
-      {
-        "name": "Grand Turk"
-      },
-      {
-        "name": "Middle Caicos"
-      },
-      {
-        "name": "North Caicos"
-      },
-      {
-        "name": "Providenciales"
-      },
-      {
-        "name": "Salt Cay"
-      },
-      {
-        "name": "South Caicos"
       }
     ]
   },
@@ -15927,38 +14885,6 @@
     ]
   },
   {
-    "name": "United States Minor Outlying Islands",
-    "states": [
-      {
-        "name": "Baker Island"
-      },
-      {
-        "name": "Howland Island"
-      },
-      {
-        "name": "Jarvis Island"
-      },
-      {
-        "name": "Johnston Atoll"
-      },
-      {
-        "name": "Kingman Reef"
-      },
-      {
-        "name": "Midway Islands"
-      },
-      {
-        "name": "Navassa Island"
-      },
-      {
-        "name": "Palmyra Atoll"
-      },
-      {
-        "name": "Wake Island"
-      }
-    ]
-  },
-  {
     "name": "Uruguay",
     "states": [
       {
@@ -16091,7 +15017,7 @@
     ]
   },
   {
-    "name": "Vatican City State",
+    "name": "Vatican City",
     "states": []
   },
   {
@@ -16367,28 +15293,6 @@
         "name": "Yên Bái"
       }
     ]
-  },
-  {
-    "name": "Virgin Islands (British)",
-    "states": []
-  },
-  {
-    "name": "Virgin Islands (US)",
-    "states": [
-      {
-        "name": "Saint Croix"
-      },
-      {
-        "name": "Saint John"
-      },
-      {
-        "name": "Saint Thomas"
-      }
-    ]
-  },
-  {
-    "name": "Wallis and Futuna Islands",
-    "states": []
   },
   {
     "name": "Western Sahara",
