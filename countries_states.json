@@ -57,7 +57,7 @@
         "name": "Kunar"
       },
       {
-        "name": "Kunduz Province"
+        "name": "Kunduz"
       },
       {
         "name": "Laghman"
@@ -96,7 +96,10 @@
         "name": "Takhar"
       },
       {
-        "name": "Urozgan"
+        "name": "Uruzgan"
+      },
+      {
+        "name": "Wardak"
       },
       {
         "name": "Zabul"
@@ -163,25 +166,7 @@
         "name": "Berat"
       },
       {
-        "name": "Berat"
-      },
-      {
-        "name": "Bulqizë"
-      },
-      {
-        "name": "Delvinë"
-      },
-      {
-        "name": "Devoll"
-      },
-      {
         "name": "Dibër"
-      },
-      {
-        "name": "Dibër"
-      },
-      {
-        "name": "Durrës"
       },
       {
         "name": "Durrës"
@@ -193,109 +178,22 @@
         "name": "Fier"
       },
       {
-        "name": "Fier"
-      },
-      {
         "name": "Gjirokastër"
-      },
-      {
-        "name": "Gjirokastër"
-      },
-      {
-        "name": "Gramsh"
-      },
-      {
-        "name": "Has"
-      },
-      {
-        "name": "Kavajë"
-      },
-      {
-        "name": "Kolonjë"
       },
       {
         "name": "Korçë"
       },
       {
-        "name": "Korçë"
-      },
-      {
-        "name": "Krujë"
-      },
-      {
-        "name": "Kuçovë"
-      },
-      {
         "name": "Kukës"
-      },
-      {
-        "name": "Kukës"
-      },
-      {
-        "name": "Kurbin"
       },
       {
         "name": "Lezhë"
       },
       {
-        "name": "Lezhë"
-      },
-      {
-        "name": "Librazhd"
-      },
-      {
-        "name": "Lushnjë"
-      },
-      {
-        "name": "Malësi e Madhe"
-      },
-      {
-        "name": "Mallakastër"
-      },
-      {
-        "name": "Mat"
-      },
-      {
-        "name": "Mirditë"
-      },
-      {
-        "name": "Peqin"
-      },
-      {
-        "name": "Përmet"
-      },
-      {
-        "name": "Pogradec"
-      },
-      {
-        "name": "Pukë"
-      },
-      {
-        "name": "Sarandë"
-      },
-      {
         "name": "Shkodër"
       },
       {
-        "name": "Shkodër"
-      },
-      {
-        "name": "Skrapar"
-      },
-      {
-        "name": "Tepelenë"
-      },
-      {
         "name": "Tirana"
-      },
-      {
-        "name": "Tirana"
-      },
-      {
-        "name": "Tropojë"
-      },
-      {
-        "name": "Vlorë"
       },
       {
         "name": "Vlorë"
@@ -339,10 +237,10 @@
         "name": "Blida"
       },
       {
-        "name": "Bordj Baji Mokhtar"
+        "name": "Bordj Bou Arréridj"
       },
       {
-        "name": "Bordj Bou Arréridj"
+        "name": "Bordj Bou Mokhtar"
       },
       {
         "name": "Bouïra"
@@ -357,16 +255,16 @@
         "name": "Constantine"
       },
       {
-        "name": "Djanet"
+        "name": "Djelfa"
       },
       {
-        "name": "Djelfa"
+        "name": "Djanet"
       },
       {
         "name": "El Bayadh"
       },
       {
-        "name": "El M'ghair"
+        "name": "El M'Ghair"
       },
       {
         "name": "El Menia"
@@ -450,16 +348,13 @@
         "name": "Souk Ahras"
       },
       {
-        "name": "Tamanghasset"
+        "name": "Tamanrasset"
       },
       {
         "name": "Tébessa"
       },
       {
         "name": "Tiaret"
-      },
-      {
-        "name": "Timimoun"
       },
       {
         "name": "Tindouf"
@@ -550,6 +445,9 @@
       },
       {
         "name": "Cuanza Norte"
+      },
+      {
+        "name": "Cuanza Sul"
       },
       {
         "name": "Cunene"
@@ -785,9 +683,6 @@
         "name": "Noord"
       },
       {
-        "name": "Oranjestad"
-      },
-      {
         "name": "Oranjestad East"
       },
       {
@@ -797,10 +692,10 @@
         "name": "Paradera"
       },
       {
-        "name": "San Nicolaas Noord"
+        "name": "San Nicolas North"
       },
       {
-        "name": "San Nicolaas Zuid"
+        "name": "San Nicolas South"
       },
       {
         "name": "Santa Cruz"
@@ -814,10 +709,34 @@
     "name": "Australia",
     "states": [
       {
+        "name": "Australian Antarctic Territory"
+      },
+      {
         "name": "Australian Capital Territory"
       },
       {
+        "name": "Ashmore and Cartier Islands"
+      },
+      {
+        "name": "Christmas Island"
+      },
+      {
+        "name": "Cocos (or Keeling) Islands"
+      },
+      {
+        "name": "Coral Sea Islands"
+      },
+      {
+        "name": "Heard and McDonald Islands"
+      },
+      {
+        "name": "Jervis Bay Territory"
+      },
+      {
         "name": "New South Wales"
+      },
+      {
+        "name": "Norfolk Island"
       },
       {
         "name": "Northern Territory"
@@ -1102,13 +1021,84 @@
     ]
   },
   {
+    "name": "Bahamas",
+    "states": [
+      {
+        "name": "New Providence"
+      },
+      {
+        "name": "Abaco islands"
+      },
+      {
+        "name": "Acklins"
+      },
+      {
+        "name": "Andros Island"
+      },
+      {
+        "name": "Berry Islands"
+      },
+      {
+        "name": "Berry Islands"
+      },
+      {
+        "name": "New Providence"
+      },
+      {
+        "name": "Abaco islands"
+      },
+      {
+        "name": "Acklins"
+      },
+      {
+        "name": "Andros Island"
+      },
+      {
+        "name": "Berry Islands"
+      },
+      {
+        "name": "Bimini"
+      },
+      {
+        "name": "Cat Island"
+      },
+      {
+        "name": "Crooked Island"
+      },
+      {
+        "name": "Grand Bahama"
+      },
+      {
+        "name": "Eleuthera"
+      },
+      {
+        "name": "Exuma and Cays"
+      },
+      {
+        "name": "Inagua"
+      },
+      {
+        "name": "Long Island"
+      },
+      {
+        "name": "Mayaguana"
+      },
+      {
+        "name": "Ragged Island"
+      },
+      {
+        "name": "Rum Cay"
+      },
+      {
+        "name": "San Salvador"
+      }
+    ]
+  },
+  {
     "name": "Bahrain",
     "states": [
       {
         "name": "Capital"
-      },
-      {
-        "name": "Central"
       },
       {
         "name": "Muharraq"
@@ -1125,28 +1115,28 @@
     "name": "Bangladesh",
     "states": [
       {
-        "name": "Barisal "
+        "name": "Barisal"
       },
       {
-        "name": "Chittagong "
+        "name": "Chattogram"
       },
       {
-        "name": "Dhaka "
+        "name": "Dhaka"
       },
       {
-        "name": "Khulna "
+        "name": "Khulna"
       },
       {
-        "name": "Mymensingh "
+        "name": "Mymensingh"
       },
       {
-        "name": "Rajshahi "
+        "name": "Rajshahi"
       },
       {
-        "name": "Rangpur "
+        "name": "Rangpur"
       },
       {
-        "name": "Sylhet "
+        "name": "Sylhet"
       }
     ]
   },
@@ -1195,13 +1185,13 @@
         "name": "Brest"
       },
       {
+        "name": "City of Minsk"
+      },
+      {
         "name": "Gomel"
       },
       {
         "name": "Grodno"
-      },
-      {
-        "name": "Minsk"
       },
       {
         "name": "Minsk"
@@ -1221,13 +1211,10 @@
         "name": "Antwerp"
       },
       {
-        "name": "Brussels-Capital "
+        "name": "Brussels-Capital"
       },
       {
         "name": "East Flanders"
-      },
-      {
-        "name": "Flanders"
       },
       {
         "name": "Flemish Brabant"
@@ -1358,64 +1345,64 @@
     "name": "Bhutan",
     "states": [
       {
-        "name": "Bumthang "
+        "name": "Bumthang"
       },
       {
-        "name": "Chukha "
+        "name": "Chukha"
       },
       {
-        "name": "Dagana "
+        "name": "Dagana"
       },
       {
-        "name": "Gasa "
+        "name": "Gasa"
       },
       {
-        "name": "Haa "
+        "name": "Haa"
       },
       {
-        "name": "Lhuntse "
+        "name": "Lhuntse"
       },
       {
-        "name": "Mongar "
+        "name": "Mongar"
       },
       {
-        "name": "Paro "
+        "name": "Paro"
       },
       {
-        "name": "Pemagatshel "
+        "name": "Pema Gatshel"
       },
       {
-        "name": "Punakha "
+        "name": "Punakha"
       },
       {
-        "name": "Samdrup Jongkhar "
+        "name": "Samdrup Jongkhar"
       },
       {
-        "name": "Samtse "
+        "name": "Samtse"
       },
       {
-        "name": "Sarpang "
+        "name": "Sarpang"
       },
       {
-        "name": "Thimphu "
+        "name": "Thimphu"
       },
       {
-        "name": "Trashi Yangtse\t"
+        "name": "Trashi Yangtse"
       },
       {
-        "name": "Trashigang "
+        "name": "Trashigang"
       },
       {
-        "name": "Trongsa "
+        "name": "Trongsa"
       },
       {
-        "name": "Tsirang "
+        "name": "Tsirang"
       },
       {
-        "name": "Wangdue Phodrang "
+        "name": "Wangdue Phodrang"
       },
       {
-        "name": "Zhemgang "
+        "name": "Zhemgang"
       }
     ]
   },
@@ -1452,20 +1439,6 @@
     ]
   },
   {
-    "name": "Bonaire, Sint Eustatius and Saba",
-    "states": [
-      {
-        "name": "Bonaire"
-      },
-      {
-        "name": "Saba"
-      },
-      {
-        "name": "Sint Eustatius"
-      }
-    ]
-  },
-  {
     "name": "Bosnia and Herzegovina",
     "states": [
       {
@@ -1479,9 +1452,6 @@
       },
       {
         "name": "Central Bosnia"
-      },
-      {
-        "name": "Federation of Bosnia and Herzegovina"
       },
       {
         "name": "Herzegovina-Neretva"
@@ -1516,6 +1486,9 @@
         "name": "Central"
       },
       {
+        "name": "Chobe"
+      },
+      {
         "name": "Ghanzi"
       },
       {
@@ -1526,9 +1499,6 @@
       },
       {
         "name": "Kweneng"
-      },
-      {
-        "name": "Ngamiland"
       },
       {
         "name": "North-East"
@@ -1543,10 +1513,6 @@
         "name": "Southern"
       }
     ]
-  },
-  {
-    "name": "Bouvet Island",
-    "states": []
   },
   {
     "name": "Brazil",
@@ -1635,8 +1601,21 @@
     ]
   },
   {
-    "name": "British Indian Ocean Territory",
-    "states": []
+    "name": "British Virgin Islands",
+    "states": [
+      {
+        "name": "Tortola"
+      },
+      {
+        "name": "Virgin Gorda"
+      },
+      {
+        "name": "Anegada"
+      },
+      {
+        "name": "Jost Van Dyke"
+      }
+    ]
   },
   {
     "name": "Brunei",
@@ -1760,40 +1739,16 @@
         "name": "Bazèga"
       },
       {
-        "name": "Boucle du Mouhoun"
-      },
-      {
         "name": "Bougouriba"
       },
       {
         "name": "Boulgou"
       },
       {
-        "name": "Boulkiemde"
-      },
-      {
-        "name": "Cascades"
-      },
-      {
-        "name": "Centre"
-      },
-      {
-        "name": "Centre-Est"
-      },
-      {
-        "name": "Centre-Nord"
-      },
-      {
-        "name": "Centre-Ouest"
-      },
-      {
-        "name": "Centre-Sud"
+        "name": "Boulkiemdé"
       },
       {
         "name": "Comoé"
-      },
-      {
-        "name": "Est"
       },
       {
         "name": "Ganzourgou"
@@ -1803,9 +1758,6 @@
       },
       {
         "name": "Gourma"
-      },
-      {
-        "name": "Hauts-Bassins"
       },
       {
         "name": "Houet"
@@ -1856,9 +1808,6 @@
         "name": "Nayala"
       },
       {
-        "name": "Nord"
-      },
-      {
         "name": "Noumbiel"
       },
       {
@@ -1871,13 +1820,7 @@
         "name": "Passoré"
       },
       {
-        "name": "Plateau-Central"
-      },
-      {
         "name": "Poni"
-      },
-      {
-        "name": "Sahel"
       },
       {
         "name": "Sanguié"
@@ -1896,9 +1839,6 @@
       },
       {
         "name": "Sourou"
-      },
-      {
-        "name": "Sud-Ouest"
       },
       {
         "name": "Tapoa"
@@ -16210,7 +16150,7 @@
     ]
   },
   {
-    "name": "Vatican City State (Holy See)",
+    "name": "Vatican City State",
     "states": []
   },
   {
