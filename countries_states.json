@@ -4271,25 +4271,25 @@
     "name": "Iceland",
     "states": [
       {
-        "name": "Capital"
+        "name": "Capital Region"
       },
       {
-        "name": "Eastern"
+        "name": "East"
       },
       {
-        "name": "Northeastern"
+        "name": "Northeast"
       },
       {
-        "name": "Northwestern"
+        "name": "Northwest"
       },
       {
-        "name": "Southern"
+        "name": "South"
       },
       {
         "name": "Southern Peninsula"
       },
       {
-        "name": "Western"
+        "name": "West"
       },
       {
         "name": "Westfjords"
@@ -4630,10 +4630,10 @@
     "name": "Iraq",
     "states": [
       {
-        "name": "Al Anbar"
+        "name": "Al-Anbar"
       },
       {
-        "name": "Al Muthanna"
+        "name": "Al-Muthanna"
       },
       {
         "name": "Al-Qādisiyyah"
@@ -4660,6 +4660,9 @@
         "name": "Erbil"
       },
       {
+        "name": "Halabja"
+      },
+      {
         "name": "Karbala"
       },
       {
@@ -4675,7 +4678,7 @@
         "name": "Nineveh"
       },
       {
-        "name": "Saladin"
+        "name": "Salah ad-Din"
       },
       {
         "name": "Sulaymaniyah"
@@ -4689,94 +4692,16 @@
     "name": "Ireland",
     "states": [
       {
-        "name": "Carlow"
-      },
-      {
-        "name": "Cavan"
-      },
-      {
-        "name": "Clare"
-      },
-      {
         "name": "Connacht"
-      },
-      {
-        "name": "Cork"
-      },
-      {
-        "name": "Donegal"
-      },
-      {
-        "name": "Dublin"
-      },
-      {
-        "name": "Galway"
-      },
-      {
-        "name": "Kerry"
-      },
-      {
-        "name": "Kildare"
-      },
-      {
-        "name": "Kilkenny"
-      },
-      {
-        "name": "Laois"
       },
       {
         "name": "Leinster"
       },
       {
-        "name": "Leitrim"
-      },
-      {
-        "name": "Limerick"
-      },
-      {
-        "name": "Longford"
-      },
-      {
-        "name": "Louth"
-      },
-      {
-        "name": "Mayo"
-      },
-      {
-        "name": "Meath"
-      },
-      {
-        "name": "Monaghan"
-      },
-      {
         "name": "Munster"
       },
       {
-        "name": "Offaly"
-      },
-      {
-        "name": "Roscommon"
-      },
-      {
-        "name": "Sligo"
-      },
-      {
-        "name": "Tipperary"
-      },
-      {
         "name": "Ulster"
-      },
-      {
-        "name": "Waterford"
-      },
-      {
-        "name": "Westmeath"
-      },
-      {
-        "name": "Wexford"
-      },
-      {
-        "name": "Wicklow"
       }
     ]
   },
@@ -4807,9 +4732,6 @@
     "name": "Italy",
     "states": [
       {
-        "name": "Abruzzo"
-      },
-      {
         "name": "Agrigento"
       },
       {
@@ -4819,10 +4741,7 @@
         "name": "Ancona"
       },
       {
-        "name": "Aosta Valley"
-      },
-      {
-        "name": "Apulia"
+        "name": "Aosta"
       },
       {
         "name": "Arezzo"
@@ -4837,10 +4756,10 @@
         "name": "Avellino"
       },
       {
-        "name": "Barletta-Andria-Trani"
+        "name": "Bari"
       },
       {
-        "name": "Basilicata"
+        "name": "Barletta-Andria-Trani"
       },
       {
         "name": "Belluno"
@@ -4855,25 +4774,28 @@
         "name": "Biella"
       },
       {
+        "name": "Bologna"
+      },
+      {
         "name": "Brescia"
       },
       {
         "name": "Brindisi"
       },
       {
-        "name": "Calabria"
+        "name": "Cagliari"
       },
       {
         "name": "Caltanissetta"
-      },
-      {
-        "name": "Campania"
       },
       {
         "name": "Campobasso"
       },
       {
         "name": "Caserta"
+      },
+      {
+        "name": "Catania"
       },
       {
         "name": "Catanzaro"
@@ -4897,9 +4819,6 @@
         "name": "Cuneo"
       },
       {
-        "name": "Emilia-Romagna"
-      },
-      {
         "name": "Enna"
       },
       {
@@ -4909,16 +4828,19 @@
         "name": "Ferrara"
       },
       {
+        "name": "Florence"
+      },
+      {
         "name": "Foggia"
       },
       {
         "name": "Forlì-Cesena"
       },
       {
-        "name": "Friuli–Venezia Giulia"
+        "name": "Frosinone"
       },
       {
-        "name": "Frosinone"
+        "name": "Genoa"
       },
       {
         "name": "Gorizia"
@@ -4942,25 +4864,16 @@
         "name": "Latina"
       },
       {
-        "name": "Lazio"
-      },
-      {
         "name": "Lecce"
       },
       {
         "name": "Lecco"
       },
       {
-        "name": "Liguria"
-      },
-      {
         "name": "Livorno"
       },
       {
         "name": "Lodi"
-      },
-      {
-        "name": "Lombardy"
       },
       {
         "name": "Lucca"
@@ -4972,22 +4885,25 @@
         "name": "Mantua"
       },
       {
-        "name": "Marche"
-      },
-      {
-        "name": "Massa and Carrara"
+        "name": "Massa-Carrara"
       },
       {
         "name": "Matera"
       },
       {
+        "name": "Messina"
+      },
+      {
+        "name": "Milan"
+      },
+      {
         "name": "Modena"
       },
       {
-        "name": "Molise"
+        "name": "Monza and Brianza"
       },
       {
-        "name": "Monza and Brianza"
+        "name": "Naples"
       },
       {
         "name": "Novara"
@@ -5023,9 +4939,6 @@
         "name": "Piacenza"
       },
       {
-        "name": "Piedmont"
-      },
-      {
         "name": "Pisa"
       },
       {
@@ -5056,13 +4969,13 @@
         "name": "Rimini"
       },
       {
+        "name": "Rome"
+      },
+      {
         "name": "Rovigo"
       },
       {
         "name": "Salerno"
-      },
-      {
-        "name": "Sardinia"
       },
       {
         "name": "Sassari"
@@ -5071,19 +4984,19 @@
         "name": "Savona"
       },
       {
-        "name": "Sicily"
-      },
-      {
         "name": "Siena"
-      },
-      {
-        "name": "Siracusa"
       },
       {
         "name": "Sondrio"
       },
       {
         "name": "South Sardinia"
+      },
+      {
+        "name": "South Tyrol"
+      },
+      {
+        "name": "Syracuse"
       },
       {
         "name": "Taranto"
@@ -5098,7 +5011,7 @@
         "name": "Trapani"
       },
       {
-        "name": "Trentino-South Tyrol"
+        "name": "Trento"
       },
       {
         "name": "Treviso"
@@ -5107,19 +5020,16 @@
         "name": "Trieste"
       },
       {
-        "name": "Tuscany"
+        "name": "Turin"
       },
       {
         "name": "Udine"
       },
       {
-        "name": "Umbria"
-      },
-      {
         "name": "Varese"
       },
       {
-        "name": "Veneto"
+        "name": "Venice"
       },
       {
         "name": "Verbano-Cusio-Ossola"
@@ -5296,145 +5206,28 @@
     "name": "Japan",
     "states": [
       {
-        "name": "Aichi"
+        "name": "Chubu"
       },
       {
-        "name": "Akita"
+        "name": "Chugoku"
       },
       {
-        "name": "Aomori"
+        "name": "Hokkaido"
       },
       {
-        "name": "Chiba"
+        "name": "Kanto"
       },
       {
-        "name": "Ehime"
+        "name": "Kinki"
       },
       {
-        "name": "Fukui"
+        "name": "Kyushu"
       },
       {
-        "name": "Fukuoka"
+        "name": "Shikoku"
       },
       {
-        "name": "Fukushima"
-      },
-      {
-        "name": "Gifu"
-      },
-      {
-        "name": "Gunma"
-      },
-      {
-        "name": "Hiroshima"
-      },
-      {
-        "name": "Hokkaidō"
-      },
-      {
-        "name": "Hyōgo"
-      },
-      {
-        "name": "Ibaraki"
-      },
-      {
-        "name": "Ishikawa"
-      },
-      {
-        "name": "Iwate"
-      },
-      {
-        "name": "Kagawa"
-      },
-      {
-        "name": "Kagoshima"
-      },
-      {
-        "name": "Kanagawa"
-      },
-      {
-        "name": "Kōchi"
-      },
-      {
-        "name": "Kumamoto"
-      },
-      {
-        "name": "Kyōto"
-      },
-      {
-        "name": "Mie"
-      },
-      {
-        "name": "Miyagi"
-      },
-      {
-        "name": "Miyazaki"
-      },
-      {
-        "name": "Nagano"
-      },
-      {
-        "name": "Nagasaki"
-      },
-      {
-        "name": "Nara"
-      },
-      {
-        "name": "Niigata"
-      },
-      {
-        "name": "Ōita"
-      },
-      {
-        "name": "Okayama"
-      },
-      {
-        "name": "Okinawa"
-      },
-      {
-        "name": "Ōsaka"
-      },
-      {
-        "name": "Saga"
-      },
-      {
-        "name": "Saitama"
-      },
-      {
-        "name": "Shiga"
-      },
-      {
-        "name": "Shimane"
-      },
-      {
-        "name": "Shizuoka"
-      },
-      {
-        "name": "Tochigi"
-      },
-      {
-        "name": "Tokushima"
-      },
-      {
-        "name": "Tokyo"
-      },
-      {
-        "name": "Tottori"
-      },
-      {
-        "name": "Toyama"
-      },
-      {
-        "name": "Wakayama"
-      },
-      {
-        "name": "Yamagata"
-      },
-      {
-        "name": "Yamaguchi"
-      },
-      {
-        "name": "Yamanashi"
+        "name": "Tohoku"
       }
     ]
   },
@@ -5483,16 +5276,19 @@
     "name": "Kazakhstan",
     "states": [
       {
-        "name": "Akmola"
+        "name": "Abai"
       },
       {
-        "name": "Aktobe"
+        "name": "Aqmola"
+      },
+      {
+        "name": "Aqtobe"
       },
       {
         "name": "Almaty"
       },
       {
-        "name": "Almaty"
+        "name": "Almaty City"
       },
       {
         "name": "Astana"
@@ -5508,6 +5304,9 @@
       },
       {
         "name": "Jambyl"
+      },
+      {
+        "name": "Jetisu"
       },
       {
         "name": "Karaganda"
@@ -5528,10 +5327,16 @@
         "name": "Pavlodar"
       },
       {
-        "name": "Turkestan"
+        "name": "Shymkent"
+      },
+      {
+        "name": "Turkistan"
       },
       {
         "name": "West Kazakhstan"
+      },
+      {
+        "name": "Ulytau"
       }
     ]
   },
@@ -5539,145 +5344,28 @@
     "name": "Kenya",
     "states": [
       {
-        "name": "Baringo"
+        "name": "Nairobi"
       },
       {
-        "name": "Bomet"
+        "name": "Central"
       },
       {
-        "name": "Bungoma"
+        "name": "Coast"
       },
       {
-        "name": "Busia"
+        "name": "Eastern"
       },
       {
-        "name": "Elgeyo-Marakwet"
+        "name": "North Eastern"
       },
       {
-        "name": "Embu"
+        "name": "Nyanza"
       },
       {
-        "name": "Garissa"
+        "name": "Rift Valley"
       },
       {
-        "name": "Homa Bay"
-      },
-      {
-        "name": "Isiolo"
-      },
-      {
-        "name": "Kajiado"
-      },
-      {
-        "name": "Kakamega"
-      },
-      {
-        "name": "Kericho"
-      },
-      {
-        "name": "Kiambu"
-      },
-      {
-        "name": "Kilifi"
-      },
-      {
-        "name": "Kirinyaga"
-      },
-      {
-        "name": "Kisii"
-      },
-      {
-        "name": "Kisumu"
-      },
-      {
-        "name": "Kitui"
-      },
-      {
-        "name": "Kwale"
-      },
-      {
-        "name": "Laikipia"
-      },
-      {
-        "name": "Lamu"
-      },
-      {
-        "name": "Machakos"
-      },
-      {
-        "name": "Makueni"
-      },
-      {
-        "name": "Mandera"
-      },
-      {
-        "name": "Marsabit"
-      },
-      {
-        "name": "Meru"
-      },
-      {
-        "name": "Migori"
-      },
-      {
-        "name": "Mombasa"
-      },
-      {
-        "name": "Murang'a"
-      },
-      {
-        "name": "Nairobi City"
-      },
-      {
-        "name": "Nakuru"
-      },
-      {
-        "name": "Nandi"
-      },
-      {
-        "name": "Narok"
-      },
-      {
-        "name": "Nyamira"
-      },
-      {
-        "name": "Nyandarua"
-      },
-      {
-        "name": "Nyeri"
-      },
-      {
-        "name": "Samburu"
-      },
-      {
-        "name": "Siaya"
-      },
-      {
-        "name": "Taita–Taveta"
-      },
-      {
-        "name": "Tana River"
-      },
-      {
-        "name": "Tharaka-Nithi"
-      },
-      {
-        "name": "Trans Nzoia"
-      },
-      {
-        "name": "Turkana"
-      },
-      {
-        "name": "Uasin Gishu"
-      },
-      {
-        "name": "Vihiga"
-      },
-      {
-        "name": "Wajir"
-      },
-      {
-        "name": "West Pokot"
+        "name": "Western"
       }
     ]
   },
@@ -5685,13 +5373,25 @@
     "name": "Kiribati",
     "states": [
       {
-        "name": "Gilbert"
+        "name": "Banaba"
       },
       {
-        "name": "Line"
+        "name": "Central Gilbert Islands"
       },
       {
-        "name": "Phoenix"
+        "name": "Line Islands"
+      },
+      {
+        "name": "Northern Gilbert Islands"
+      },
+      {
+        "name": "Phoenix Islands"
+      },
+      {
+        "name": "Southern Gilbert Islands"
+      },
+      {
+        "name": "Tarawa"
       }
     ]
   },
@@ -5769,7 +5469,7 @@
         "name": "Osh"
       },
       {
-        "name": "Osh"
+        "name": "Osh City"
       },
       {
         "name": "Talas"
