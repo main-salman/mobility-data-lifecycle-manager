@@ -9390,7 +9390,7 @@
         "name": "North Jeolla"
       },
       {
-        "name": "Sejong City"
+        "name": "Sejong"
       },
       {
         "name": "Seoul"
@@ -9412,6 +9412,18 @@
   {
     "name": "South Ossetia",
     "states": [
+      {
+        "name": "Dzau"
+      },
+      {
+        "name": "Leningor"
+      },
+      {
+        "name": "Tskhinvali"
+      },
+      {
+        "name": "Znaur"
+      }
     ]
   },
   {
@@ -9453,7 +9465,7 @@
     "name": "Spain",
     "states": [
       {
-        "name": "A Coruña"
+        "name": "Álava"
       },
       {
         "name": "Albacete"
@@ -9468,17 +9480,8 @@
         "name": "Andalusia"
       },
       {
-        "name": "Araba"
-      },
-      {
-        "name": "Aragon"
-      },
-      {
         "name": "Asturias"
-      },
-      {
-        "name": "Asturias"
-      },
+      }
       {
         "name": "Ávila"
       },
@@ -9492,25 +9495,16 @@
         "name": "Barcelona"
       },
       {
-        "name": "Basque Country"
-      },
-      {
-        "name": "Bizkaia"
+        "name": "Biscay"
       },
       {
         "name": "Burgos"
       },
       {
-        "name": "Caceres"
+        "name": "Cáceres"
       },
       {
         "name": "Cádiz"
-      },
-      {
-        "name": "Canary Islands"
-      },
-      {
-        "name": "Cantabria"
       },
       {
         "name": "Cantabria"
@@ -9519,37 +9513,13 @@
         "name": "Castellón"
       },
       {
-        "name": "Castile and Leon"
-      },
-      {
-        "name": "Castilla-La Mancha"
-      },
-      {
-        "name": "Catalonia"
-      },
-      {
-        "name": "Ceuta"
-      },
-      {
         "name": "Ciudad Real"
-      },
-      {
-        "name": "Community of Madrid"
       },
       {
         "name": "Córdoba"
       },
       {
         "name": "Cuenca"
-      },
-      {
-        "name": "Estremadura"
-      },
-      {
-        "name": "Galicia"
-      },
-      {
-        "name": "Gipuzkoa"
       },
       {
         "name": "Girona"
@@ -9561,19 +9531,19 @@
         "name": "Guadalajara"
       },
       {
+        "name": "Guipúzcoa"
+      },
+      {
         "name": "Huelva"
       },
       {
         "name": "Huesca"
       },
       {
-        "name": "Islas Baleares"
-      },
-      {
         "name": "Jaén"
       },
       {
-        "name": "La Rioja"
+        "name": "La Coruña"
       },
       {
         "name": "La Rioja"
@@ -9585,7 +9555,7 @@
         "name": "León"
       },
       {
-        "name": "Lleida"
+        "name": "Lérida"
       },
       {
         "name": "Lugo"
@@ -9597,28 +9567,19 @@
         "name": "Málaga"
       },
       {
-        "name": "Melilla"
-      },
-      {
         "name": "Murcia"
-      },
-      {
-        "name": "Navarra"
       },
       {
         "name": "Navarre"
       },
       {
-        "name": "Ourense"
+        "name": "Orense"
       },
       {
         "name": "Palencia"
       },
       {
         "name": "Pontevedra"
-      },
-      {
-        "name": "Region of Murcia"
       },
       {
         "name": "Salamanca"
@@ -9630,7 +9591,7 @@
         "name": "Segovia"
       },
       {
-        "name": "Sevilla"
+        "name": "Seville"
       },
       {
         "name": "Soria"
@@ -9648,9 +9609,6 @@
         "name": "Valencia"
       },
       {
-        "name": "Valencian Community"
-      },
-      {
         "name": "Valladolid"
       },
       {
@@ -9665,67 +9623,10 @@
     "name": "Sri Lanka",
     "states": [
       {
-        "name": "Ampara"
-      },
-      {
-        "name": "Anuradhapura"
-      },
-      {
-        "name": "Badulla"
-      },
-      {
-        "name": "Batticaloa"
-      },
-      {
         "name": "Central"
       },
       {
-        "name": "Colombo"
-      },
-      {
         "name": "Eastern"
-      },
-      {
-        "name": "Galle"
-      },
-      {
-        "name": "Gampaha"
-      },
-      {
-        "name": "Hambantota"
-      },
-      {
-        "name": "Jaffna"
-      },
-      {
-        "name": "Kalutara"
-      },
-      {
-        "name": "Kandy"
-      },
-      {
-        "name": "Kegalle"
-      },
-      {
-        "name": "Kilinochchi"
-      },
-      {
-        "name": "Kurunegala"
-      },
-      {
-        "name": "Mannar"
-      },
-      {
-        "name": "Matale"
-      },
-      {
-        "name": "Matara"
-      },
-      {
-        "name": "Monaragala"
-      },
-      {
-        "name": "Mullaitivu"
       },
       {
         "name": "North Central"
@@ -9737,31 +9638,13 @@
         "name": "Northern"
       },
       {
-        "name": "Nuwara Eliya"
-      },
-      {
-        "name": "Polonnaruwa"
-      },
-      {
-        "name": "Puttalam"
-      },
-      {
-        "name": "Ratnapura"
-      },
-      {
         "name": "Sabaragamuwa"
       },
       {
         "name": "Southern"
       },
       {
-        "name": "Trincomalee"
-      },
-      {
         "name": "Uva"
-      },
-      {
-        "name": "Vavuniya"
       },
       {
         "name": "Western"
@@ -9866,13 +9749,22 @@
     "name": "Sweden",
     "states": [
       {
+        "name": "Ångermanland"
+      },
+      {
         "name": "Blekinge"
+      },
+      {
+        "name": "Bohuslän"
       },
       {
         "name": "Dalarna"
       },
       {
-        "name": "Gävleborg"
+        "name": "Dalsland"
+      },
+      {
+        "name": "Gästrikland"
       },
       {
         "name": "Gotland"
@@ -9881,22 +9773,28 @@
         "name": "Halland"
       },
       {
+        "name": "Hälsingland"
+      },
+      {
+        "name": "Härjedalen"
+      },
+      {
         "name": "Jämtland"
       },
       {
-        "name": "Jönköping"
+        "name": "Lappland"
       },
       {
-        "name": "Kalmar"
+        "name": "Medelpad"
       },
       {
-        "name": "Kronoberg"
+        "name": "Närke"
       },
       {
         "name": "Norrbotten"
       },
       {
-        "name": "Örebro"
+        "name": "Öland"
       },
       {
         "name": "Östergötland"
@@ -9905,13 +9803,13 @@
         "name": "Skåne"
       },
       {
+        "name": "Småland"
+      },
+      {
         "name": "Södermanland"
       },
       {
-        "name": "Stockholm"
-      },
-      {
-        "name": "Uppsala"
+        "name": "Uppland"
       },
       {
         "name": "Värmland"
@@ -9920,13 +9818,10 @@
         "name": "Västerbotten"
       },
       {
-        "name": "Västernorrland"
+        "name": "Västergötland"
       },
       {
         "name": "Västmanland"
-      },
-      {
-        "name": "Västra Götaland"
       }
     ]
   },
@@ -10141,10 +10036,10 @@
         "name": "Khatlon"
       },
       {
-        "name": "Nohiyahoi Tobei Jumhurí "
+        "name": "Republican Subordination"
       },
       {
-        "name": "Sughd "
+        "name": "Sughd"
       }
     ]
   },
@@ -10189,6 +10084,9 @@
       },
       {
         "name": "Mbeya"
+      },
+      {
+        "name": "Mjini Magharibi"
       },
       {
         "name": "Morogoro"
@@ -10236,13 +10134,10 @@
         "name": "Tanga"
       },
       {
-        "name": "Zanzibar North"
+        "name": "Unguja North"
       },
       {
-        "name": "Zanzibar South"
-      },
-      {
-        "name": "Zanzibar West"
+        "name": "Unguja South"
       }
     ]
   },
@@ -10489,130 +10384,13 @@
     "name": "The Bahamas",
     "states": [
       {
-        "name": "Acklins"
+        "name": "Family Islands"
       },
       {
-        "name": "Acklins and Crooked Islands"
-      },
-      {
-        "name": "Berry Islands"
-      },
-      {
-        "name": "Bimini"
-      },
-      {
-        "name": "Black Point"
-      },
-      {
-        "name": "Cat Island"
-      },
-      {
-        "name": "Central Abaco"
-      },
-      {
-        "name": "Central Andros"
-      },
-      {
-        "name": "Central Eleuthera"
-      },
-      {
-        "name": "Crooked Island"
-      },
-      {
-        "name": "East Grand Bahama"
-      },
-      {
-        "name": "Exuma"
-      },
-      {
-        "name": "Freeport"
-      },
-      {
-        "name": "Fresh Creek"
-      },
-      {
-        "name": "Governor's Harbour"
-      },
-      {
-        "name": "Grand Cay"
-      },
-      {
-        "name": "Green Turtle Cay"
-      },
-      {
-        "name": "Harbour Island"
-      },
-      {
-        "name": "High Rock"
-      },
-      {
-        "name": "Hope Town"
-      },
-      {
-        "name": "Inagua"
-      },
-      {
-        "name": "Kemps Bay"
-      },
-      {
-        "name": "Long Island"
-      },
-      {
-        "name": "Mangrove Cay"
-      },
-      {
-        "name": "Marsh Harbour"
-      },
-      {
-        "name": "Mayaguana"
+        "name": "Grand Bahama"
       },
       {
         "name": "New Providence"
-      },
-      {
-        "name": "Nichollstown and Berry Islands"
-      },
-      {
-        "name": "North Abaco"
-      },
-      {
-        "name": "North Andros"
-      },
-      {
-        "name": "North Eleuthera"
-      },
-      {
-        "name": "Ragged Island"
-      },
-      {
-        "name": "Rock Sound"
-      },
-      {
-        "name": "Rum Cay"
-      },
-      {
-        "name": "San Salvador and Rum Cay"
-      },
-      {
-        "name": "San Salvador Island"
-      },
-      {
-        "name": "Sandy Point"
-      },
-      {
-        "name": "South Abaco"
-      },
-      {
-        "name": "South Andros"
-      },
-      {
-        "name": "South Eleuthera"
-      },
-      {
-        "name": "Spanish Wells"
-      },
-      {
-        "name": "West Grand Bahama"
       }
     ]
   },
@@ -10651,6 +10429,9 @@
       },
       {
         "name": "Manufahi"
+      },
+      {
+        "name": "Oecussi-Ambeno"
       },
       {
         "name": "Viqueque"
@@ -10713,9 +10494,6 @@
         "name": "Diego Martin"
       },
       {
-        "name": "Eastern Tobago"
-      },
-      {
         "name": "Penal-Debe"
       },
       {
@@ -10743,10 +10521,10 @@
         "name": "Siparia"
       },
       {
-        "name": "Tunapuna-Piarco"
+        "name": "Tobago"
       },
       {
-        "name": "Western Tobago"
+        "name": "Tunapuna-Piarco"
       }
     ]
   },
@@ -11111,7 +10889,10 @@
         "name": "Nanumea"
       },
       {
-        "name": "Niutao Island Council"
+        "name": "Niulakita"
+      },
+      {
+        "name": "Niutao"
       },
       {
         "name": "Nui"
