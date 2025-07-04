@@ -6953,7 +6953,13 @@
     "name": "Netherlands",
     "states": [
       {
+        "name": "Aruba"
+      },
+      {
         "name": "Bonaire"
+      },
+      {
+        "name": "Curaçao"
       },
       {
         "name": "Drenthe"
@@ -6987,6 +6993,9 @@
       },
       {
         "name": "Sint Eustatius"
+      },
+      {
+        "name": "Sint Maarten"
       },
       {
         "name": "South Holland"
@@ -7125,6 +7134,9 @@
       },
       {
         "name": "Maradi"
+      },
+      {
+        "name": "Niamey"
       },
       {
         "name": "Tahoua"
@@ -7342,268 +7354,71 @@
     "name": "North Macedonia",
     "states": [
       {
-        "name": "Aerodrom"
+        "name": "Eastern"
       },
       {
-        "name": "Aračinovo"
+        "name": "Northeastern"
       },
       {
-        "name": "Berovo"
+        "name": "Pelagonia"
       },
       {
-        "name": "Bitola"
+        "name": "Polog"
       },
       {
-        "name": "Bogdanci"
+        "name": "Skopje"
       },
       {
-        "name": "Bogovinje"
+        "name": "Southeastern"
       },
       {
-        "name": "Bosilovo"
+        "name": "Southwestern"
       },
       {
-        "name": "Brvenica"
-      },
-      {
-        "name": "Butel"
-      },
-      {
-        "name": "Čair"
-      },
-      {
-        "name": "Čaška"
-      },
-      {
-        "name": "Centar"
-      },
-      {
-        "name": "Centar Župa"
-      },
-      {
-        "name": "Češinovo-Obleševo"
-      },
-      {
-        "name": "Čučer-Sandevo"
-      },
-      {
-        "name": "Debarca"
-      },
-      {
-        "name": "Delčevo"
-      },
-      {
-        "name": "Demir Hisar"
-      },
-      {
-        "name": "Demir Kapija"
-      },
-      {
-        "name": "Dojran"
-      },
-      {
-        "name": "Dolneni"
-      },
-      {
-        "name": "Drugovo"
-      },
-      {
-        "name": "Gazi Baba"
-      },
-      {
-        "name": "Gevgelija"
-      },
-      {
-        "name": "Gjorče Petrov"
-      },
-      {
-        "name": "Gostivar"
-      },
-      {
-        "name": "Gradsko"
-      },
-      {
-        "name": "Greater Skopje"
-      },
-      {
-        "name": "Ilinden"
-      },
-      {
-        "name": "Jegunovce"
-      },
-      {
-        "name": "Karbinci"
-      },
-      {
-        "name": "Karpoš"
-      },
-      {
-        "name": "Kavadarci"
-      },
-      {
-        "name": "Kičevo"
-      },
-      {
-        "name": "Kisela Voda"
-      },
-      {
-        "name": "Kočani"
-      },
-      {
-        "name": "Konče"
-      },
-      {
-        "name": "Kratovo"
-      },
-      {
-        "name": "Kriva Palanka"
-      },
-      {
-        "name": "Krivogaštani"
-      },
-      {
-        "name": "Kruševo"
-      },
-      {
-        "name": "Kumanovo"
-      },
-      {
-        "name": "Lipkovo"
-      },
-      {
-        "name": "Lozovo"
-      },
-      {
-        "name": "Makedonska Kamenica"
-      },
-      {
-        "name": "Makedonski Brod"
-      },
-      {
-        "name": "Mavrovo and Rostuša"
-      },
-      {
-        "name": "Mogila"
-      },
-      {
-        "name": "Negotino"
-      },
-      {
-        "name": "Novaci"
-      },
-      {
-        "name": "Novo Selo"
-      },
-      {
-        "name": "Ohrid"
-      },
-      {
-        "name": "Oslomej "
-      },
-      {
-        "name": "Pehčevo"
-      },
-      {
-        "name": "Petrovec"
-      },
-      {
-        "name": "Plasnica"
-      },
-      {
-        "name": "Prilep"
-      },
-      {
-        "name": "Probištip"
-      },
-      {
-        "name": "Radoviš"
-      },
-      {
-        "name": "Rankovce"
-      },
-      {
-        "name": "Resen"
-      },
-      {
-        "name": "Rosoman"
-      },
-      {
-        "name": "Saraj"
-      },
-      {
-        "name": "Sopište"
-      },
-      {
-        "name": "Staro Nagoričane"
-      },
-      {
-        "name": "Štip"
-      },
-      {
-        "name": "Struga"
-      },
-      {
-        "name": "Strumica"
-      },
-      {
-        "name": "Studeničani"
-      },
-      {
-        "name": "Šuto Orizari"
-      },
-      {
-        "name": "Sveti Nikole"
-      },
-      {
-        "name": "Tearce"
-      },
-      {
-        "name": "Tetovo"
-      },
-      {
-        "name": "Valandovo"
-      },
-      {
-        "name": "Vasilevo"
-      },
-      {
-        "name": "Veles"
-      },
-      {
-        "name": "Vevčani"
-      },
-      {
-        "name": "Vinica"
-      },
-      {
-        "name": "Vraneštica"
-      },
-      {
-        "name": "Vrapčište"
-      },
-      {
-        "name": "Zajas"
-      },
-      {
-        "name": "Zelenikovo"
-      },
-      {
-        "name": "Želino"
-      },
-      {
-        "name": "Zrnovci"
+        "name": "Vardar"
       }
     ]
   },
   {
     "name": "Northern Cyprus",
-    "states": []
+    "states": [
+       {
+        "name": "İskele"
+      },
+      {
+        "name": "Lefke"
+      },
+      {
+        "name": "Lefkoşa"
+      },
+      {
+        "name": "Gazimağusa"
+      },
+      {
+        "name": "Girne"
+      },
+      {
+        "name": "Güzelyurt"
+      }
+    ]
   },
   {
     "name": "Norway",
     "states": [
       {
         "name": "Agder"
+      },
+      {
+        "name": "Akershus"
+      },
+      {
+        "name": "Bouvet Island"
+      },
+      {
+        "name": "Buskerud"
+      },
+      {
+        "name": "Finnmark"
       },
       {
         "name": "Innlandet"
@@ -7621,25 +7436,34 @@
         "name": "Oslo"
       },
       {
+        "name": "Østfold"
+      },
+      {
+        "name": "Peter I Island"
+      },
+      {
+        "name": "Queen Maud Land"
+      },
+      {
         "name": "Rogaland"
       },
       {
         "name": "Svalbard"
       },
       {
-        "name": "Troms og Finnmark"
+        "name": "Telemark"
+      },
+      {
+        "name": "Troms"
       },
       {
         "name": "Trøndelag"
       },
       {
-        "name": "Vestfold og Telemark"
+        "name": "Vestfold"
       },
       {
         "name": "Vestland"
-      },
-      {
-        "name": "Viken"
       }
     ]
   },
@@ -7647,43 +7471,193 @@
     "name": "Oman",
     "states": [
       {
-        "name": "Ad Dakhiliyah"
+        "name": "Adam"
       },
       {
-        "name": "Ad Dhahirah"
+        "name": "Al Amarat"
       },
       {
-        "name": "Al Batinah North"
-      },
-      {
-        "name": "Al Batinah Region"
-      },
-      {
-        "name": "Al Batinah South"
+        "name": "Al Awabi"
       },
       {
         "name": "Al Buraimi"
       },
       {
-        "name": "Al Wusta"
+        "name": "Al Hamra"
       },
       {
-        "name": "Ash Sharqiyah North"
+        "name": "Al Jazer"
       },
       {
-        "name": "Ash Sharqiyah Region"
+        "name": "Al Kamil Wal Wafi"
       },
       {
-        "name": "Ash Sharqiyah South"
+        "name": "Al Khaburah"
       },
       {
-        "name": "Dhofar"
+        "name": "Al-Mazyona"
       },
       {
-        "name": "Musandam"
+        "name": "Al-Mudhaibi"
+      },
+      {
+        "name": "Al Musanaah"
+      },
+      {
+        "name": "Al-Qabil"
+      },
+      {
+        "name": "As Sunaynah"
+      },
+      {
+        "name": "Bahla"
+      },
+      {
+        "name": "Barka"
+      },
+      {
+        "name": "Bawshar"
+      },
+      {
+        "name": "Bidbid"
+      },
+      {
+        "name": "Bidiya"
+      },
+      {
+        "name": "Bukha"
+      },
+      {
+        "name": "Dema Wa Thaieen"
+      },
+      {
+        "name": "Dhalkut"
+      },
+      {
+        "name": "Dhank"
+      },
+      {
+        "name": "Dibba"
+      },
+      {
+        "name": "Duqm"
+      },
+      {
+        "name": "Haima"
+      },
+      {
+        "name": "Ibra"
+      },
+      {
+        "name": "Ibri"
+      },
+      {
+        "name": "Izki"
+      },
+      {
+        "name": "Jalan Bani Bu Ali"
+      },
+      {
+        "name": "Jalan Bani Bu Hassan"
+      },
+      {
+        "name": "Jebel Akhdar"
+      },
+      {
+        "name": "Khasab"
+      },
+      {
+        "name": "Liwa"
+      },
+      {
+        "name": "Madha"
+      },
+      {
+        "name": "Mahdah"
+      },
+      {
+        "name": "Mahout"
+      },
+      {
+        "name": "Manah"
+      },
+      {
+        "name": "Masirah"
+      },
+      {
+        "name": "Mirbat"
+      },
+      {
+        "name": "Muqshin"
       },
       {
         "name": "Muscat"
+      },
+      {
+        "name": "Muttrah"
+      },
+      {
+        "name": "Nakhal"
+      },
+      {
+        "name": "Nizwa"
+      },
+      {
+        "name": "Qurayyat"
+      },
+      {
+        "name": "Rakhyut"
+      },
+      {
+        "name": "Rustaq"
+      },
+      {
+        "name": "Sadah"
+      },
+      {
+        "name": "Saham"
+      },
+      {
+        "name": "Samail"
+      },
+      {
+        "name": "Salalah"
+      },
+      {
+        "name": "Seeb"
+      },
+      {
+        "name": "Shalim and the Hallaniyat Islands"
+      },
+      {
+        "name": "Shinas"
+      },
+      {
+        "name": "Sinaw"
+      },
+      {
+        "name": "Sohar"
+      },
+      {
+        "name": "Sur"
+      },
+      {
+        "name": "Suwayq"
+      },
+      {
+        "name": "Taqah"
+      },
+      {
+        "name": "Thumrait"
+      },
+      {
+        "name": "Wadi Al Maawil"
+      },
+      {
+        "name": "Wadi Bani Khaled"
+      },
+      {
+        "name": "Yanqul"
       }
     ]
   },
