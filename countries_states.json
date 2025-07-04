@@ -5525,7 +5525,7 @@
         "name": "Vientiane"
       },
       {
-        "name": "Vientiane"
+        "name": "Vientiane City"
       },
       {
         "name": "Xaisomboun"
@@ -5539,133 +5539,19 @@
     "name": "Latvia",
     "states": [
       {
-        "name": "Ādaži"
+        "name": "Kurzeme"
       },
       {
-        "name": "Aizkraukle"
-      },
-      {
-        "name": "Alūksne"
-      },
-      {
-        "name": "Augšdaugava"
-      },
-      {
-        "name": "Balvi"
-      },
-      {
-        "name": "Bauska"
-      },
-      {
-        "name": "Cēsis"
-      },
-      {
-        "name": "Daugavpils"
-      },
-      {
-        "name": "Dienvidkurzemes"
-      },
-      {
-        "name": "Dobele"
-      },
-      {
-        "name": "Gulbene"
-      },
-      {
-        "name": "Jēkabpils"
-      },
-      {
-        "name": "Jelgava"
-      },
-      {
-        "name": "Jelgava"
-      },
-      {
-        "name": "Jūrmala"
-      },
-      {
-        "name": "Ķekava"
-      },
-      {
-        "name": "Krāslava"
-      },
-      {
-        "name": "Kuldīga"
-      },
-      {
-        "name": "Liepāja"
-      },
-      {
-        "name": "Limbaži"
-      },
-      {
-        "name": "Līvāni"
-      },
-      {
-        "name": "Ludza"
-      },
-      {
-        "name": "Madona"
-      },
-      {
-        "name": "Mārupe"
-      },
-      {
-        "name": "Ogre"
-      },
-      {
-        "name": "Olaine"
-      },
-      {
-        "name": "Preiļi"
-      },
-      {
-        "name": "Rēzekne"
-      },
-      {
-        "name": "Rēzekne"
+        "name": "Latgale"
       },
       {
         "name": "Riga"
       },
       {
-        "name": "Ropaži"
+        "name": "Vidzeme"
       },
       {
-        "name": "Salaspils"
-      },
-      {
-        "name": "Saldus"
-      },
-      {
-        "name": "Saulkrasti"
-      },
-      {
-        "name": "Sigulda"
-      },
-      {
-        "name": "Smiltene"
-      },
-      {
-        "name": "Talsi"
-      },
-      {
-        "name": "Tukums"
-      },
-      {
-        "name": "Valka"
-      },
-      {
-        "name": "Valmiera"
-      },
-      {
-        "name": "Varakļāni"
-      },
-      {
-        "name": "Ventspils"
-      },
-      {
-        "name": "Ventspils"
+        "name": "Zemgale"
       }
     ]
   },
@@ -5787,67 +5673,13 @@
     "name": "Libya",
     "states": [
       {
-        "name": "Al Wahat"
+        "name": "Cyrenaica"
       },
       {
-        "name": "Benghazi"
+        "name": "Fezzan"
       },
       {
-        "name": "Derna"
-      },
-      {
-        "name": "Ghat"
-      },
-      {
-        "name": "Jabal al Akhdar"
-      },
-      {
-        "name": "Jabal al Gharbi"
-      },
-      {
-        "name": "Jafara"
-      },
-      {
-        "name": "Jufra"
-      },
-      {
-        "name": "Kufra"
-      },
-      {
-        "name": "Marj"
-      },
-      {
-        "name": "Misrata"
-      },
-      {
-        "name": "Murqub"
-      },
-      {
-        "name": "Murzuq"
-      },
-      {
-        "name": "Nalut"
-      },
-      {
-        "name": "Nuqat al Khams"
-      },
-      {
-        "name": "Sabha"
-      },
-      {
-        "name": "Sirte"
-      },
-      {
-        "name": "Tripoli"
-      },
-      {
-        "name": "Wadi al Hayaa"
-      },
-      {
-        "name": "Wadi al Shatii"
-      },
-      {
-        "name": "Zawiya"
+        "name": "Tripolitania"
       }
     ]
   },
@@ -5893,172 +5725,22 @@
     "name": "Lithuania",
     "states": [
       {
-        "name": "Akmenė"
-      },
-      {
         "name": "Alytus"
       },
       {
-        "name": "Alytus"
-      },
-      {
-        "name": "Alytus"
-      },
-      {
-        "name": "Anykščiai"
-      },
-      {
-        "name": "Birštonas"
-      },
-      {
-        "name": "Biržai"
-      },
-      {
-        "name": "Druskininkai"
-      },
-      {
-        "name": "Elektrėnai"
-      },
-      {
-        "name": "Ignalina"
-      },
-      {
-        "name": "Jonava"
-      },
-      {
-        "name": "Joniškis"
-      },
-      {
-        "name": "Jurbarkas"
-      },
-      {
-        "name": "Kaišiadorys"
-      },
-      {
-        "name": "Kalvarija"
-      },
-      {
         "name": "Kaunas"
-      },
-      {
-        "name": "Kaunas"
-      },
-      {
-        "name": "Kaunas"
-      },
-      {
-        "name": "Kazlų Rūda"
-      },
-      {
-        "name": "Kėdainiai"
-      },
-      {
-        "name": "Kelmė"
-      },
-      {
-        "name": "Klaipeda"
       },
       {
         "name": "Klaipėda"
       },
       {
-        "name": "Klaipėda"
-      },
-      {
-        "name": "Kretinga"
-      },
-      {
-        "name": "Kupiškis"
-      },
-      {
-        "name": "Lazdijai"
-      },
-      {
         "name": "Marijampolė"
       },
       {
-        "name": "Marijampolė"
-      },
-      {
-        "name": "Mažeikiai"
-      },
-      {
-        "name": "Molėtai"
-      },
-      {
-        "name": "Neringa"
-      },
-      {
-        "name": "Pagėgiai"
-      },
-      {
-        "name": "Pakruojis"
-      },
-      {
-        "name": "Palanga"
-      },
-      {
         "name": "Panevėžys"
       },
       {
-        "name": "Panevėžys"
-      },
-      {
-        "name": "Panevėžys"
-      },
-      {
-        "name": "Pasvalys"
-      },
-      {
-        "name": "Plungė"
-      },
-      {
-        "name": "Prienai"
-      },
-      {
-        "name": "Radviliškis"
-      },
-      {
-        "name": "Raseiniai"
-      },
-      {
-        "name": "Rietavas"
-      },
-      {
-        "name": "Rokiškis"
-      },
-      {
-        "name": "Šakiai"
-      },
-      {
-        "name": "Šalčininkai"
-      },
-      {
         "name": "Šiauliai"
-      },
-      {
-        "name": "Šiauliai"
-      },
-      {
-        "name": "Šiauliai"
-      },
-      {
-        "name": "Šilalė "
-      },
-      {
-        "name": "Šilutė"
-      },
-      {
-        "name": "Širvintos"
-      },
-      {
-        "name": "Skuodas"
-      },
-      {
-        "name": "Švenčionys"
-      },
-      {
-        "name": "Tauragė"
       },
       {
         "name": "Tauragė"
@@ -6067,40 +5749,10 @@
         "name": "Telšiai"
       },
       {
-        "name": "Telšiai"
-      },
-      {
-        "name": "Trakai"
-      },
-      {
-        "name": "Ukmergė"
-      },
-      {
         "name": "Utena"
       },
       {
-        "name": "Utena"
-      },
-      {
-        "name": "Varėna"
-      },
-      {
-        "name": "Vilkaviškis"
-      },
-      {
         "name": "Vilnius"
-      },
-      {
-        "name": "Vilnius"
-      },
-      {
-        "name": "Vilnius"
-      },
-      {
-        "name": "Visaginas"
-      },
-      {
-        "name": "Zarasai"
       }
     ]
   },
@@ -6172,97 +5824,13 @@
     "name": "Malawi",
     "states": [
       {
-        "name": "Balaka"
-      },
-      {
-        "name": "Blantyre"
-      },
-      {
         "name": "Central"
-      },
-      {
-        "name": "Chikwawa"
-      },
-      {
-        "name": "Chiradzulu"
-      },
-      {
-        "name": "Chitipa"
-      },
-      {
-        "name": "Dedza"
-      },
-      {
-        "name": "Dowa"
-      },
-      {
-        "name": "Karonga"
-      },
-      {
-        "name": "Kasungu"
-      },
-      {
-        "name": "Likoma"
-      },
-      {
-        "name": "Lilongwe"
-      },
-      {
-        "name": "Machinga"
-      },
-      {
-        "name": "Mangochi"
-      },
-      {
-        "name": "Mchinji"
-      },
-      {
-        "name": "Mulanje"
-      },
-      {
-        "name": "Mwanza"
-      },
-      {
-        "name": "Mzimba"
-      },
-      {
-        "name": "Neno"
-      },
-      {
-        "name": "Nkhata Bay"
-      },
-      {
-        "name": "Nkhotakota"
       },
       {
         "name": "Northern"
       },
       {
-        "name": "Nsanje"
-      },
-      {
-        "name": "Ntcheu"
-      },
-      {
-        "name": "Ntchisi"
-      },
-      {
-        "name": "Phalombe"
-      },
-      {
-        "name": "Rumphi"
-      },
-      {
-        "name": "Salima"
-      },
-      {
         "name": "Southern"
-      },
-      {
-        "name": "Thyolo"
-      },
-      {
-        "name": "Zomba"
       }
     ]
   },
@@ -6323,64 +5891,13 @@
     "name": "Maldives",
     "states": [
       {
-        "name": "Addu"
-      },
-      {
-        "name": "Alif Alif"
-      },
-      {
-        "name": "Alif Dhaal"
-      },
-      {
         "name": "Central"
       },
       {
-        "name": "Dhaalu"
-      },
-      {
-        "name": "Faafu"
-      },
-      {
-        "name": "Gaafu Alif"
-      },
-      {
-        "name": "Gaafu Dhaalu"
-      },
-      {
-        "name": "Gnaviyani"
-      },
-      {
-        "name": "Haa Alif"
-      },
-      {
-        "name": "Haa Dhaalu"
-      },
-      {
-        "name": "Kaafu"
-      },
-      {
-        "name": "Laamu"
-      },
-      {
-        "name": "Lhaviyani"
-      },
-      {
-        "name": "Malé"
-      },
-      {
-        "name": "Meemu"
-      },
-      {
-        "name": "Noonu"
+        "name": "North"
       },
       {
         "name": "North Central"
-      },
-      {
-        "name": "Raa"
-      },
-      {
-        "name": "Shaviyani"
       },
       {
         "name": "South"
@@ -6389,13 +5906,10 @@
         "name": "South Central"
       },
       {
-        "name": "Thaa"
+        "name": "Upper North"
       },
       {
         "name": "Upper South"
-      },
-      {
-        "name": "Vaavu"
       }
     ]
   },
@@ -6441,205 +5955,22 @@
     "name": "Malta",
     "states": [
       {
-        "name": "Attard"
+        "name": "Gozo and Comino"
       },
       {
-        "name": "Balzan"
+        "name": "Northern"
       },
       {
-        "name": "Birgu"
+        "name": "Northern Habour"
       },
       {
-        "name": "Birkirkara"
+        "name": "South Eastern"
       },
       {
-        "name": "Birżebbuġa"
+        "name": "Southern Harbour"
       },
       {
-        "name": "Cospicua"
-      },
-      {
-        "name": "Dingli"
-      },
-      {
-        "name": "Fgura"
-      },
-      {
-        "name": "Floriana"
-      },
-      {
-        "name": "Fontana"
-      },
-      {
-        "name": "Għajnsielem"
-      },
-      {
-        "name": "Għarb"
-      },
-      {
-        "name": "Għargħur"
-      },
-      {
-        "name": "Għasri"
-      },
-      {
-        "name": "Għaxaq"
-      },
-      {
-        "name": "Gudja"
-      },
-      {
-        "name": "Gżira"
-      },
-      {
-        "name": "Ħamrun"
-      },
-      {
-        "name": "Iklin"
-      },
-      {
-        "name": "Kalkara"
-      },
-      {
-        "name": "Kerċem"
-      },
-      {
-        "name": "Kirkop"
-      },
-      {
-        "name": "Lija"
-      },
-      {
-        "name": "Luqa"
-      },
-      {
-        "name": "Marsa"
-      },
-      {
-        "name": "Marsaskala"
-      },
-      {
-        "name": "Marsaxlokk"
-      },
-      {
-        "name": "Mdina"
-      },
-      {
-        "name": "Mellieħa"
-      },
-      {
-        "name": "Mġarr"
-      },
-      {
-        "name": "Mosta"
-      },
-      {
-        "name": "Mqabba"
-      },
-      {
-        "name": "Msida"
-      },
-      {
-        "name": "Mtarfa"
-      },
-      {
-        "name": "Munxar"
-      },
-      {
-        "name": "Nadur"
-      },
-      {
-        "name": "Naxxar"
-      },
-      {
-        "name": "Paola"
-      },
-      {
-        "name": "Pembroke"
-      },
-      {
-        "name": "Pietà"
-      },
-      {
-        "name": "Qala"
-      },
-      {
-        "name": "Qormi"
-      },
-      {
-        "name": "Qrendi"
-      },
-      {
-        "name": "Rabat"
-      },
-      {
-        "name": "San Ġwann"
-      },
-      {
-        "name": "San Lawrenz"
-      },
-      {
-        "name": "Sannat"
-      },
-      {
-        "name": "Santa Luċija"
-      },
-      {
-        "name": "Santa Venera"
-      },
-      {
-        "name": "Senglea"
-      },
-      {
-        "name": "Siġġiewi"
-      },
-      {
-        "name": "Sliema"
-      },
-      {
-        "name": "St. Julian's"
-      },
-      {
-        "name": "St. Paul's Bay"
-      },
-      {
-        "name": "Swieqi"
-      },
-      {
-        "name": "Ta' Xbiex"
-      },
-      {
-        "name": "Tarxien"
-      },
-      {
-        "name": "Valletta"
-      },
-      {
-        "name": "Victoria"
-      },
-      {
-        "name": "Xagħra"
-      },
-      {
-        "name": "Xewkija"
-      },
-      {
-        "name": "Xgħajra"
-      },
-      {
-        "name": "Żabbar"
-      },
-      {
-        "name": "Żebbuġ Gozo"
-      },
-      {
-        "name": "Żebbuġ Malta"
-      },
-      {
-        "name": "Żejtun"
-      },
-      {
-        "name": "Żurrieq"
+        "name": "Western"
       }
     ]
   },
@@ -6770,7 +6101,7 @@
         "name": "Ciudad de México"
       },
       {
-        "name": "Coahuila de Zaragoza"
+        "name": "Coahuila"
       },
       {
         "name": "Colima"
@@ -6794,7 +6125,7 @@
         "name": "Jalisco"
       },
       {
-        "name": "Michoacán de Ocampo"
+        "name": "Michoacán"
       },
       {
         "name": "Morelos"
@@ -6836,7 +6167,7 @@
         "name": "Tlaxcala"
       },
       {
-        "name": "Veracruz de Ignacio de la Llave"
+        "name": "Veracruz"
       },
       {
         "name": "Yucatán"
@@ -6933,6 +6264,9 @@
         "name": "Ialoveni"
       },
       {
+        "name": "Left Bank of the Dniester"
+      },
+      {
         "name": "Nisporeni"
       },
       {
@@ -6980,13 +6314,34 @@
     "name": "Monaco",
     "states": [
       {
+        "name": "Fontvieille"
+      },
+      {
         "name": "La Colle"
       },
       {
         "name": "La Condamine"
       },
       {
-        "name": "Moneghetti"
+        "name": "La Rousse/Saint Roman"
+      },
+      {
+        "name": "Larvotto/Bas Moulins"
+      },
+      {
+        "name": "Les Révoires"
+      },
+      {
+        "name": "Monaco-Ville"
+      },
+      {
+        "name": "Moneghetti/Bd de Belgique"
+      },
+      {
+        "name": "Monte-Carlo"
+      },
+      {
+        "name": "Saint Michel"
       }
     ]
   },
@@ -7051,6 +6406,9 @@
         "name": "Töv"
       },
       {
+        "name": "Ulaanbaatar"
+      },
+      {
         "name": "Uvs"
       },
       {
@@ -7077,10 +6435,19 @@
         "name": "Budva"
       },
       {
+        "name": "Cetinje"
+      },
+      {
+        "name": "Cetinje (Historical Capital)"
+      },
+      {
         "name": "Danilovgrad"
       },
       {
         "name": "Gusinje"
+      },
+      {
+        "name": "Herceg Novi"
       },
       {
         "name": "Kolašin"
@@ -7093,9 +6460,6 @@
       },
       {
         "name": "Nikšić"
-      },
-      {
-        "name": "Old Royal Capital Cetinje"
       },
       {
         "name": "Petnjica"
@@ -7111,6 +6475,9 @@
       },
       {
         "name": "Podgorica"
+      },
+      {
+        "name": "Podgorica (Historical Capital)"
       },
       {
         "name": "Rožaje"
@@ -7142,10 +6509,10 @@
         "name": "Al Hoceïma"
       },
       {
-        "name": "Aousserd (EH)"
+        "name": "Aousserd"
       },
       {
-        "name": "Assa-Zag (EH-partial)"
+        "name": "Assa-Zag"
       },
       {
         "name": "Azilal"
@@ -7166,7 +6533,7 @@
         "name": "Berrechid"
       },
       {
-        "name": "Boujdour (EH)"
+        "name": "Boujdour"
       },
       {
         "name": "Boulemane"
@@ -7187,7 +6554,7 @@
         "name": "Chtouka-Ait Baha"
       },
       {
-        "name": "Dakhla-Oued Ed-Dahab (EH)"
+        "name": "Dakhla-Oued Ed-Dahab"
       },
       {
         "name": "Drâa-Tafilalet"
@@ -7208,7 +6575,7 @@
         "name": "Errachidia"
       },
       {
-        "name": "Es-Semara (EH-partial)"
+        "name": "Es-Semara"
       },
       {
         "name": "Essaouira"
@@ -7217,10 +6584,7 @@
         "name": "Fahs-Anjra"
       },
       {
-        "name": "Fès"
-      },
-      {
-        "name": "Fès-Meknès"
+        "name": "Fez"
       },
       {
         "name": "Figuig"
@@ -7232,7 +6596,7 @@
         "name": "Guelmim"
       },
       {
-        "name": "Guelmim-Oued Noun (EH-partial)"
+        "name": "Guelmim-Oued Noun"
       },
       {
         "name": "Guercif"
@@ -7259,13 +6623,7 @@
         "name": "Khouribga"
       },
       {
-        "name": "L'Oriental"
-      },
-      {
-        "name": "Laâyoune (EH)"
-      },
-      {
-        "name": "Laâyoune-Sakia El Hamra (EH-partial)"
+        "name": "Laâyoune"
       },
       {
         "name": "Larache"
@@ -7275,9 +6633,6 @@
       },
       {
         "name": "Marrakech"
-      },
-      {
-        "name": "Marrakesh-Safi"
       },
       {
         "name": "Médiouna"
@@ -7304,7 +6659,7 @@
         "name": "Ouarzazate"
       },
       {
-        "name": "Oued Ed-Dahab (EH)"
+        "name": "Oued Ed-Dahab"
       },
       {
         "name": "Ouezzane"
@@ -7314,9 +6669,6 @@
       },
       {
         "name": "Rabat"
-      },
-      {
-        "name": "Rabat-Salé-Kénitra"
       },
       {
         "name": "Rehamna"
@@ -7349,16 +6701,10 @@
         "name": "Skhirate-Témara"
       },
       {
-        "name": "Souss-Massa"
-      },
-      {
-        "name": "Tan-Tan (EH-partial)"
+        "name": "Tan-Tan"
       },
       {
         "name": "Tanger-Assilah"
-      },
-      {
-        "name": "Tanger-Tétouan-Al Hoceïma"
       },
       {
         "name": "Taounate"
@@ -7367,7 +6713,7 @@
         "name": "Taourirt"
       },
       {
-        "name": "Tarfaya (EH-partial)"
+        "name": "Tarfaya"
       },
       {
         "name": "Taroudannt"
