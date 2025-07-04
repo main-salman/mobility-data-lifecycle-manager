@@ -10912,421 +10912,16 @@
     "name": "Uganda",
     "states": [
       {
-        "name": "Abim"
-      },
-      {
-        "name": "Adjumani"
-      },
-      {
-        "name": "Agago"
-      },
-      {
-        "name": "Alebtong"
-      },
-      {
-        "name": "Amolatar"
-      },
-      {
-        "name": "Amudat"
-      },
-      {
-        "name": "Amuria"
-      },
-      {
-        "name": "Amuru"
-      },
-      {
-        "name": "Apac"
-      },
-      {
-        "name": "Arua"
-      },
-      {
-        "name": "Budaka"
-      },
-      {
-        "name": "Bududa"
-      },
-      {
-        "name": "Bugiri"
-      },
-      {
-        "name": "Bugweri"
-      },
-      {
-        "name": "Buhweju"
-      },
-      {
-        "name": "Buikwe"
-      },
-      {
-        "name": "Bukedea"
-      },
-      {
-        "name": "Bukomansimbi"
-      },
-      {
-        "name": "Bukwo"
-      },
-      {
-        "name": "Bulambuli"
-      },
-      {
-        "name": "Buliisa"
-      },
-      {
-        "name": "Bundibugyo"
-      },
-      {
-        "name": "Bunyangabu"
-      },
-      {
-        "name": "Bushenyi"
-      },
-      {
-        "name": "Busia"
-      },
-      {
-        "name": "Butaleja"
-      },
-      {
-        "name": "Butambala"
-      },
-      {
-        "name": "Butebo"
-      },
-      {
-        "name": "Buvuma"
-      },
-      {
-        "name": "Buyende"
-      },
-      {
         "name": "Central"
-      },
-      {
-        "name": "Dokolo"
       },
       {
         "name": "Eastern"
       },
       {
-        "name": "Gomba"
-      },
-      {
-        "name": "Gulu"
-      },
-      {
-        "name": "Hoima"
-      },
-      {
-        "name": "Ibanda"
-      },
-      {
-        "name": "Iganga"
-      },
-      {
-        "name": "Isingiro"
-      },
-      {
-        "name": "Jinja"
-      },
-      {
-        "name": "Kaabong"
-      },
-      {
-        "name": "Kabale"
-      },
-      {
-        "name": "Kabarole"
-      },
-      {
-        "name": "Kaberamaido"
-      },
-      {
-        "name": "Kagadi"
-      },
-      {
-        "name": "Kakumiro"
-      },
-      {
-        "name": "Kalaki"
-      },
-      {
-        "name": "Kalangala"
-      },
-      {
-        "name": "Kaliro"
-      },
-      {
-        "name": "Kalungu"
-      },
-      {
-        "name": "Kampala"
-      },
-      {
-        "name": "Kamuli"
-      },
-      {
-        "name": "Kamwenge"
-      },
-      {
-        "name": "Kanungu"
-      },
-      {
-        "name": "Kapchorwa"
-      },
-      {
-        "name": "Kapelebyong"
-      },
-      {
-        "name": "Karenga"
-      },
-      {
-        "name": "Kasanda"
-      },
-      {
-        "name": "Kasese"
-      },
-      {
-        "name": "Katakwi"
-      },
-      {
-        "name": "Kayunga"
-      },
-      {
-        "name": "Kazo"
-      },
-      {
-        "name": "Kibaale"
-      },
-      {
-        "name": "Kiboga"
-      },
-      {
-        "name": "Kibuku"
-      },
-      {
-        "name": "Kikuube"
-      },
-      {
-        "name": "Kiruhura"
-      },
-      {
-        "name": "Kiryandongo"
-      },
-      {
-        "name": "Kisoro"
-      },
-      {
-        "name": "Kitagwenda"
-      },
-      {
-        "name": "Kitgum"
-      },
-      {
-        "name": "Koboko"
-      },
-      {
-        "name": "Kole"
-      },
-      {
-        "name": "Kotido"
-      },
-      {
-        "name": "Kumi"
-      },
-      {
-        "name": "Kwania"
-      },
-      {
-        "name": "Kween"
-      },
-      {
-        "name": "Kyankwanzi"
-      },
-      {
-        "name": "Kyegegwa"
-      },
-      {
-        "name": "Kyenjojo"
-      },
-      {
-        "name": "Kyotera"
-      },
-      {
-        "name": "Lamwo"
-      },
-      {
-        "name": "Lira"
-      },
-      {
-        "name": "Luuka"
-      },
-      {
-        "name": "Luwero"
-      },
-      {
-        "name": "Lwengo"
-      },
-      {
-        "name": "Lyantonde"
-      },
-      {
-        "name": "Madi-Okollo"
-      },
-      {
-        "name": "Manafwa"
-      },
-      {
-        "name": "Maracha"
-      },
-      {
-        "name": "Masaka"
-      },
-      {
-        "name": "Masindi"
-      },
-      {
-        "name": "Mayuge"
-      },
-      {
-        "name": "Mbale"
-      },
-      {
-        "name": "Mbarara"
-      },
-      {
-        "name": "Mitooma"
-      },
-      {
-        "name": "Mityana"
-      },
-      {
-        "name": "Moroto"
-      },
-      {
-        "name": "Moyo"
-      },
-      {
-        "name": "Mpigi"
-      },
-      {
-        "name": "Mubende"
-      },
-      {
-        "name": "Mukono"
-      },
-      {
-        "name": "Nabilatuk"
-      },
-      {
-        "name": "Nakapiripirit"
-      },
-      {
-        "name": "Nakaseke"
-      },
-      {
-        "name": "Nakasongola"
-      },
-      {
-        "name": "Namayingo"
-      },
-      {
-        "name": "Namisindwa"
-      },
-      {
-        "name": "Namutumba"
-      },
-      {
-        "name": "Napak"
-      },
-      {
-        "name": "Nebbi"
-      },
-      {
-        "name": "Ngora"
-      },
-      {
         "name": "Northern"
       },
       {
-        "name": "Ntoroko"
-      },
-      {
-        "name": "Ntungamo"
-      },
-      {
-        "name": "Nwoya"
-      },
-      {
-        "name": "Obongi"
-      },
-      {
-        "name": "Omoro"
-      },
-      {
-        "name": "Otuke"
-      },
-      {
-        "name": "Oyam"
-      },
-      {
-        "name": "Pader"
-      },
-      {
-        "name": "Pakwach"
-      },
-      {
-        "name": "Pallisa"
-      },
-      {
-        "name": "Rakai"
-      },
-      {
-        "name": "Rubanda"
-      },
-      {
-        "name": "Rubirizi"
-      },
-      {
-        "name": "Rukiga"
-      },
-      {
-        "name": "Rukungiri"
-      },
-      {
-        "name": "Rwampara"
-      },
-      {
-        "name": "Sembabule"
-      },
-      {
-        "name": "Serere"
-      },
-      {
-        "name": "Sheema"
-      },
-      {
-        "name": "Sironko"
-      },
-      {
-        "name": "Soroti"
-      },
-      {
-        "name": "Tororo"
-      },
-      {
-        "name": "Wakiso"
-      },
-      {
         "name": "Western"
-      },
-      {
-        "name": "Yumbe"
-      },
-      {
-        "name": "Zombo"
       }
     ]
   },
@@ -11334,85 +10929,82 @@
     "name": "Ukraine",
     "states": [
       {
-        "name": "Autonomous Republic of Crimea"
+        "name": "Cherkaska"
       },
       {
-        "name": "Cherkaska oblast"
+        "name": "Chernihivska"
       },
       {
-        "name": "Chernihivska oblast"
+        "name": "Chernivetska"
       },
       {
-        "name": "Chernivetska oblast"
+        "name": "Crimea"
       },
       {
-        "name": "Dnipropetrovska oblast"
+        "name": "Dnipropetrovska"
       },
       {
-        "name": "Donetska oblast"
+        "name": "Donetska"
       },
       {
-        "name": "Ivano-Frankivska oblast"
+        "name": "Ivano-Frankivska"
       },
       {
-        "name": "Kharkivska oblast"
+        "name": "Kharkivska"
       },
       {
-        "name": "Khersonska oblast"
+        "name": "Khersonska"
       },
       {
-        "name": "Khmelnytska oblast"
+        "name": "Khmelnytska"
       },
       {
-        "name": "Kirovohradska oblast"
+        "name": "Kirovohradska"
       },
       {
         "name": "Kyiv"
       },
       {
-        "name": "Kyivska oblast"
+        "name": "Kyivska"
       },
       {
-        "name": "Luhanska oblast"
+        "name": "Luhanska"
       },
       {
-        "name": "Lvivska oblast"
+        "name": "Lvivska"
       },
       {
-        "name": "Mykolaivska oblast"
+        "name": "Mykolaivska"
       },
       {
-        "name": "Odeska oblast"
+        "name": "Odeska"
       },
       {
-        "name": "Poltavska oblast"
+        "name": "Poltavska"
       },
       {
-        "name": "Rivnenska oblast"
+        "name": "Rivnenska"
       },
       {
         "name": "Sevastopol"
       },
       {
-        "name": "Sumska oblast"
+        "name": "Sumska"
       },
       {
-        "name": "Ternopilska oblast"
+        "name": "Ternopilska"
       },
       {
-        "name": "Vinnytska oblast"
+        "name": "Vinnytska"
       },
       {
-        "name": "Volynska oblast"
+        "name": "Volynska"
       },
       {
-        "name": "Zakarpatska Oblast"
+        "name": "Zakarpatska"
       },
       {
-        "name": "Zaporizka oblast"
-      },
-      {
-        "name": "Zhytomyrska oblast"
+        "name": "Zaporizka"
       }
     ]
   },
@@ -11446,745 +11038,55 @@
     "name": "United Kingdom",
     "states": [
       {
-        "name": "Aberdeen"
+        "name": "Anguilla"
       },
       {
-        "name": "Aberdeenshire"
+        "name": "Bermuda"
       },
       {
-        "name": "Angus"
+        "name": "British Antarctic Territory"
       },
       {
-        "name": "Antrim"
+        "name": "British Indian Ocean Territory"
       },
       {
-        "name": "Antrim and Newtownabbey"
+        "name": "British Virgin Islands"
       },
       {
-        "name": "Ards"
-      },
-      {
-        "name": "Ards and North Down"
-      },
-      {
-        "name": "Argyll and Bute"
-      },
-      {
-        "name": "Armagh"
-      },
-      {
-        "name": "Armagh, Banbridge and Craigavon"
-      },
-      {
-        "name": "Ascension Island"
-      },
-      {
-        "name": "Ballymena"
-      },
-      {
-        "name": "Ballymoney"
-      },
-      {
-        "name": "Banbridge"
-      },
-      {
-        "name": "Barking and Dagenham"
-      },
-      {
-        "name": "Barnet"
-      },
-      {
-        "name": "Barnsley"
-      },
-      {
-        "name": "Bath and North East Somerset"
-      },
-      {
-        "name": "Bedford"
-      },
-      {
-        "name": "Belfast"
-      },
-      {
-        "name": "Bexley"
-      },
-      {
-        "name": "Birmingham"
-      },
-      {
-        "name": "Blackburn with Darwen"
-      },
-      {
-        "name": "Blackpool"
-      },
-      {
-        "name": "Blaenau Gwent"
-      },
-      {
-        "name": "Bolton"
-      },
-      {
-        "name": "Bournemouth"
-      },
-      {
-        "name": "Bracknell Forest"
-      },
-      {
-        "name": "Bradford"
-      },
-      {
-        "name": "Brent"
-      },
-      {
-        "name": "Bridgend"
-      },
-      {
-        "name": "Brighton and Hove"
-      },
-      {
-        "name": "Bristol"
-      },
-      {
-        "name": "Bromley"
-      },
-      {
-        "name": "Buckinghamshire"
-      },
-      {
-        "name": "Bury"
-      },
-      {
-        "name": "Caerphilly"
-      },
-      {
-        "name": "Calderdale"
-      },
-      {
-        "name": "Cambridgeshire"
-      },
-      {
-        "name": "Camden"
-      },
-      {
-        "name": "Cardiff"
-      },
-      {
-        "name": "Carmarthenshire"
-      },
-      {
-        "name": "Carrickfergus"
-      },
-      {
-        "name": "Castlereagh"
-      },
-      {
-        "name": "Causeway Coast and Glens"
-      },
-      {
-        "name": "Central Bedfordshire"
-      },
-      {
-        "name": "Ceredigion"
-      },
-      {
-        "name": "Cheshire East"
-      },
-      {
-        "name": "Cheshire West and Chester"
-      },
-      {
-        "name": "City of Kingston upon Hull"
-      },
-      {
-        "name": "City of Southampton"
-      },
-      {
-        "name": "Clackmannanshire"
-      },
-      {
-        "name": "Coleraine"
-      },
-      {
-        "name": "Conwy"
-      },
-      {
-        "name": "Cookstown"
-      },
-      {
-        "name": "Cornwall"
-      },
-      {
-        "name": "Coventry"
-      },
-      {
-        "name": "Craigavon"
-      },
-      {
-        "name": "Croydon"
-      },
-      {
-        "name": "Cumbria"
-      },
-      {
-        "name": "Darlington"
-      },
-      {
-        "name": "Denbighshire"
-      },
-      {
-        "name": "Derby"
-      },
-      {
-        "name": "Derbyshire"
-      },
-      {
-        "name": "Derry"
-      },
-      {
-        "name": "Derry City and Strabane"
-      },
-      {
-        "name": "Devon"
-      },
-      {
-        "name": "Doncaster"
-      },
-      {
-        "name": "Dorset"
-      },
-      {
-        "name": "Down District Council"
-      },
-      {
-        "name": "Dudley"
-      },
-      {
-        "name": "Dumfries and Galloway"
-      },
-      {
-        "name": "Dundee"
-      },
-      {
-        "name": "Dungannon and South Tyrone"
-      },
-      {
-        "name": "Durham"
-      },
-      {
-        "name": "Ealing"
-      },
-      {
-        "name": "East Ayrshire"
-      },
-      {
-        "name": "East Dunbartonshire"
-      },
-      {
-        "name": "East Lothian"
-      },
-      {
-        "name": "East Renfrewshire"
-      },
-      {
-        "name": "East Riding of Yorkshire"
-      },
-      {
-        "name": "East Sussex"
-      },
-      {
-        "name": "Edinburgh"
-      },
-      {
-        "name": "Enfield"
+        "name": "Cayman Islands"
       },
       {
         "name": "England"
       },
       {
-        "name": "Essex"
+        "name": "Falkland Islands"
       },
       {
-        "name": "Falkirk"
+        "name": "Gibraltar"
       },
       {
-        "name": "Fermanagh"
+        "name": "Montserrat"
       },
       {
-        "name": "Fermanagh and Omagh"
+        "name": "Pitcairn Islands"
       },
       {
-        "name": "Fife"
-      },
-      {
-        "name": "Flintshire"
-      },
-      {
-        "name": "Gateshead"
-      },
-      {
-        "name": "Glasgow"
-      },
-      {
-        "name": "Gloucestershire"
-      },
-      {
-        "name": "Greenwich"
-      },
-      {
-        "name": "Gwynedd"
-      },
-      {
-        "name": "Hackney"
-      },
-      {
-        "name": "Halton"
-      },
-      {
-        "name": "Hammersmith and Fulham"
-      },
-      {
-        "name": "Hampshire"
-      },
-      {
-        "name": "Haringey"
-      },
-      {
-        "name": "Harrow"
-      },
-      {
-        "name": "Hartlepool"
-      },
-      {
-        "name": "Havering"
-      },
-      {
-        "name": "Herefordshire"
-      },
-      {
-        "name": "Hertfordshire"
-      },
-      {
-        "name": "Highland"
-      },
-      {
-        "name": "Hillingdon"
-      },
-      {
-        "name": "Hounslow"
-      },
-      {
-        "name": "Inverclyde"
-      },
-      {
-        "name": "Isle of Wight"
-      },
-      {
-        "name": "Isles of Scilly"
-      },
-      {
-        "name": "Islington"
-      },
-      {
-        "name": "Kensington and Chelsea"
-      },
-      {
-        "name": "Kent"
-      },
-      {
-        "name": "Kingston upon Thames"
-      },
-      {
-        "name": "Kirklees"
-      },
-      {
-        "name": "Knowsley"
-      },
-      {
-        "name": "Lambeth"
-      },
-      {
-        "name": "Lancashire"
-      },
-      {
-        "name": "Larne"
-      },
-      {
-        "name": "Leeds"
-      },
-      {
-        "name": "Leicester"
-      },
-      {
-        "name": "Leicestershire"
-      },
-      {
-        "name": "Lewisham"
-      },
-      {
-        "name": "Limavady"
-      },
-      {
-        "name": "Lincolnshire"
-      },
-      {
-        "name": "Lisburn"
-      },
-      {
-        "name": "Lisburn and Castlereagh"
-      },
-      {
-        "name": "Liverpool"
-      },
-      {
-        "name": "London"
-      },
-      {
-        "name": "Magherafelt"
-      },
-      {
-        "name": "Manchester"
-      },
-      {
-        "name": "Medway"
-      },
-      {
-        "name": "Merthyr Tydfil"
-      },
-      {
-        "name": "Merton"
-      },
-      {
-        "name": "Mid and East Antrim"
-      },
-      {
-        "name": "Mid Ulster"
-      },
-      {
-        "name": "Middlesbrough"
-      },
-      {
-        "name": "Midlothian"
-      },
-      {
-        "name": "Milton Keynes"
-      },
-      {
-        "name": "Monmouthshire"
-      },
-      {
-        "name": "Moray"
-      },
-      {
-        "name": "Moyle"
-      },
-      {
-        "name": "Neath Port Talbot"
-      },
-      {
-        "name": "Newcastle upon Tyne"
-      },
-      {
-        "name": "Newham"
-      },
-      {
-        "name": "Newport"
-      },
-      {
-        "name": "Newry and Mourne"
-      },
-      {
-        "name": "Newry, Mourne and Down"
-      },
-      {
-        "name": "Newtownabbey"
-      },
-      {
-        "name": "Norfolk"
-      },
-      {
-        "name": "North Ayrshire"
-      },
-      {
-        "name": "North Down"
-      },
-      {
-        "name": "North East Lincolnshire"
-      },
-      {
-        "name": "North Lanarkshire"
-      },
-      {
-        "name": "North Lincolnshire"
-      },
-      {
-        "name": "North Somerset"
-      },
-      {
-        "name": "North Tyneside"
-      },
-      {
-        "name": "North Yorkshire"
-      },
-      {
-        "name": "Northamptonshire"
-      },
-      {
-        "name": "Northern Ireland"
-      },
-      {
-        "name": "Northumberland"
-      },
-      {
-        "name": "Nottingham"
-      },
-      {
-        "name": "Nottinghamshire"
-      },
-      {
-        "name": "Oldham"
-      },
-      {
-        "name": "Omagh"
-      },
-      {
-        "name": "Orkney Islands"
-      },
-      {
-        "name": "Outer Hebrides"
-      },
-      {
-        "name": "Oxfordshire"
-      },
-      {
-        "name": "Pembrokeshire"
-      },
-      {
-        "name": "Perth and Kinross"
-      },
-      {
-        "name": "Peterborough"
-      },
-      {
-        "name": "Plymouth"
-      },
-      {
-        "name": "Poole"
-      },
-      {
-        "name": "Portsmouth"
-      },
-      {
-        "name": "Powys"
-      },
-      {
-        "name": "Reading"
-      },
-      {
-        "name": "Redbridge"
-      },
-      {
-        "name": "Redcar and Cleveland"
-      },
-      {
-        "name": "Renfrewshire"
-      },
-      {
-        "name": "Rhondda Cynon Taf"
-      },
-      {
-        "name": "Richmond upon Thames"
-      },
-      {
-        "name": "Rochdale"
-      },
-      {
-        "name": "Rotherham"
-      },
-      {
-        "name": "Rutland"
-      },
-      {
-        "name": "Saint Helena"
-      },
-      {
-        "name": "Salford"
-      },
-      {
-        "name": "Sandwell"
+        "name": "Saint Helena, Ascension and Tristan da Cunha"
       },
       {
         "name": "Scotland"
       },
       {
-        "name": "Scottish Borders"
+        "name": "South Georgia and the South Sandwich Islands"
       },
       {
-        "name": "Sefton"
+        "name": "Sovereign Base Areas of Akrotiri and Dhekelia"
       },
       {
-        "name": "Sheffield"
-      },
-      {
-        "name": "Shetland Islands"
-      },
-      {
-        "name": "Shropshire"
-      },
-      {
-        "name": "Slough"
-      },
-      {
-        "name": "Solihull"
-      },
-      {
-        "name": "Somerset"
-      },
-      {
-        "name": "South Ayrshire"
-      },
-      {
-        "name": "South Gloucestershire"
-      },
-      {
-        "name": "South Lanarkshire"
-      },
-      {
-        "name": "South Tyneside"
-      },
-      {
-        "name": "Southend-on-Sea"
-      },
-      {
-        "name": "Southwark"
-      },
-      {
-        "name": "St Helens"
-      },
-      {
-        "name": "Staffordshire"
-      },
-      {
-        "name": "Stirling"
-      },
-      {
-        "name": "Stockport"
-      },
-      {
-        "name": "Stockton-on-Tees"
-      },
-      {
-        "name": "Stoke-on-Trent"
-      },
-      {
-        "name": "Strabane"
-      },
-      {
-        "name": "Suffolk"
-      },
-      {
-        "name": "Sunderland"
-      },
-      {
-        "name": "Surrey"
-      },
-      {
-        "name": "Sutton"
-      },
-      {
-        "name": "Swansea"
-      },
-      {
-        "name": "Swindon"
-      },
-      {
-        "name": "Tameside"
-      },
-      {
-        "name": "Telford and Wrekin"
-      },
-      {
-        "name": "Thurrock"
-      },
-      {
-        "name": "Torbay"
-      },
-      {
-        "name": "Torfaen"
-      },
-      {
-        "name": "Tower Hamlets"
-      },
-      {
-        "name": "Trafford"
-      },
-      {
-        "name": "United Kingdom"
-      },
-      {
-        "name": "Vale of Glamorgan"
-      },
-      {
-        "name": "Wakefield"
+        "name": "Turks and Caicos Islands"
       },
       {
         "name": "Wales"
-      },
-      {
-        "name": "Walsall"
-      },
-      {
-        "name": "Waltham Forest"
-      },
-      {
-        "name": "Wandsworth"
-      },
-      {
-        "name": "Warrington"
-      },
-      {
-        "name": "Warwickshire"
-      },
-      {
-        "name": "West Berkshire"
-      },
-      {
-        "name": "West Dunbartonshire"
-      },
-      {
-        "name": "West Lothian"
-      },
-      {
-        "name": "West Sussex"
-      },
-      {
-        "name": "Westminster"
-      },
-      {
-        "name": "Wigan"
-      },
-      {
-        "name": "Wiltshire"
-      },
-      {
-        "name": "Windsor and Maidenhead"
-      },
-      {
-        "name": "Wirral"
-      },
-      {
-        "name": "Wokingham"
-      },
-      {
-        "name": "Wolverhampton"
-      },
-      {
-        "name": "Worcestershire"
-      },
-      {
-        "name": "Wrexham"
-      },
-      {
-        "name": "York"
       }
     ]
   },
@@ -12207,9 +11109,6 @@
         "name": "Arkansas"
       },
       {
-        "name": "Baker Island"
-      },
-      {
         "name": "California"
       },
       {
@@ -12220,9 +11119,6 @@
       },
       {
         "name": "Delaware"
-      },
-      {
-        "name": "District of Columbia"
       },
       {
         "name": "Florida"
@@ -12252,19 +11148,10 @@
         "name": "Iowa"
       },
       {
-        "name": "Jarvis Island"
-      },
-      {
-        "name": "Johnston Atoll"
-      },
-      {
         "name": "Kansas"
       },
       {
         "name": "Kentucky"
-      },
-      {
-        "name": "Kingman Reef"
       },
       {
         "name": "Louisiana"
@@ -12282,9 +11169,6 @@
         "name": "Michigan"
       },
       {
-        "name": "Midway Atoll"
-      },
-      {
         "name": "Minnesota"
       },
       {
@@ -12295,9 +11179,6 @@
       },
       {
         "name": "Montana"
-      },
-      {
-        "name": "Navassa Island"
       },
       {
         "name": "Nebraska"
@@ -12336,9 +11217,6 @@
         "name": "Oregon"
       },
       {
-        "name": "Palmyra Atoll"
-      },
-      {
         "name": "Pennsylvania"
       },
       {
@@ -12373,9 +11251,6 @@
       },
       {
         "name": "Virginia"
-      },
-      {
-        "name": "Wake Island"
       },
       {
         "name": "Washington"
@@ -12525,7 +11400,11 @@
   },
   {
     "name": "Vatican City",
-    "states": []
+    "states": [
+      {
+        "name": "Vatican City"
+      }
+    ]
   },
   {
     "name": "Venezuela",
@@ -12564,6 +11443,9 @@
         "name": "Falcón"
       },
       {
+        "name": "Federal Dependencies"
+      },
+      {
         "name": "Guárico"
       },
       {
@@ -12597,9 +11479,6 @@
         "name": "Trujillo"
       },
       {
-        "name": "Venezuela"
-      },
-      {
         "name": "Yaracuy"
       },
       {
@@ -12614,34 +11493,7 @@
         "name": "An Giang"
       },
       {
-        "name": "Bà Rịa-Vũng Tàu"
-      },
-      {
-        "name": "Bắc Giang"
-      },
-      {
-        "name": "Bắc Kạn"
-      },
-      {
-        "name": "Bạc Liêu"
-      },
-      {
         "name": "Bắc Ninh"
-      },
-      {
-        "name": "Bến Tre"
-      },
-      {
-        "name": "Bình Dương"
-      },
-      {
-        "name": "Bình Định"
-      },
-      {
-        "name": "Bình Phước"
-      },
-      {
-        "name": "Bình Thuận"
       },
       {
         "name": "Cà Mau"
@@ -12659,9 +11511,6 @@
         "name": "Đắk Lắk"
       },
       {
-        "name": "Đắk Nông"
-      },
-      {
         "name": "Điện Biên"
       },
       {
@@ -12674,43 +11523,25 @@
         "name": "Gia Lai"
       },
       {
-        "name": "Hà Giang"
-      },
-      {
-        "name": "Hà Nam"
-      },
-      {
-        "name": "Hà Nội"
-      },
-      {
         "name": "Hà Tĩnh"
       },
       {
-        "name": "Hải Dương"
+        "name": "Haiphong"
       },
       {
-        "name": "Hải Phòng"
-      },
-      {
-        "name": "Hậu Giang"
+        "name": "Hanoi"
       },
       {
         "name": "Hồ Chí Minh"
       },
       {
-        "name": "Hòa Bình"
+        "name": "Huế"
       },
       {
         "name": "Hưng Yên"
       },
       {
         "name": "Khánh Hòa"
-      },
-      {
-        "name": "Kiên Giang"
-      },
-      {
-        "name": "Kon Tum"
       },
       {
         "name": "Lai Châu"
@@ -12725,31 +11556,13 @@
         "name": "Lào Cai"
       },
       {
-        "name": "Long An"
-      },
-      {
-        "name": "Nam Định"
-      },
-      {
         "name": "Nghệ An"
       },
       {
         "name": "Ninh Bình"
       },
       {
-        "name": "Ninh Thuận"
-      },
-      {
         "name": "Phú Thọ"
-      },
-      {
-        "name": "Phú Yên"
-      },
-      {
-        "name": "Quảng Bình"
-      },
-      {
-        "name": "Quảng Nam"
       },
       {
         "name": "Quảng Ngãi"
@@ -12761,16 +11574,10 @@
         "name": "Quảng Trị"
       },
       {
-        "name": "Sóc Trăng"
-      },
-      {
         "name": "Sơn La"
       },
       {
         "name": "Tây Ninh"
-      },
-      {
-        "name": "Thái Bình"
       },
       {
         "name": "Thái Nguyên"
@@ -12779,43 +11586,41 @@
         "name": "Thanh Hóa"
       },
       {
-        "name": "Thừa Thiên-Huế"
-      },
-      {
-        "name": "Tiền Giang"
-      },
-      {
-        "name": "Trà Vinh"
-      },
-      {
         "name": "Tuyên Quang"
       },
       {
         "name": "Vĩnh Long"
-      },
-      {
-        "name": "Vĩnh Phúc"
-      },
-      {
-        "name": "Yên Bái"
       }
     ]
   },
   {
     "name": "Western Sahara",
-    "states": []
+    "states": [
+      {
+        "name": "Dakhla-Oued Ed-Dahab"
+      },
+      {
+        "name": "Guelmim-Oued Noun"
+      },
+      {
+        "name": "Laâyoune-Sakia El Hamra"
+      }
+    ]
   },
   {
     "name": "Yemen",
     "states": [
       {
-        "name": "'Adan"
-      },
-      {
         "name": "'Amran"
       },
       {
         "name": "Abyan"
+      },
+      {
+        "name": "Ad Dali"
+      },
+      {
+        "name": "Aden"
       },
       {
         "name": "Al Bayda'"
@@ -12857,7 +11662,7 @@
         "name": "Raymah"
       },
       {
-        "name": "Saada"
+        "name": "Sa'dah"
       },
       {
         "name": "Sana'a"
