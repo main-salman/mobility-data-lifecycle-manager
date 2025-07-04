@@ -4419,52 +4419,43 @@
         "name": "Bali"
       },
       {
+        "name": "Bangka Belitung Islands"
+      },
+      {
         "name": "Banten"
       },
       {
         "name": "Bengkulu"
       },
       {
-        "name": "DI Yogyakarta"
+        "name": "Central Java"
       },
       {
-        "name": "DKI Jakarta"
+        "name": "Central Kalimantan"
+      },
+      {
+        "name": "Central Papua"
+      },
+      {
+        "name": "Central Sulawesi"
+      },
+      {
+        "name": "East Java"
+      },
+      {
+        "name": "East Kalimantan"
+      },
+      {
+        "name": "East Nusa Tenggara"
       },
       {
         "name": "Gorontalo"
       },
       {
+        "name": "Highland Papua"
+      },
+      {
         "name": "Jambi"
-      },
-      {
-        "name": "Jawa Barat"
-      },
-      {
-        "name": "Jawa Tengah"
-      },
-      {
-        "name": "Jawa Timur"
-      },
-      {
-        "name": "Kalimantan Barat"
-      },
-      {
-        "name": "Kalimantan Selatan"
-      },
-      {
-        "name": "Kalimantan Tengah"
-      },
-      {
-        "name": "Kalimantan Timur"
-      },
-      {
-        "name": "Kalimantan Utara"
-      },
-      {
-        "name": "Kepulauan Bangka Belitung"
-      },
-      {
-        "name": "Kepulauan Riau"
       },
       {
         "name": "Lampung"
@@ -4473,58 +4464,67 @@
         "name": "Maluku"
       },
       {
-        "name": "Maluku Utara"
+        "name": "North Kalimantan"
       },
       {
-        "name": "Nusa Tenggara Barat"
+        "name": "North Maluku"
       },
       {
-        "name": "Nusa Tenggara Timur"
+        "name": "North Sulawesi"
+      },
+      {
+        "name": "North Sumatra"
       },
       {
         "name": "Papua"
       },
       {
-        "name": "Papua Barat"
-      },
-      {
-        "name": "Papua Barat Daya"
-      },
-      {
-        "name": "Papua Pegunungan"
-      },
-      {
-        "name": "Papua Selatan"
-      },
-      {
-        "name": "Papua Tengah"
-      },
-      {
         "name": "Riau"
       },
       {
-        "name": "Sulawesi Barat"
+        "name": "Riau Islands"
       },
       {
-        "name": "Sulawesi Selatan"
+        "name": "South Kalimantan"
       },
       {
-        "name": "Sulawesi Tengah"
+        "name": "South Papua"
       },
       {
-        "name": "Sulawesi Tenggara"
+        "name": "South Sulawesi"
       },
       {
-        "name": "Sulawesi Utara"
+        "name": "South Sumatra"
       },
       {
-        "name": "Sumatera Barat"
+        "name": "Southeast Sulawesi"
       },
       {
-        "name": "Sumatera Selatan"
+        "name": "Southwest Papua"
       },
       {
-        "name": "Sumatera Utara"
+        "name": "Special Capital Region of Jakarta"
+      },
+      {
+        "name": "West Java"
+      },
+      {
+        "name": "West Kalimantan"
+      },
+      {
+        "name": "West Nusa Tenggara"
+      },
+      {
+        "name": "West Papua"
+      },
+      {
+        "name": "West Sulawesi"
+      },
+      {
+        "name": "West Sumatra"
+      },
+      {
+        "name": "Special Region of Yogyakarta"
       }
     ]
   },
