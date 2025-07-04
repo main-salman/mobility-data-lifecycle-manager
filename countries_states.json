@@ -3487,12 +3487,6 @@
         "name": "Cakaudrove"
       },
       {
-        "name": "Central"
-      },
-      {
-        "name": "Eastern"
-      },
-      {
         "name": "Kadavu"
       },
       {
@@ -3514,9 +3508,6 @@
         "name": "Namosi"
       },
       {
-        "name": "Northern"
-      },
-      {
         "name": "Ra"
       },
       {
@@ -3530,9 +3521,6 @@
       },
       {
         "name": "Tailevu"
-      },
-      {
-        "name": "Western"
       }
     ]
   },
@@ -3540,7 +3528,7 @@
     "name": "Finland",
     "states": [
       {
-        "name": "Åland Islands"
+        "name": "Åland"
       },
       {
         "name": "Central Finland"
@@ -3549,10 +3537,10 @@
         "name": "Central Ostrobothnia"
       },
       {
-        "name": "Finland Proper"
+        "name": "Kainuu"
       },
       {
-        "name": "Kainuu"
+        "name": "Kanta-Häme"
       },
       {
         "name": "Kymenlaakso"
@@ -3561,19 +3549,19 @@
         "name": "Lapland"
       },
       {
+        "name": "North Ostrobothnia"
+      },
+      {
         "name": "North Karelia"
       },
       {
-        "name": "Northern Ostrobothnia"
-      },
-      {
-        "name": "Northern Savonia"
+        "name": "North Savo"
       },
       {
         "name": "Ostrobothnia"
       },
       {
-        "name": "Päijänne Tavastia"
+        "name": "Päijät-Häme"
       },
       {
         "name": "Pirkanmaa"
@@ -3585,13 +3573,13 @@
         "name": "South Karelia"
       },
       {
-        "name": "Southern Ostrobothnia"
+        "name": "South Ostrobothnia"
       },
       {
-        "name": "Southern Savonia"
+        "name": "South Savo"
       },
       {
-        "name": "Tavastia Proper"
+        "name": "Southwest Finland"
       },
       {
         "name": "Uusimaa"
@@ -3602,49 +3590,7 @@
     "name": "France",
     "states": [
       {
-        "name": "Ain"
-      },
-      {
-        "name": "Aisne"
-      },
-      {
-        "name": "Allier"
-      },
-      {
-        "name": "Alpes-de-Haute-Provence"
-      },
-      {
-        "name": "Alpes-Maritimes"
-      },
-      {
-        "name": "Alsace"
-      },
-      {
-        "name": "Ardèche"
-      },
-      {
-        "name": "Ardennes"
-      },
-      {
-        "name": "Ariège"
-      },
-      {
-        "name": "Aube"
-      },
-      {
-        "name": "Aude"
-      },
-      {
         "name": "Auvergne-Rhône-Alpes"
-      },
-      {
-        "name": "Aveyron"
-      },
-      {
-        "name": "Bas-Rhin"
-      },
-      {
-        "name": "Bouches-du-Rhône"
       },
       {
         "name": "Bourgogne-Franche-Comté"
@@ -3653,67 +3599,13 @@
         "name": "Bretagne"
       },
       {
-        "name": "Calvados"
-      },
-      {
-        "name": "Cantal"
-      },
-      {
         "name": "Centre-Val de Loire"
       },
       {
-        "name": "Charente"
-      },
-      {
-        "name": "Charente-Maritime"
-      },
-      {
-        "name": "Cher"
-      },
-      {
-        "name": "Clipperton"
-      },
-      {
-        "name": "Corrèze"
+        "name": "Clipperton Island"
       },
       {
         "name": "Corse"
-      },
-      {
-        "name": "Corse-du-Sud"
-      },
-      {
-        "name": "Côte-d'Or"
-      },
-      {
-        "name": "Côtes-d'Armor"
-      },
-      {
-        "name": "Creuse"
-      },
-      {
-        "name": "Deux-Sèvres"
-      },
-      {
-        "name": "Dordogne"
-      },
-      {
-        "name": "Doubs"
-      },
-      {
-        "name": "Drôme"
-      },
-      {
-        "name": "Essonne"
-      },
-      {
-        "name": "Eure"
-      },
-      {
-        "name": "Eure-et-Loir"
-      },
-      {
-        "name": "Finistère"
       },
       {
         "name": "French Guiana"
@@ -3725,250 +3617,55 @@
         "name": "French Southern and Antarctic Lands"
       },
       {
-        "name": "Gard"
-      },
-      {
-        "name": "Gers"
-      },
-      {
-        "name": "Gironde"
-      },
-      {
-        "name": "Grand-Est"
+        "name": "Grand Est"
       },
       {
         "name": "Guadeloupe"
       },
       {
-        "name": "Haut-Rhin"
-      },
-      {
-        "name": "Haute-Corse"
-      },
-      {
-        "name": "Haute-Garonne"
-      },
-      {
-        "name": "Haute-Loire"
-      },
-      {
-        "name": "Haute-Marne"
-      },
-      {
-        "name": "Haute-Saône"
-      },
-      {
-        "name": "Haute-Savoie"
-      },
-      {
-        "name": "Haute-Vienne"
-      },
-      {
-        "name": "Hautes-Alpes"
-      },
-      {
-        "name": "Hautes-Pyrénées"
-      },
-      {
         "name": "Hauts-de-France"
-      },
-      {
-        "name": "Hauts-de-Seine"
-      },
-      {
-        "name": "Hérault"
       },
       {
         "name": "Île-de-France"
       },
       {
-        "name": "Ille-et-Vilaine"
-      },
-      {
-        "name": "Indre"
-      },
-      {
-        "name": "Indre-et-Loire"
-      },
-      {
-        "name": "Isère"
-      },
-      {
-        "name": "Jura"
-      },
-      {
-        "name": "La Réunion"
-      },
-      {
-        "name": "Landes"
-      },
-      {
-        "name": "Loir-et-Cher"
-      },
-      {
-        "name": "Loire"
-      },
-      {
-        "name": "Loire-Atlantique"
-      },
-      {
-        "name": "Loiret"
-      },
-      {
-        "name": "Lot"
-      },
-      {
-        "name": "Lot-et-Garonne"
-      },
-      {
-        "name": "Lozère"
-      },
-      {
-        "name": "Maine-et-Loire"
-      },
-      {
-        "name": "Manche"
-      },
-      {
-        "name": "Marne"
-      },
-      {
         "name": "Martinique"
-      },
-      {
-        "name": "Mayenne"
       },
       {
         "name": "Mayotte"
       },
       {
-        "name": "Métropole de Lyon"
-      },
-      {
-        "name": "Meurthe-et-Moselle"
-      },
-      {
-        "name": "Meuse"
-      },
-      {
-        "name": "Morbihan"
-      },
-      {
-        "name": "Moselle"
-      },
-      {
-        "name": "Nièvre"
-      },
-      {
-        "name": "Nord"
-      },
-      {
-        "name": "Normandie"
+        "name": "New Caledonia"
       },
       {
         "name": "Nouvelle-Aquitaine"
       },
       {
+        "name": "Normandie"
+      },
+      {
         "name": "Occitanie"
       },
       {
-        "name": "Oise"
+        "name": "Pays de la Loire"
       },
       {
-        "name": "Orne"
+        "name": "Provence-Alpes-Côte d'Azur"
       },
       {
-        "name": "Paris"
+        "name": "Réunion"
       },
       {
-        "name": "Pas-de-Calais"
+        "name": "Saint Barthélemy"
       },
       {
-        "name": "Pays-de-la-Loire"
-      },
-      {
-        "name": "Provence-Alpes-Côte-d’Azur"
-      },
-      {
-        "name": "Puy-de-Dôme"
-      },
-      {
-        "name": "Pyrénées-Atlantiques"
-      },
-      {
-        "name": "Pyrénées-Orientales"
-      },
-      {
-        "name": "Rhône"
+        "name": "Saint Martin"
       },
       {
         "name": "Saint Pierre and Miquelon"
       },
       {
-        "name": "Saint-Barthélemy"
-      },
-      {
-        "name": "Saint-Martin"
-      },
-      {
-        "name": "Saône-et-Loire"
-      },
-      {
-        "name": "Sarthe"
-      },
-      {
-        "name": "Savoie"
-      },
-      {
-        "name": "Seine-et-Marne"
-      },
-      {
-        "name": "Seine-Maritime"
-      },
-      {
-        "name": "Seine-Saint-Denis"
-      },
-      {
-        "name": "Somme"
-      },
-      {
-        "name": "Tarn"
-      },
-      {
-        "name": "Tarn-et-Garonne"
-      },
-      {
-        "name": "Territoire de Belfort"
-      },
-      {
-        "name": "Val-d'Oise"
-      },
-      {
-        "name": "Val-de-Marne"
-      },
-      {
-        "name": "Var"
-      },
-      {
-        "name": "Vaucluse"
-      },
-      {
-        "name": "Vendée"
-      },
-      {
-        "name": "Vienne"
-      },
-      {
-        "name": "Vosges"
-      },
-      {
         "name": "Wallis and Futuna"
-      },
-      {
-        "name": "Yonne"
-      },
-      {
-        "name": "Yvelines"
       }
     ]
   },
@@ -4007,6 +3704,30 @@
   {
     "name": "Gambria",
     "states": [
+      {
+        "name": "Banjul"
+      },
+      {
+        "name": "Kanifing"
+      },
+      {
+        "name": "Brikama"
+      },
+      {
+        "name": "Mansa Konko"
+      },
+      {
+        "name": "Kerewan"
+      },
+      {
+        "name": "Kuntaur"
+      },
+      {
+        "name": "Janjanbureh"
+      },
+      {
+        "name": "Basse"
+      }
     ]
   },
   {
@@ -4159,6 +3880,48 @@
   {
     "name": "Greece",
     "states": [
+      {
+        "name": "Attica"
+      },
+      {
+        "name": "Central Greece"
+      },
+      {
+        "name": "Central Macedonia"
+      },
+      {
+        "name": "Crete"
+      },
+      {
+        "name": "Eastern Macedonia and Thrace"
+      },
+      {
+        "name": "Epirus"
+      },
+      {
+        "name": "Ionian Islands"
+      },
+      {
+        "name": "North Aegean"
+      },
+      {
+        "name": "Peloponnese"
+      },
+      {
+        "name": "South Aegean"
+      },
+      {
+        "name": "Thessaly"
+      },
+      {
+        "name": "Western Greece"
+      },
+      {
+        "name": "Western Macedonia"
+      },
+      {
+        "name": "Mount Athos"
+      }
     ]
   },
   {
@@ -4166,6 +3929,9 @@
     "states": [
       {
         "name": "Carriacou"
+      },
+      {
+        "name": "Petite Martinique"
       },
       {
         "name": "Saint Andrew"
@@ -4191,67 +3957,67 @@
     "name": "Guatemala",
     "states": [
       {
-        "name": "Alta Verapaz "
+        "name": "Alta Verapaz"
       },
       {
-        "name": "Baja Verapaz "
+        "name": "Baja Verapaz"
       },
       {
-        "name": "Chimaltenango "
+        "name": "Chimaltenango"
       },
       {
-        "name": "Chiquimula "
+        "name": "Chiquimula"
       },
       {
-        "name": "El Progreso "
+        "name": "El Progreso"
       },
       {
-        "name": "Escuintla "
+        "name": "El Quiché"
       },
       {
-        "name": "Guatemala "
+        "name": "Escuintla"
       },
       {
-        "name": "Huehuetenango "
+        "name": "Guatemala"
       },
       {
-        "name": "Izabal "
+        "name": "Huehuetenango"
       },
       {
-        "name": "Jalapa "
+        "name": "Izabal"
       },
       {
-        "name": "Jutiapa "
+        "name": "Jalapa"
       },
       {
-        "name": "Petén "
+        "name": "Jutiapa"
       },
       {
-        "name": "Quetzaltenango "
+        "name": "Petén"
       },
       {
-        "name": "Quiché "
+        "name": "Quetzaltenango"
       },
       {
-        "name": "Retalhuleu "
+        "name": "Retalhuleu"
       },
       {
-        "name": "Sacatepéquez "
+        "name": "Sacatepéquez"
       },
       {
-        "name": "San Marcos "
+        "name": "San Marcos"
       },
       {
-        "name": "Santa Rosa "
+        "name": "Santa Rosa"
       },
       {
-        "name": "Sololá "
+        "name": "Sololá"
       },
       {
-        "name": "Suchitepéquez "
+        "name": "Suchitepéquez"
       },
       {
-        "name": "Totonicapán "
+        "name": "Totonicapán"
       },
       {
         "name": "Zacapa"
@@ -4262,31 +4028,10 @@
     "name": "Guinea",
     "states": [
       {
-        "name": "Beyla"
-      },
-      {
-        "name": "Boffa"
-      },
-      {
-        "name": "Boké"
-      },
-      {
         "name": "Boké"
       },
       {
         "name": "Conakry"
-      },
-      {
-        "name": "Coyah"
-      },
-      {
-        "name": "Dabola"
-      },
-      {
-        "name": "Dalaba"
-      },
-      {
-        "name": "Dinguiraye"
       },
       {
         "name": "Dubréka"
@@ -4295,94 +4040,19 @@
         "name": "Faranah"
       },
       {
-        "name": "Faranah"
-      },
-      {
-        "name": "Forécariah"
-      },
-      {
-        "name": "Fria"
-      },
-      {
-        "name": "Gaoual"
-      },
-      {
-        "name": "Guéckédou"
-      },
-      {
         "name": "Kankan"
-      },
-      {
-        "name": "Kankan"
-      },
-      {
-        "name": "Kérouané"
       },
       {
         "name": "Kindia"
       },
       {
-        "name": "Kindia"
-      },
-      {
-        "name": "Kissidougou"
-      },
-      {
-        "name": "Koubia"
-      },
-      {
-        "name": "Koundara"
-      },
-      {
-        "name": "Kouroussa"
-      },
-      {
         "name": "Labé"
-      },
-      {
-        "name": "Labé"
-      },
-      {
-        "name": "Lélouma"
-      },
-      {
-        "name": "Lola"
-      },
-      {
-        "name": "Macenta"
-      },
-      {
-        "name": "Mali"
       },
       {
         "name": "Mamou"
       },
       {
-        "name": "Mamou"
-      },
-      {
-        "name": "Mandiana"
-      },
-      {
         "name": "Nzérékoré"
-      },
-      {
-        "name": "Nzérékoré"
-      },
-      {
-        "name": "Pita"
-      },
-      {
-        "name": "Siguiri"
-      },
-      {
-        "name": "Télimélé"
-      },
-      {
-        "name": "Tougué"
-      },
-      {
-        "name": "Yomou"
       }
     ]
   },
@@ -4390,19 +4060,7 @@
     "name": "Guinea-Bissau",
     "states": [
       {
-        "name": "Bafatá"
-      },
-      {
-        "name": "Biombo"
-      },
-      {
-        "name": "Bolama"
-      },
-      {
-        "name": "Cacheu"
-      },
-      {
-        "name": "Gabú"
+        "name": "Bissau"
       },
       {
         "name": "Leste"
@@ -4411,16 +4069,7 @@
         "name": "Norte"
       },
       {
-        "name": "Oio"
-      },
-      {
-        "name": "Quinara"
-      },
-      {
         "name": "Sul"
-      },
-      {
-        "name": "Tombali"
       }
     ]
   },
@@ -4566,124 +4215,55 @@
         "name": "Békés"
       },
       {
-        "name": "Békéscsaba"
-      },
-      {
         "name": "Borsod-Abaúj-Zemplén"
       },
       {
         "name": "Budapest"
       },
       {
-        "name": "Csongrád County"
+        "name": "Csongrád-Csanád"
       },
       {
-        "name": "Debrecen"
+        "name": "Fejér"
       },
       {
-        "name": "Dunaújváros"
+        "name": "Győr-Moson-Sopron"
       },
       {
-        "name": "Eger"
+        "name": "Hajdú-Bihar"
       },
       {
-        "name": "Érd"
+        "name": "Heves"
       },
       {
-        "name": "Fejér County"
-      },
-      {
-        "name": "Győr"
-      },
-      {
-        "name": "Győr-Moson-Sopron County"
-      },
-      {
-        "name": "Hajdú-Bihar County"
-      },
-      {
-        "name": "Heves County"
-      },
-      {
-        "name": "Hódmezővásárhely"
-      },
-      {
-        "name": "Jász-Nagykun-Szolnok County"
-      },
-      {
-        "name": "Kaposvár"
-      },
-      {
-        "name": "Kecskemét"
+        "name": "Jász-Nagykun-Szolnok"
       },
       {
         "name": "Komárom-Esztergom"
       },
       {
-        "name": "Miskolc"
+        "name": "Nógrád"
       },
       {
-        "name": "Nagykanizsa"
+        "name": "Pest"
       },
       {
-        "name": "Nógrád County"
+        "name": "Somogy"
       },
       {
-        "name": "Nyíregyháza"
+        "name": "Szabolcs-Szatmár-Bereg"
       },
       {
-        "name": "Pécs"
+        "name": "Tolna"
       },
       {
-        "name": "Pest County"
-      },
-      {
-        "name": "Salgótarján"
-      },
-      {
-        "name": "Somogy County"
-      },
-      {
-        "name": "Sopron"
-      },
-      {
-        "name": "Szabolcs-Szatmár-Bereg County"
-      },
-      {
-        "name": "Szeged"
-      },
-      {
-        "name": "Székesfehérvár"
-      },
-      {
-        "name": "Szekszárd"
-      },
-      {
-        "name": "Szolnok"
-      },
-      {
-        "name": "Szombathely"
-      },
-      {
-        "name": "Tatabánya"
-      },
-      {
-        "name": "Tolna County"
-      },
-      {
-        "name": "Vas County"
+        "name": "Vas"
       },
       {
         "name": "Veszprém"
       },
       {
-        "name": "Veszprém County"
-      },
-      {
-        "name": "Zala County"
-      },
-      {
-        "name": "Zalaegerszeg"
+        "name": "Zala"
       }
     ]
   },
