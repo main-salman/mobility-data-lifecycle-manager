@@ -7665,19 +7665,19 @@
     "name": "Pakistan",
     "states": [
       {
-        "name": "Azad Kashmir"
+        "name": "Azad Jammu"
       },
       {
         "name": "Balochistan"
       },
       {
-        "name": "Federally Administered Tribal Areas"
-      },
-      {
         "name": "Gilgit-Baltistan"
       },
       {
-        "name": "Islamabad"
+        "name": "Islamabad Pakhtunkhwa"
+      },
+      {
+        "name": "Kashmir"
       },
       {
         "name": "Khyber Pakhtunkhwa"
@@ -7765,7 +7765,7 @@
         "name": "Jericho "
       },
       {
-        "name": "Jerusalem (Quds)"
+        "name": "Jerusalem/Quds"
       },
       {
         "name": "Khan Yunis"
@@ -7803,7 +7803,7 @@
         "name": "Bocas del Toro"
       },
       {
-        "name": "Chiriquí Province"
+        "name": "Chiriquí"
       },
       {
         "name": "Coclé"
@@ -7815,7 +7815,7 @@
         "name": "Darién"
       },
       {
-        "name": "Emberá-Wounaan Comarca"
+        "name": "Emberá-Wounaan"
       },
       {
         "name": "Guna"
@@ -7827,7 +7827,7 @@
         "name": "Los Santos"
       },
       {
-        "name": "Ngöbe-Buglé Comarca"
+        "name": "Ngöbe-Buglé"
       },
       {
         "name": "Panamá"
@@ -8078,9 +8078,6 @@
         "name": "Aurora"
       },
       {
-        "name": "Autonomous Region in Muslim Mindanao"
-      },
-      {
         "name": "Basilan"
       },
       {
@@ -8094,9 +8091,6 @@
       },
       {
         "name": "Benguet"
-      },
-      {
-        "name": "Bicol"
       },
       {
         "name": "Biliran"
@@ -8114,12 +8108,6 @@
         "name": "Cagayan"
       },
       {
-        "name": "Cagayan Valley"
-      },
-      {
-        "name": "Calabarzon"
-      },
-      {
         "name": "Camarines Norte"
       },
       {
@@ -8132,9 +8120,6 @@
         "name": "Capiz"
       },
       {
-        "name": "Caraga"
-      },
-      {
         "name": "Catanduanes"
       },
       {
@@ -8144,22 +8129,10 @@
         "name": "Cebu"
       },
       {
-        "name": "Central Luzon"
-      },
-      {
-        "name": "Central Visayas"
-      },
-      {
-        "name": "Compostela Valley"
-      },
-      {
-        "name": "Cordillera Administrative"
-      },
-      {
         "name": "Cotabato"
       },
       {
-        "name": "Davao"
+        "name": "Davao de Oro"
       },
       {
         "name": "Davao del Norte"
@@ -8180,16 +8153,10 @@
         "name": "Eastern Samar"
       },
       {
-        "name": "Eastern Visayas"
-      },
-      {
         "name": "Guimaras"
       },
       {
         "name": "Ifugao"
-      },
-      {
-        "name": "Ilocos"
       },
       {
         "name": "Ilocos Norte"
@@ -8222,7 +8189,10 @@
         "name": "Leyte"
       },
       {
-        "name": "Maguindanao"
+        "name": "Maguindanao del Norte"
+      },
+      {
+        "name": "Maguindanao del Sur"
       },
       {
         "name": "Marinduque"
@@ -8232,12 +8202,6 @@
       },
       {
         "name": "Metro Manila"
-      },
-      {
-        "name": "Metro Manila(National Capital Region)"
-      },
-      {
-        "name": "Mimaropa"
       },
       {
         "name": "Misamis Occidental"
@@ -8253,9 +8217,6 @@
       },
       {
         "name": "Negros Oriental"
-      },
-      {
-        "name": "Northern Mindanao"
       },
       {
         "name": "Northern Samar"
@@ -8294,13 +8255,13 @@
         "name": "Romblon"
       },
       {
+        "name": "Samar"
+      },
+      {
         "name": "Sarangani"
       },
       {
         "name": "Siquijor"
-      },
-      {
-        "name": "Soccsksargen"
       },
       {
         "name": "Sorsogon"
@@ -8330,12 +8291,6 @@
         "name": "Tawi-Tawi"
       },
       {
-        "name": "Western Samar"
-      },
-      {
-        "name": "Western Visayas"
-      },
-      {
         "name": "Zambales"
       },
       {
@@ -8343,9 +8298,6 @@
       },
       {
         "name": "Zamboanga del Sur"
-      },
-      {
-        "name": "Zamboanga Peninsula"
       },
       {
         "name": "Zamboanga Sibugay"
@@ -8684,253 +8636,28 @@
     "name": "Russia",
     "states": [
       {
-        "name": "Adygea"
+        "name": "Central"
       },
       {
-        "name": "Altai"
+        "name": "Far Eastern"
       },
       {
-        "name": "Altai"
+        "name": "North Caucasian"
       },
       {
-        "name": "Amur"
+        "name": "Northwestern"
       },
       {
-        "name": "Arkhangelsk"
+        "name": "Sirberian"
       },
       {
-        "name": "Astrakhan"
+        "name": "Southern"
       },
       {
-        "name": "Bashkortostan"
+        "name": "Ural"
       },
       {
-        "name": "Belgorod"
-      },
-      {
-        "name": "Bryansk"
-      },
-      {
-        "name": "Buryatia"
-      },
-      {
-        "name": "Chechen"
-      },
-      {
-        "name": "Chelyabinsk"
-      },
-      {
-        "name": "Chukotka"
-      },
-      {
-        "name": "Chuvash"
-      },
-      {
-        "name": "Dagestan"
-      },
-      {
-        "name": "Ingushetia"
-      },
-      {
-        "name": "Irkutsk"
-      },
-      {
-        "name": "Ivanovo"
-      },
-      {
-        "name": "Jewish"
-      },
-      {
-        "name": "Kabardino-Balkar"
-      },
-      {
-        "name": "Kaliningrad"
-      },
-      {
-        "name": "Kalmykia"
-      },
-      {
-        "name": "Kaluga"
-      },
-      {
-        "name": "Kamchatka"
-      },
-      {
-        "name": "Karachay-Cherkess"
-      },
-      {
-        "name": "Karelia"
-      },
-      {
-        "name": "Kemerovo"
-      },
-      {
-        "name": "Khabarovsk"
-      },
-      {
-        "name": "Khakassia"
-      },
-      {
-        "name": "Khanty-Mansi"
-      },
-      {
-        "name": "Kirov"
-      },
-      {
-        "name": "Komi"
-      },
-      {
-        "name": "Kostroma"
-      },
-      {
-        "name": "Krasnodar"
-      },
-      {
-        "name": "Krasnoyarsk"
-      },
-      {
-        "name": "Kurgan"
-      },
-      {
-        "name": "Kursk"
-      },
-      {
-        "name": "Leningrad"
-      },
-      {
-        "name": "Lipetsk"
-      },
-      {
-        "name": "Magadan"
-      },
-      {
-        "name": "Mari El"
-      },
-      {
-        "name": "Mordovia"
-      },
-      {
-        "name": "Moscow"
-      },
-      {
-        "name": "Moscow"
-      },
-      {
-        "name": "Murmansk"
-      },
-      {
-        "name": "Nenets"
-      },
-      {
-        "name": "Nizhny Novgorod"
-      },
-      {
-        "name": "North Ossetia-Alania"
-      },
-      {
-        "name": "Novgorod"
-      },
-      {
-        "name": "Novosibirsk"
-      },
-      {
-        "name": "Omsk"
-      },
-      {
-        "name": "Orenburg"
-      },
-      {
-        "name": "Oryol"
-      },
-      {
-        "name": "Penza"
-      },
-      {
-        "name": "Perm"
-      },
-      {
-        "name": "Primorsky"
-      },
-      {
-        "name": "Pskov"
-      },
-      {
-        "name": "Rostov"
-      },
-      {
-        "name": "Ryazan"
-      },
-      {
-        "name": "Saint Petersburg"
-      },
-      {
-        "name": "Sakha"
-      },
-      {
-        "name": "Sakhalin"
-      },
-      {
-        "name": "Samara"
-      },
-      {
-        "name": "Saratov"
-      },
-      {
-        "name": "Smolensk"
-      },
-      {
-        "name": "Stavropol"
-      },
-      {
-        "name": "Sverdlovsk"
-      },
-      {
-        "name": "Tambov"
-      },
-      {
-        "name": "Tatarstan"
-      },
-      {
-        "name": "Tomsk"
-      },
-      {
-        "name": "Tula"
-      },
-      {
-        "name": "Tuva"
-      },
-      {
-        "name": "Tver"
-      },
-      {
-        "name": "Tyumen"
-      },
-      {
-        "name": "Udmurt"
-      },
-      {
-        "name": "Ulyanovsk"
-      },
-      {
-        "name": "Vladimir"
-      },
-      {
-        "name": "Volgograd Oblast"
-      },
-      {
-        "name": "Vologda"
-      },
-      {
-        "name": "Voronezh"
-      },
-      {
-        "name": "Yamalo-Nenets"
-      },
-      {
-        "name": "Yaroslavl"
-      },
-      {
-        "name": "Zabaykalsky"
+        "name": "Volga"
       }
     ]
   },
@@ -8961,9 +8688,6 @@
         "name": "Christ Church Nichola Town"
       },
       {
-        "name": "Nevis"
-      },
-      {
         "name": "Saint Anne Sandy Point"
       },
       {
@@ -8980,9 +8704,6 @@
       },
       {
         "name": "Saint John Figtree"
-      },
-      {
-        "name": "Saint Kitts"
       },
       {
         "name": "Saint Mary Cayon"
@@ -9036,9 +8757,6 @@
       },
       {
         "name": "Micoud"
-      },
-      {
-        "name": "Praslin"
       },
       {
         "name": "Soufrière"
@@ -9145,10 +8863,25 @@
     "name": "Sao Tome and Principe",
     "states": [
       {
-        "name": "Príncipe"
+        "name": "Água Grande"
       },
       {
-        "name": "São Tomé"
+        "name": "Cantagalo"
+      },
+      {
+        "name": "Caué"
+      },
+      {
+        "name": "Lembá"
+      },
+      {
+        "name": "Lobata"
+      },
+      {
+        "name": "Mé-Zóchi"
+      },
+      {
+        "name": "Príncipe"
       }
     ]
   },
@@ -9247,9 +8980,6 @@
     "name": "Serbia",
     "states": [
       {
-        "name": "Belgrade"
-      },
-      {
         "name": "Bor"
       },
       {
@@ -9313,9 +9043,6 @@
         "name": "Toplica"
       },
       {
-        "name": "Vojvodina"
-      },
-      {
         "name": "West Bačka"
       },
       {
@@ -9330,13 +9057,16 @@
     "name": "Seychelles",
     "states": [
       {
+        "name": "Anse aux Pins"
+      },
+      {
         "name": "Anse Boileau"
       },
       {
-        "name": "Anse Royale"
+        "name": "Anse Etoile"
       },
       {
-        "name": "Anse-aux-Pins"
+        "name": "Anse Royale"
       },
       {
         "name": "Au Cap"
@@ -9369,10 +9099,7 @@
         "name": "Grand'Anse Praslin"
       },
       {
-        "name": "La Digue"
-      },
-      {
-        "name": "La Rivière Anglaise"
+        "name": "La Digue and Inner Islands"
       },
       {
         "name": "Les Mamelles"
@@ -9382,6 +9109,9 @@
       },
       {
         "name": "Mont Fleuri"
+      },
+      {
+        "name": "Outer Islands"
       },
       {
         "name": "Plaisance"
@@ -9410,6 +9140,9 @@
         "name": "Eastern"
       },
       {
+        "name": "North Western"
+      },
+      {
         "name": "Northern"
       },
       {
@@ -9424,7 +9157,7 @@
     "name": "Singapore",
     "states": [
       {
-        "name": "Central Singapore"
+        "name": "Central"
       },
       {
         "name": "North East"
@@ -9473,637 +9206,40 @@
     "name": "Slovenia",
     "states": [
       {
-        "name": "Ajdovščina"
+        "name": "Carinthia"
       },
       {
-        "name": "Ankaran"
+        "name": "Central Sava"
       },
       {
-        "name": "Apače"
+        "name": "Central Slovenia"
       },
       {
-        "name": "Beltinci"
+        "name": "Coastal-Karst"
       },
       {
-        "name": "Benedikt"
+        "name": "Drava"
       },
       {
-        "name": "Bistrica ob Sotli"
+        "name": "Gorizia"
       },
       {
-        "name": "Bled"
+        "name": "Littoral-Inner Carniola"
       },
       {
-        "name": "Bloke"
+        "name": "Lower Sava"
       },
       {
-        "name": "Bohinj"
+        "name": "Mura"
       },
       {
-        "name": "Borovnica"
+        "name": "Savinja"
       },
       {
-        "name": "Bovec"
+        "name": "Southeast Slovenia"
       },
       {
-        "name": "Braslovče"
-      },
-      {
-        "name": "Brda"
-      },
-      {
-        "name": "Brežice"
-      },
-      {
-        "name": "Brezovica"
-      },
-      {
-        "name": "Cankova"
-      },
-      {
-        "name": "Celje"
-      },
-      {
-        "name": "Cerklje na Gorenjskem"
-      },
-      {
-        "name": "Cerknica"
-      },
-      {
-        "name": "Cerkno"
-      },
-      {
-        "name": "Cerkvenjak"
-      },
-      {
-        "name": "Cirkulane"
-      },
-      {
-        "name": "Črenšovci"
-      },
-      {
-        "name": "Črna na Koroškem"
-      },
-      {
-        "name": "Črnomelj"
-      },
-      {
-        "name": "Destrnik"
-      },
-      {
-        "name": "Divača"
-      },
-      {
-        "name": "Dobje"
-      },
-      {
-        "name": "Dobrepolje"
-      },
-      {
-        "name": "Dobrna"
-      },
-      {
-        "name": "Dobrova–Polhov Gradec"
-      },
-      {
-        "name": "Dobrovnik"
-      },
-      {
-        "name": "Dol pri Ljubljani"
-      },
-      {
-        "name": "Dolenjske Toplice"
-      },
-      {
-        "name": "Domžale"
-      },
-      {
-        "name": "Dornava"
-      },
-      {
-        "name": "Dravograd"
-      },
-      {
-        "name": "Duplek"
-      },
-      {
-        "name": "Gorenja Vas–Poljane"
-      },
-      {
-        "name": "Gorišnica"
-      },
-      {
-        "name": "Gorje"
-      },
-      {
-        "name": "Gornja Radgona"
-      },
-      {
-        "name": "Gornji Grad"
-      },
-      {
-        "name": "Gornji Petrovci"
-      },
-      {
-        "name": "Grad"
-      },
-      {
-        "name": "Grosuplje"
-      },
-      {
-        "name": "Hajdina"
-      },
-      {
-        "name": "Hoče–Slivnica"
-      },
-      {
-        "name": "Hodoš"
-      },
-      {
-        "name": "Horjul"
-      },
-      {
-        "name": "Hrastnik"
-      },
-      {
-        "name": "Hrpelje–Kozina"
-      },
-      {
-        "name": "Idrija"
-      },
-      {
-        "name": "Ig"
-      },
-      {
-        "name": "Ilirska Bistrica"
-      },
-      {
-        "name": "Ivančna Gorica"
-      },
-      {
-        "name": "Izola"
-      },
-      {
-        "name": "Jesenice"
-      },
-      {
-        "name": "Jezersko"
-      },
-      {
-        "name": "Juršinci"
-      },
-      {
-        "name": "Kamnik"
-      },
-      {
-        "name": "Kanal ob Soči"
-      },
-      {
-        "name": "Kidričevo"
-      },
-      {
-        "name": "Kobarid"
-      },
-      {
-        "name": "Kobilje"
-      },
-      {
-        "name": "Kočevje"
-      },
-      {
-        "name": "Komen"
-      },
-      {
-        "name": "Komenda"
-      },
-      {
-        "name": "Koper"
-      },
-      {
-        "name": "Kostanjevica na Krki"
-      },
-      {
-        "name": "Kostel"
-      },
-      {
-        "name": "Kozje"
-      },
-      {
-        "name": "Kranj"
-      },
-      {
-        "name": "Kranjska Gora"
-      },
-      {
-        "name": "Križevci"
-      },
-      {
-        "name": "Krško"
-      },
-      {
-        "name": "Kungota"
-      },
-      {
-        "name": "Kuzma"
-      },
-      {
-        "name": "Laško"
-      },
-      {
-        "name": "Lenart"
-      },
-      {
-        "name": "Lendava"
-      },
-      {
-        "name": "Litija"
-      },
-      {
-        "name": "Ljubljana"
-      },
-      {
-        "name": "Ljubno"
-      },
-      {
-        "name": "Ljutomer"
-      },
-      {
-        "name": "Log–Dragomer"
-      },
-      {
-        "name": "Logatec"
-      },
-      {
-        "name": "Loška Dolina"
-      },
-      {
-        "name": "Loški Potok"
-      },
-      {
-        "name": "Lovrenc na Pohorju"
-      },
-      {
-        "name": "Luče"
-      },
-      {
-        "name": "Lukovica"
-      },
-      {
-        "name": "Majšperk"
-      },
-      {
-        "name": "Makole"
-      },
-      {
-        "name": "Maribor"
-      },
-      {
-        "name": "Markovci"
-      },
-      {
-        "name": "Medvode"
-      },
-      {
-        "name": "Mengeš"
-      },
-      {
-        "name": "Metlika"
-      },
-      {
-        "name": "Mežica"
-      },
-      {
-        "name": "Miklavž na Dravskem Polju"
-      },
-      {
-        "name": "Miren–Kostanjevica"
-      },
-      {
-        "name": "Mirna"
-      },
-      {
-        "name": "Mirna Peč"
-      },
-      {
-        "name": "Mislinja"
-      },
-      {
-        "name": "Mokronog–Trebelno"
-      },
-      {
-        "name": "Moravče"
-      },
-      {
-        "name": "Moravske Toplice"
-      },
-      {
-        "name": "Mozirje"
-      },
-      {
-        "name": "Murska Sobota"
-      },
-      {
-        "name": "Muta"
-      },
-      {
-        "name": "Naklo"
-      },
-      {
-        "name": "Nazarje"
-      },
-      {
-        "name": "Nova Gorica"
-      },
-      {
-        "name": "Novo Mesto"
-      },
-      {
-        "name": "Odranci"
-      },
-      {
-        "name": "Oplotnica"
-      },
-      {
-        "name": "Ormož"
-      },
-      {
-        "name": "Osilnica"
-      },
-      {
-        "name": "Pesnica"
-      },
-      {
-        "name": "Piran"
-      },
-      {
-        "name": "Pivka"
-      },
-      {
-        "name": "Podčetrtek"
-      },
-      {
-        "name": "Podlehnik"
-      },
-      {
-        "name": "Podvelka"
-      },
-      {
-        "name": "Poljčane"
-      },
-      {
-        "name": "Polzela"
-      },
-      {
-        "name": "Postojna"
-      },
-      {
-        "name": "Prebold"
-      },
-      {
-        "name": "Preddvor"
-      },
-      {
-        "name": "Prevalje"
-      },
-      {
-        "name": "Ptuj"
-      },
-      {
-        "name": "Puconci"
-      },
-      {
-        "name": "Rače–Fram"
-      },
-      {
-        "name": "Radeče"
-      },
-      {
-        "name": "Radenci"
-      },
-      {
-        "name": "Radlje ob Dravi"
-      },
-      {
-        "name": "Radovljica"
-      },
-      {
-        "name": "Ravne na Koroškem"
-      },
-      {
-        "name": "Razkrižje"
-      },
-      {
-        "name": "Rečica ob Savinji"
-      },
-      {
-        "name": "Renče–Vogrsko"
-      },
-      {
-        "name": "Ribnica"
-      },
-      {
-        "name": "Ribnica na Pohorju"
-      },
-      {
-        "name": "Rogaška Slatina"
-      },
-      {
-        "name": "Rogašovci"
-      },
-      {
-        "name": "Rogatec"
-      },
-      {
-        "name": "Ruše"
-      },
-      {
-        "name": "Šalovci"
-      },
-      {
-        "name": "Selnica ob Dravi"
-      },
-      {
-        "name": "Semič"
-      },
-      {
-        "name": "Šempeter–Vrtojba"
-      },
-      {
-        "name": "Šenčur"
-      },
-      {
-        "name": "Šentilj"
-      },
-      {
-        "name": "Šentjernej"
-      },
-      {
-        "name": "Šentjur"
-      },
-      {
-        "name": "Šentrupert"
-      },
-      {
-        "name": "Sevnica"
-      },
-      {
-        "name": "Sežana"
-      },
-      {
-        "name": "Škocjan"
-      },
-      {
-        "name": "Škofja Loka"
-      },
-      {
-        "name": "Škofljica"
-      },
-      {
-        "name": "Slovenj Gradec"
-      },
-      {
-        "name": "Slovenska Bistrica"
-      },
-      {
-        "name": "Slovenske Konjice"
-      },
-      {
-        "name": "Šmarje pri Jelšah"
-      },
-      {
-        "name": "Šmarješke Toplice"
-      },
-      {
-        "name": "Šmartno ob Paki"
-      },
-      {
-        "name": "Šmartno pri Litiji"
-      },
-      {
-        "name": "Sodražica"
-      },
-      {
-        "name": "Solčava"
-      },
-      {
-        "name": "Šoštanj"
-      },
-      {
-        "name": "Središče ob Dravi"
-      },
-      {
-        "name": "Starše"
-      },
-      {
-        "name": "Štore"
-      },
-      {
-        "name": "Straža"
-      },
-      {
-        "name": "Sveta Ana"
-      },
-      {
-        "name": "Sveta Trojica v Slovenskih Goricah"
-      },
-      {
-        "name": "Sveti Andraž v Slovenskih Goricah"
-      },
-      {
-        "name": "Sveti Jurij ob Ščavnici"
-      },
-      {
-        "name": "Sveti Jurij v Slovenskih Goricah"
-      },
-      {
-        "name": "Sveti Tomaž"
-      },
-      {
-        "name": "Tabor"
-      },
-      {
-        "name": "Tišina"
-      },
-      {
-        "name": "Tolmin"
-      },
-      {
-        "name": "Trbovlje"
-      },
-      {
-        "name": "Trebnje"
-      },
-      {
-        "name": "Trnovska Vas"
-      },
-      {
-        "name": "Tržič"
-      },
-      {
-        "name": "Trzin"
-      },
-      {
-        "name": "Turnišče"
-      },
-      {
-        "name": "Velika Polana"
-      },
-      {
-        "name": "Velike Lašče"
-      },
-      {
-        "name": "Veržej"
-      },
-      {
-        "name": "Videm"
-      },
-      {
-        "name": "Vipava"
-      },
-      {
-        "name": "Vitanje"
-      },
-      {
-        "name": "Vodice"
-      },
-      {
-        "name": "Vojnik"
-      },
-      {
-        "name": "Vransko"
-      },
-      {
-        "name": "Vrhnika"
-      },
-      {
-        "name": "Vuzenica"
-      },
-      {
-        "name": "Zagorje ob Savi"
-      },
-      {
-        "name": "Žalec"
-      },
-      {
-        "name": "Zavrč"
-      },
-      {
-        "name": "Železniki"
-      },
-      {
-        "name": "Žetale"
-      },
-      {
-        "name": "Žiri"
-      },
-      {
-        "name": "Žirovnica"
-      },
-      {
-        "name": "Zreče"
-      },
-      {
-        "name": "Žužemberk"
+        "name": "Upper Carniola"
       }
     ]
   },
@@ -10146,49 +9282,39 @@
     "name": "Somalia",
     "states": [
       {
+        "name": "Galmudug"
+      },
+      {
+        "name": "Hirshabelle"
+      },
+      {
+        "name": "Jubaland"
+      },
+      {
+        "name": "Puntland"
+      },
+      {
+        "name": "South West"
+      }
+    ]
+  },
+  {
+    "name": "Somaliland",
+    "states": [
+      {
         "name": "Awdal"
       },
       {
-        "name": "Bakool"
+        "name": "Maroodi Jeeh"
       },
       {
-        "name": "Banaadir"
-      },
-      {
-        "name": "Bari"
-      },
-      {
-        "name": "Bay"
-      },
-      {
-        "name": "Galguduud"
-      },
-      {
-        "name": "Gedo"
-      },
-      {
-        "name": "Hiran"
-      },
-      {
-        "name": "Lower Juba"
-      },
-      {
-        "name": "Lower Shebelle"
-      },
-      {
-        "name": "Middle Juba"
-      },
-      {
-        "name": "Middle Shebelle"
-      },
-      {
-        "name": "Mudug"
-      },
-      {
-        "name": "Nugal"
+        "name": "Sahil"
       },
       {
         "name": "Sanaag"
+      },
+      {
+        "name": "Sool"
       },
       {
         "name": "Togdheer"
