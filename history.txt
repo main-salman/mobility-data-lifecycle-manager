@@ -253,4 +253,26 @@ Updated flask_app.py:
 
 [2024-06-26] Refactored sync_city_for_date in sync_logic.py to process 31-day chunks in parallel using ThreadPoolExecutor, enabling concurrent API calls and S3 syncs for large date ranges.
 
---- 
+2024-12-19: Enhanced Flask app with boundary file upload functionality for the add city page:
+- Added file upload capability for shapefiles (.shp) and ZIP files containing shapefiles
+- Added new route /upload_boundary for processing uploaded boundary files
+- Added process_boundary_file() function to convert shapefiles to GeoJSON using geopandas
+- Added uploadBoundary() JavaScript function to handle file uploads and display boundaries
+- Boundaries are displayed on the map in PURPLE color (#800080) with 20% opacity fill
+- Added proper error handling and status messages for file upload process
+- Created uploads/boundaries directory for temporary file storage
+- Added support for multiple shapefile formats: .zip, .shp, .dbf, .shx, .prj, .cpg
+- Integrated with existing Leaflet map functionality on add city page
+- Files are automatically cleaned up after processing to save disk space
+
+Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkzeug (for secure_filename)
+
+2024-12-19: Fixed boundary upload issues and improved user experience:
+- Fixed shapefile processing error where missing .shx file caused crashes
+- Changed file input to only accept ZIP files to prevent incomplete shapefile uploads
+- Added comprehensive error handling for common shapefile issues
+- Enhanced user guidance with warning about requiring all shapefile components
+- Improved error messages to be more user-friendly
+- Added validation to check for required shapefile components (.shx, .dbf)
+- Created CASSO_Boundaries_102457.zip test file with all required components
+- Updated UI text to clearly indicate ZIP file requirement 

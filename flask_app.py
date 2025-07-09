@@ -26,6 +26,10 @@ from glob import glob
 from utils import load_cities, save_cities, setup_logging
 import geojson  # Add this import at the top
 import subprocess
+import zipfile
+import tempfile
+import geopandas as gpd
+from werkzeug.utils import secure_filename
 
 # Centralized logging setup
 setup_logging()
@@ -48,6 +52,13 @@ cities_lock = threading.Lock()
 
 # Global sync progress tracking
 data_sync_progress = {}
+
+# Upload configuration
+UPLOAD_FOLDER = 'uploads/boundaries'
+ALLOWED_EXTENSIONS = {'zip'}
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -290,6 +301,74 @@ def update_crontab_for_sync_time(time_str):
     lines.append(cron_line.strip())
     new_crontab = '\n'.join(lines) + '\n'
     subprocess.run(['sudo', 'crontab', '-u', 'ec2-user', '-'], input=new_crontab, text=True, check=True)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def process_boundary_file(file_path, filename):
+    """Process uploaded boundary file and convert to GeoJSON"""
+    try:
+        if filename.lower().endswith('.zip'):
+            # Extract ZIP file
+            with tempfile.TemporaryDirectory() as temp_dir:
+                with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                    zip_ref.extractall(temp_dir)
+                
+                # Look for .shp file
+                shp_files = glob(os.path.join(temp_dir, '*.shp'))
+                if not shp_files:
+                    return {'error': 'No shapefile (.shp) found in ZIP archive'}
+                
+                shp_file = shp_files[0]
+                
+                # Check for required shapefile components
+                base_name = os.path.splitext(shp_file)[0]
+                required_files = ['.shx', '.dbf']
+                missing_files = []
+                
+                for ext in required_files:
+                    if not os.path.exists(base_name + ext):
+                        missing_files.append(ext)
+                
+                if missing_files:
+                    return {'error': f'Missing required shapefile components: {", ".join(missing_files)}. Please ensure your ZIP contains all shapefile files (.shp, .shx, .dbf, .prj)'}
+                
+                gdf = gpd.read_file(shp_file)
+        
+        elif filename.lower().endswith('.shp'):
+            # For direct shapefile upload, provide helpful error message
+            return {'error': 'Direct .shp file upload requires all shapefile components (.shx, .dbf, .prj files). Please upload a ZIP file containing all shapefile components instead.'}
+        
+        else:
+            return {'error': 'Unsupported file format. Please upload a ZIP file containing shapefile components.'}
+        
+        # Convert to WGS84 if needed
+        if gdf.crs and gdf.crs != 'EPSG:4326':
+            gdf = gdf.to_crs('EPSG:4326')
+        
+        # Check if we have any geometries
+        if len(gdf) == 0:
+            return {'error': 'No geometries found in the shapefile'}
+        
+        # Convert to GeoJSON
+        geojson_data = json.loads(gdf.to_json())
+        
+        return {'success': True, 'geojson': geojson_data}
+    
+    except Exception as e:
+        logging.error(f"Error processing boundary file: {str(e)}")
+        error_msg = str(e)
+        
+        # Provide more user-friendly error messages for common issues
+        if 'Unable to open' in error_msg and '.shx' in error_msg:
+            return {'error': 'Shapefile index (.shx) file is missing or corrupted. Please upload a ZIP file containing all shapefile components (.shp, .shx, .dbf, .prj).'}
+        elif 'No such file or directory' in error_msg:
+            return {'error': 'Required shapefile components are missing. Please upload a ZIP file containing all shapefile files.'}
+        elif 'not recognized as a supported file format' in error_msg:
+            return {'error': 'File format not supported. Please upload a ZIP file containing shapefile components.'}
+        else:
+            return {'error': f'Error processing file: {error_msg}'}
 
 def get_dynamodb():
     return boto3.resource('dynamodb', region_name=REGION)
@@ -830,6 +909,15 @@ def add_city():
             <button type="button" onclick="centreMapOnInput()">Centre Map</button><br>
             Notification Email: <input name="notification_email"><br>
             <div style="margin:1em 0;">
+                <b>Boundary Upload:</b><br>
+                <input type="file" id="boundary_file" accept=".zip" onchange="uploadBoundary()">
+                <span style="font-size:0.9em;color:#666;">Upload ZIP file containing shapefile components (.shp, .shx, .dbf, .prj)</span><br>
+                <div style="font-size:0.8em;color:#888;margin-top:0.3em;">
+                    ⚠️ Shapefiles require multiple files to work. Please compress all shapefile components into a ZIP file before uploading.
+                </div>
+                <div id="boundary_status" style="margin-top:0.5em;"></div>
+            </div>
+            <div style="margin:1em 0;">
                 <b>Area of Interest (AOI):</b><br>
                 <label><input type="radio" name="aoi_type" value="radius" onchange="toggleAOI()"> Radius</label>
                 <label><input type="radio" name="aoi_type" value="polygon" checked onchange="toggleAOI()"> Polygon</label>
@@ -925,9 +1013,62 @@ def add_city():
                     }
                 });
         }
-        // --- Leaflet Map and AOI Logic ---
-        let map, marker, circle, drawnItems, drawControl;
-        let currentAOI = 'polygon';
+        
+        function uploadBoundary() {
+            const fileInput = document.getElementById('boundary_file');
+            const statusDiv = document.getElementById('boundary_status');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('boundary_file', fileInput.files[0]);
+            
+            statusDiv.innerHTML = '<span style="color:#007aff;">Uploading and processing boundary file...</span>';
+            
+            fetch('/upload_boundary', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.innerHTML = '<span style="color:#4CAF50;">✓ Boundary loaded successfully</span>';
+                    
+                    // Remove existing boundary layer if any
+                    if (boundaryLayer) {
+                        map.removeLayer(boundaryLayer);
+                    }
+                    
+                    // Add new boundary layer in PURPLE
+                    boundaryLayer = L.geoJSON(data.geojson, {
+                        style: {
+                            color: '#800080',
+                            weight: 3,
+                            opacity: 0.8,
+                            fillColor: '#800080',
+                            fillOpacity: 0.2
+                        }
+                    }).addTo(map);
+                    
+                    // Fit map to boundary
+                    map.fitBounds(boundaryLayer.getBounds());
+                    
+                } else {
+                    statusDiv.innerHTML = '<span style="color:#c00;">✗ Error: ' + (data.error || 'Failed to process file') + '</span>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.innerHTML = '<span style="color:#c00;">✗ Error uploading file</span>';
+            });
+        }
+        
+                 // --- Leaflet Map and AOI Logic ---
+         let map, marker, circle, drawnItems, drawControl;
+         let currentAOI = 'polygon';
+         let boundaryLayer;
         function setMapCenter(lat, lon) {
             if (map) {
                 map.setView([lat, lon], 12);
@@ -1852,6 +1993,39 @@ def job_status():
         <a href="{{ url_for('index') }}">Back</a>
         </div>
     ''', job_id=job_id, status_result=status_result, error=error)
+
+@app.route('/upload_boundary', methods=['POST'])
+def upload_boundary():
+    if not is_logged_in():
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    if 'boundary_file' not in request.files:
+        return jsonify({'error': 'No file selected'}), 400
+    
+    file = request.files['boundary_file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+        
+        # Process the boundary file
+        result = process_boundary_file(file_path, filename)
+        
+        # Clean up the uploaded file
+        try:
+            os.remove(file_path)
+        except:
+            pass
+        
+        if result.get('success'):
+            return jsonify({'success': True, 'geojson': result['geojson']})
+        else:
+            return jsonify({'error': result.get('error', 'Failed to process file')}), 400
+    
+    return jsonify({'error': 'Invalid file type'}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True) 
