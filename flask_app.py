@@ -28,8 +28,20 @@ import geojson  # Add this import at the top
 import subprocess
 import zipfile
 import tempfile
-import geopandas as gpd
-from werkzeug.utils import secure_filename
+try:
+    import geopandas as gpd
+    GEOPANDAS_AVAILABLE = True
+except ImportError:
+    GEOPANDAS_AVAILABLE = False
+    print("Warning: geopandas not available. Boundary upload functionality will be disabled.")
+
+try:
+    from werkzeug.utils import secure_filename
+    WERKZEUG_AVAILABLE = True
+except ImportError:
+    WERKZEUG_AVAILABLE = False
+    def secure_filename(filename):
+        return filename
 
 # Centralized logging setup
 setup_logging()
@@ -57,8 +69,11 @@ data_sync_progress = {}
 UPLOAD_FOLDER = 'uploads/boundaries'
 ALLOWED_EXTENSIONS = {'zip'}
 
-# Ensure upload directory exists
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Ensure upload directory exists (with error handling)
+try:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+except Exception as e:
+    print(f"Warning: Could not create upload directory: {e}")
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -308,6 +323,9 @@ def allowed_file(filename):
 
 def process_boundary_file(file_path, filename):
     """Process uploaded boundary file and convert to GeoJSON"""
+    if not GEOPANDAS_AVAILABLE:
+        return {'error': 'Boundary processing not available. GeoPandas dependency not installed on server.'}
+    
     try:
         if filename.lower().endswith('.zip'):
             # Extract ZIP file
@@ -908,6 +926,7 @@ def add_city():
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button>
             <button type="button" onclick="centreMapOnInput()">Centre Map</button><br>
             Notification Email: <input name="notification_email"><br>
+            {% if geopandas_available %}
             <div style="margin:1em 0;">
                 <b>Boundary Upload:</b><br>
                 <input type="file" id="boundary_file" accept=".zip" onchange="uploadBoundary()">
@@ -917,6 +936,11 @@ def add_city():
                 </div>
                 <div id="boundary_status" style="margin-top:0.5em;"></div>
             </div>
+            {% else %}
+            <div style="margin:1em 0;padding:0.8em;background:#fff3cd;border:1px solid #ffeaa7;border-radius:6px;">
+                <b>Boundary Upload:</b> <span style="color:#856404;">Currently unavailable (server dependencies not installed)</span>
+            </div>
+            {% endif %}
             <div style="margin:1em 0;">
                 <b>Area of Interest (AOI):</b><br>
                 <label><input type="radio" name="aoi_type" value="radius" onchange="toggleAOI()"> Radius</label>
@@ -1192,7 +1216,7 @@ def add_city():
         }
         </script>
         </div>
-    ''')
+    ''', geopandas_available=GEOPANDAS_AVAILABLE)
 
 @app.route('/edit/<city_id>', methods=['GET', 'POST'])
 def edit_city(city_id):
@@ -1236,6 +1260,7 @@ def edit_city(city_id):
             Longitude: <input name="longitude" id="longitude" value="{{city['longitude']}}"><br>
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email" value="{{city['notification_email']}}"><br>
+            {% if geopandas_available %}
             <div style="margin:1em 0;">
                 <b>Boundary Upload:</b><br>
                 <input type="file" id="boundary_file" accept=".zip" onchange="uploadBoundary()">
@@ -1245,6 +1270,11 @@ def edit_city(city_id):
                 </div>
                 <div id="boundary_status" style="margin-top:0.5em;"></div>
             </div>
+            {% else %}
+            <div style="margin:1em 0;padding:0.8em;background:#fff3cd;border:1px solid #ffeaa7;border-radius:6px;">
+                <b>Boundary Upload:</b> <span style="color:#856404;">Currently unavailable (server dependencies not installed)</span>
+            </div>
+            {% endif %}
             <div style="margin:1em 0;">
                 <b>Area of Interest (AOI):</b><br>
                 <label><input type="radio" name="aoi_type" value="radius" {% if aoi_type == 'radius' %}checked{% endif %} onchange="toggleAOI()"> Radius</label>
@@ -1519,7 +1549,7 @@ def edit_city(city_id):
         });
         </script>
         </div>
-    ''', city=city, aoi_type=aoi_type, radius_val=radius_val, polygon_geojson=polygon_geojson)
+    ''', city=city, aoi_type=aoi_type, radius_val=radius_val, polygon_geojson=polygon_geojson, geopandas_available=GEOPANDAS_AVAILABLE)
 
 @app.route('/delete/<city_id>')
 def delete_city(city_id):
@@ -2060,6 +2090,9 @@ def job_status():
 def upload_boundary():
     if not is_logged_in():
         return jsonify({'error': 'Not logged in'}), 401
+    
+    if not GEOPANDAS_AVAILABLE:
+        return jsonify({'error': 'Boundary upload not available. Server missing required dependencies.'}), 503
     
     if 'boundary_file' not in request.files:
         return jsonify({'error': 'No file selected'}), 400

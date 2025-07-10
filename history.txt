@@ -284,4 +284,16 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Added boundaryLayer variable declaration for edit city map
 - Boundaries display in PURPLE color (#800080) with same styling on edit page
 - Users can now upload and visualize boundary files when editing existing cities
-- Maintains consistent user experience across add and edit workflows 
+- Maintains consistent user experience across add and edit workflows
+
+2024-12-19: Fixed 502 Bad Gateway error with graceful dependency handling:
+- Added graceful fallback handling for missing geopandas dependency on production server
+- Added GEOPANDAS_AVAILABLE and WERKZEUG_AVAILABLE flags to check dependency availability
+- Modified process_boundary_file() to return user-friendly error when geopandas unavailable
+- Updated upload_boundary route to return 503 status when dependencies missing
+- Added conditional UI rendering to hide boundary upload when dependencies unavailable
+- Shows helpful message "Currently unavailable (server dependencies not installed)" instead
+- Added error handling for upload directory creation
+- Prevents Flask app crashes when production server lacks geospatial dependencies
+- Maintains full functionality when dependencies are available (local development)
+- Fixed import statements to handle missing dependencies gracefully 
