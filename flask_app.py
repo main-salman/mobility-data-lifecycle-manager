@@ -1237,6 +1237,15 @@ def edit_city(city_id):
             <button type="button" onclick="geocodeCity()">Auto-populate Lat/Lon</button><br>
             Notification Email: <input name="notification_email" value="{{city['notification_email']}}"><br>
             <div style="margin:1em 0;">
+                <b>Boundary Upload:</b><br>
+                <input type="file" id="boundary_file" accept=".zip" onchange="uploadBoundary()">
+                <span style="font-size:0.9em;color:#666;">Upload ZIP file containing shapefile components (.shp, .shx, .dbf, .prj)</span><br>
+                <div style="font-size:0.8em;color:#888;margin-top:0.3em;">
+                    ⚠️ Shapefiles require multiple files to work. Please compress all shapefile components into a ZIP file before uploading.
+                </div>
+                <div id="boundary_status" style="margin-top:0.5em;"></div>
+            </div>
+            <div style="margin:1em 0;">
                 <b>Area of Interest (AOI):</b><br>
                 <label><input type="radio" name="aoi_type" value="radius" {% if aoi_type == 'radius' %}checked{% endif %} onchange="toggleAOI()"> Radius</label>
                 <label><input type="radio" name="aoi_type" value="polygon" {% if aoi_type == 'polygon' %}checked{% endif %} onchange="toggleAOI()"> Polygon</label>
@@ -1338,9 +1347,62 @@ def edit_city(city_id):
                     }
                 });
         }
+        
+        function uploadBoundary() {
+            const fileInput = document.getElementById('boundary_file');
+            const statusDiv = document.getElementById('boundary_status');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('boundary_file', fileInput.files[0]);
+            
+            statusDiv.innerHTML = '<span style="color:#007aff;">Uploading and processing boundary file...</span>';
+            
+            fetch('/upload_boundary', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.innerHTML = '<span style="color:#4CAF50;">✓ Boundary loaded successfully</span>';
+                    
+                    // Remove existing boundary layer if any
+                    if (boundaryLayer) {
+                        map.removeLayer(boundaryLayer);
+                    }
+                    
+                    // Add new boundary layer in PURPLE
+                    boundaryLayer = L.geoJSON(data.geojson, {
+                        style: {
+                            color: '#800080',
+                            weight: 3,
+                            opacity: 0.8,
+                            fillColor: '#800080',
+                            fillOpacity: 0.2
+                        }
+                    }).addTo(map);
+                    
+                    // Fit map to boundary
+                    map.fitBounds(boundaryLayer.getBounds());
+                    
+                } else {
+                    statusDiv.innerHTML = '<span style="color:#c00;">✗ Error: ' + (data.error || 'Failed to process file') + '</span>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.innerHTML = '<span style="color:#c00;">✗ Error uploading file</span>';
+            });
+        }
+        
         // --- Leaflet Map and AOI Logic ---
         let map, marker, circle, drawnItems, drawControl;
         let currentAOI = '{{aoi_type}}';
+        let boundaryLayer;
         function setMapCenter(lat, lon) {
             if (map) {
                 map.setView([lat, lon], 12);

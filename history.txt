@@ -275,4 +275,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Improved error messages to be more user-friendly
 - Added validation to check for required shapefile components (.shx, .dbf)
 - Created CASSO_Boundaries_102457.zip test file with all required components
-- Updated UI text to clearly indicate ZIP file requirement 
+- Updated UI text to clearly indicate ZIP file requirement
+
+2024-12-19: Added boundary upload functionality to edit city page:
+- Extended boundary file upload feature to work on both add and edit city pages
+- Added same boundary upload UI elements to edit city template
+- Included uploadBoundary JavaScript function in edit city page
+- Added boundaryLayer variable declaration for edit city map
+- Boundaries display in PURPLE color (#800080) with same styling on edit page
+- Users can now upload and visualize boundary files when editing existing cities
+- Maintains consistent user experience across add and edit workflows 
