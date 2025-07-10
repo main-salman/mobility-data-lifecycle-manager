@@ -1,7 +1,7 @@
 import os
 import json
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from glob import glob
 from dotenv import load_dotenv
 import logging
@@ -49,7 +49,7 @@ def load_cities():
 
 def save_cities(cities):
     backup_dir = os.path.dirname(CITIES_FILE) or '.'
-    timestamp = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
+    timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H-%M-%S')
     backup_file = os.path.join(backup_dir, f"cities.json.{timestamp}")
     # Backup current cities.json if it exists
     if os.path.exists(CITIES_FILE):
@@ -72,9 +72,16 @@ def save_cities(cities):
         backup_bucket = os.getenv('CITIES_BACKUP_BUCKET')
         if backup_bucket:
             s3_client = boto3.client('s3')
-            s3_key = f"cities-backup/cities.json.{timestamp}"
-            s3_client.upload_file(CITIES_FILE, backup_bucket, s3_key)
-            print(f"Backed up cities.json to s3://{backup_bucket}/{s3_key}")
+            
+            # Upload timestamped backup to city_polygons/backup/
+            backup_s3_key = f"city_polygons/backup/cities.json.{timestamp}"
+            s3_client.upload_file(CITIES_FILE, backup_bucket, backup_s3_key)
+            print(f"Backed up cities.json to s3://{backup_bucket}/{backup_s3_key}")
+            
+            # Upload latest copy to city_polygons/latest/ (overwrite each time)
+            latest_s3_key = "city_polygons/latest/cities.json"
+            s3_client.upload_file(CITIES_FILE, backup_bucket, latest_s3_key)
+            print(f"Updated latest cities.json at s3://{backup_bucket}/{latest_s3_key}")
         else:
             print("CITIES_BACKUP_BUCKET not set in .env, skipping S3 backup")
     except ImportError:

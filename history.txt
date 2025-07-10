@@ -296,4 +296,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Added error handling for upload directory creation
 - Prevents Flask app crashes when production server lacks geospatial dependencies
 - Maintains full functionality when dependencies are available (local development)
-- Fixed import statements to handle missing dependencies gracefully 
+- Fixed import statements to handle missing dependencies gracefully
+
+2024-12-19: Updated cities backup S3 folder structure in utils.py:
+- Changed S3 backup structure to use organized folder hierarchy
+- Timestamped backups now go to: [bucket_name]/city_polygons/backup/cities.json.{timestamp}
+- Latest copy now goes to: [bucket_name]/city_polygons/latest/cities.json (overwritten each time)
+- Maintains both historical backups and always-current latest copy
+- Improved logging to show both backup and latest file uploads
+- Better organization for city polygon data management
+- Fixed deprecated datetime.utcnow() usage to use timezone-aware datetime.now(timezone.utc) 
