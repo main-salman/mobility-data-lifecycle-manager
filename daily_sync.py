@@ -144,6 +144,10 @@ def main():
         logging.error("No cities found in cities.json. Exiting.")
         return
 
+    logging.info(f"Loaded {len(cities)} cities for sync")
+    if len(cities) > 200:
+        logging.info(f"Note: {len(cities)} cities will be automatically split into batches of 200 for API compliance")
+
     configs = get_endpoint_configs()
 
     # Parallel execution for all endpoint+schema configs
@@ -155,7 +159,7 @@ def main():
             endpoint, schema = config_key.split('#')
             bucket = config['bucket']
             schema_type = config['schema_type']
-            logging.info(f"Submitting batch sync for ALL cities using {endpoint} (schema: {schema_type}, bucket: {bucket})")
+            logging.info(f"Submitting batch sync for ALL {len(cities)} cities using {endpoint} (schema: {schema_type}, bucket: {bucket})")
             future = executor.submit(
                 sync_all_cities_for_date_range,
                 endpoint=endpoint,
@@ -166,20 +170,47 @@ def main():
                 s3_bucket=bucket
             )
             future_to_key[future] = (endpoint, schema_type)
+        
         for future in concurrent.futures.as_completed(future_to_key):
             endpoint, schema_type = future_to_key[future]
             try:
                 result = future.result()
                 results[(endpoint, schema_type)] = result
-                if not result.get('success'):
+                if result.get('success'):
+                    total_batches = result.get('total_batches', 0)
+                    total_results = len(result.get('results', []))
+                    logging.info(f"✓ SUCCESS: {endpoint} ({schema_type}) - Processed {total_batches} batches with {total_results} successful operations")
+                    
+                    # Log batch details if available
+                    if 'results' in result:
+                        for idx, batch_result in enumerate(result['results']):
+                            if 'batch_info' in batch_result:
+                                cities_count = len(batch_result.get('cities_results', []))
+                                logging.info(f"  {batch_result['batch_info']}: {cities_count} cities synced successfully")
+                else:
                     errors[(endpoint, schema_type)] = result.get('error', 'Unknown error')
+                    logging.error(f"✗ FAILED: {endpoint} ({schema_type}) - {result.get('error', 'Unknown error')}")
             except Exception as exc:
                 errors[(endpoint, schema_type)] = str(exc)
-                logging.error(f"Exception in sync for {endpoint} ({schema_type}): {exc}")
+                logging.error(f"✗ EXCEPTION: {endpoint} ({schema_type}) - {exc}")
+    
+    # Final summary
     if errors:
-        logging.error(f"Some syncs failed: {errors}")
+        logging.error(f"Daily sync completed with {len(errors)} failures out of {len(configs)} total configurations:")
+        for (endpoint, schema_type), error in errors.items():
+            logging.error(f"  - {endpoint} ({schema_type}): {error}")
     else:
-        logging.info("All syncs completed successfully.")
+        logging.info(f"🎉 Daily sync completed successfully! All {len(configs)} configurations processed without errors.")
+        
+    # Log total cities processed
+    total_cities_processed = 0
+    for result in results.values():
+        if result.get('success') and 'results' in result:
+            for batch_result in result['results']:
+                total_cities_processed += len(batch_result.get('cities_results', []))
+    
+    if total_cities_processed > 0:
+        logging.info(f"Total city-endpoint-schema combinations processed: {total_cities_processed}")
 
 if __name__ == '__main__':
     main() 

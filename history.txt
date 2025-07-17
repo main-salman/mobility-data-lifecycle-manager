@@ -253,6 +253,8 @@ Updated flask_app.py:
 
 [2024-06-26] Refactored sync_city_for_date in sync_logic.py to process 31-day chunks in parallel using ThreadPoolExecutor, enabling concurrent API calls and S3 syncs for large date ranges.
 
+[2024-12-28] Major infrastructure update: Implemented comprehensive AWS credential management system to handle token expiration during long-running sync operations. Added automatic credential refresh with exponential backoff retry logic for S3 operations. Enhanced sync_logic.py with city batching capability for 200+ cities (Veraset API limit), automatically splitting large city lists into batches of 200 for separate API calls. Added progress tracking and resume capability for interrupted syncs. Updated daily_sync.py with improved logging and batch processing support. Completely redesigned UI with modern styling including CSS custom properties, gradient backgrounds, enhanced color scheme with blue/purple/green accents, status badges, metric cards, and responsive grid layouts. Added comprehensive error handling and progress visualization for large-scale operations.
+
 2024-12-19: Enhanced Flask app with boundary file upload functionality for the add city page:
 - Added file upload capability for shapefiles (.shp) and ZIP files containing shapefiles
 - Added new route /upload_boundary for processing uploaded boundary files

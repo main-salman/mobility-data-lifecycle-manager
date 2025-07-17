@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 import time
 from requests.exceptions import RequestException
 import concurrent.futures
+from utils import (
+    get_fresh_s3_client, s3_copy_with_retry, check_credentials_validity,
+    save_sync_progress, load_sync_progress, cleanup_sync_progress
+)
 
 load_dotenv()
 
@@ -29,6 +33,13 @@ def send_sns_notification(email, subject, message):
         sns.publish(TopicArn=SNS_TOPIC_ARN, Subject=subject, Message=message)
     else:
         print(f"SNS notification to {email}: {subject}\\n{message}")
+
+def chunk_cities(cities, chunk_size=200):
+    """Split cities into chunks of specified size (default 200 for Veraset API limit)"""
+    chunks = []
+    for i in range(0, len(cities), chunk_size):
+        chunks.append(cities[i:i + chunk_size])
+    return chunks
 
 def build_sync_payload(cities, from_date, to_date, schema_type="FULL"):
     if hasattr(from_date, 'strftime'):
@@ -124,7 +135,8 @@ def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_c
         time.sleep(poll_interval)
     return {"error": "Job timed out"}
 
-def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
+def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id=None, chunk_size=50):
+    """Enhanced sync with chunked processing and credential refresh"""
     source_bucket = "veraset-prd-platform-us-west-2"
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
     if not s3_bucket:
@@ -145,6 +157,10 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
     dst_s3 = f"s3://{s3_bucket}/{dest_prefix}/"
     logger.info(f"[S3 SYNC] Source: {src_s3}")
     logger.info(f"[S3 SYNC] Destination: {dst_s3}")
+
+    # Check for existing progress
+    progress = load_sync_progress(sync_id) if sync_id else None
+    start_from = progress.get('completed_files', 0) if progress else 0
 
     try:
         assume_role_cmd = [
@@ -180,6 +196,15 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
         copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
         non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
         total_copies = len(copy_lines)
+        
+        # Save progress if sync_id provided
+        if sync_id:
+            save_sync_progress(sync_id, total_copies, total_copies, {
+                'dest_prefix': dest_prefix,
+                'city': city['city'],
+                'status': 'completed'
+            })
+        
         summary_lines = []
         if total_copies > 10:
             summary_lines.extend(copy_lines[:5])
@@ -204,10 +229,20 @@ def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
                     f.writelines(lines[-10000:])
         except Exception as e:
             logger.warning(f"[S3 SYNC] Log rotation failed: {e}")
-        return {"success": True, "dest_prefix": dest_prefix}
+        
+        # Clean up progress on successful completion
+        if sync_id:
+            cleanup_sync_progress(sync_id)
+            
+        return {"success": True, "dest_prefix": dest_prefix, "files_copied": total_copies}
     except subprocess.CalledProcessError as e:
         logger.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
-        return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}"}
+        return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}", "can_resume": bool(sync_id)}
+
+# Backward compatibility alias
+def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
+    """Backward compatibility wrapper"""
+    return sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket)
 
 # Helper to split a date range into 31-day chunks
 def split_date_range(from_date, to_date, max_days=31):
@@ -263,14 +298,15 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
                 status = wait_for_job_completion(job_id)
                 if not status or 'error' in status:
                     return {"error": status.get('error', 'Unknown error during job status polling')}
-                sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=s3_bucket)
+                sync_result = sync_data_to_bucket_chunked(city, chunk_start, status.get('s3_location'), s3_bucket=s3_bucket)
                 if not sync_result.get('success'):
                     return {"error": sync_result.get('error', 'Unknown error during S3 sync')}
                 return {
                     "success": True,
                     "s3_location": status.get('s3_location'),
                     "dest_prefix": sync_result.get('dest_prefix'),
-                    "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
+                    "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d')),
+                    "files_copied": sync_result.get('files_copied', 0)
                 }
             except Exception as e:
                 logger.error(f"[SYNC DEBUG] Exception in chunk {chunk_start} to {chunk_end}: {e}", exc_info=True)
@@ -292,45 +328,110 @@ def sync_city_for_date(city, from_date, to_date=None, schema_type="FULL", api_en
         return {"success": False, "error": str(e)}
 
 def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endpoint, s3_bucket):
+    """Enhanced sync_all with city batching for 200+ cities and improved error handling"""
     logger.info(f"[Sync All] Starting sync for {len(cities)} cities from {from_date} to {to_date} using endpoint {endpoint}")
+
+    # Split cities into batches of 200 (Veraset API limit)
+    city_batches = chunk_cities(cities, chunk_size=200)
+    logger.info(f"[Sync All] Split {len(cities)} cities into {len(city_batches)} batches")
 
     # Split into 31-day chunks
     date_chunks = split_date_range(from_date, to_date, max_days=31)
+    logger.info(f"[Sync All] Split date range into {len(date_chunks)} chunks")
+
     all_results = []
     errors = []
-    for chunk_start, chunk_end in date_chunks:
-        payload = build_sync_payload(
-            cities=cities,
-            from_date=chunk_start,
-            to_date=chunk_end,
-            schema_type=schema_type
-        )
-        response = make_api_request(endpoint, data=payload)
-        if not response or 'error' in response:
-            errors.append(response.get('error', 'No response from API'))
-            continue
-        request_id = response.get("request_id")
-        job_id = response.get("data", {}).get("job_id")
-        if not request_id or not job_id:
-            errors.append(f"No request_id or job_id in response: {response}")
-            continue
-        status = wait_for_job_completion(job_id)
-        if not status or 'error' in status:
-            errors.append(status.get('error', 'Unknown error during job status polling'))
-            continue
-        logger.info(f"[Sync All] Job {job_id} completed. Starting S3 sync for all cities.")
-        chunk_errors = []
-        for city in cities:
-            sync_result = sync_data_to_bucket(city, chunk_start, status.get('s3_location'), s3_bucket=s3_bucket)
-            if not sync_result.get('success'):
-                chunk_errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
-        if chunk_errors:
-            errors.extend(chunk_errors)
-        all_results.append({
-            "success": True,
-            "s3_location": status.get('s3_location'),
-            "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d'))
-        })
+    
+    total_batches = len(city_batches) * len(date_chunks)
+    current_batch = 0
+
+    for batch_idx, city_batch in enumerate(city_batches):
+        logger.info(f"[Sync All] Processing city batch {batch_idx + 1}/{len(city_batches)} ({len(city_batch)} cities)")
+        
+        for chunk_idx, (chunk_start, chunk_end) in enumerate(date_chunks):
+            current_batch += 1
+            logger.info(f"[Sync All] Processing batch {current_batch}/{total_batches}: Cities {batch_idx + 1}/{len(city_batches)}, Date chunk {chunk_idx + 1}/{len(date_chunks)}")
+            
+            payload = build_sync_payload(
+                cities=city_batch,
+                from_date=chunk_start,
+                to_date=chunk_end,
+                schema_type=schema_type
+            )
+            
+            # Make API request for this batch and date chunk
+            response = make_api_request(endpoint, data=payload)
+            if not response or 'error' in response:
+                error_msg = f"Batch {batch_idx + 1}, Date chunk {chunk_idx + 1}: {response.get('error', 'No response from API')}"
+                errors.append(error_msg)
+                continue
+                
+            request_id = response.get("request_id")
+            job_id = response.get("data", {}).get("job_id")
+            if not request_id or not job_id:
+                error_msg = f"Batch {batch_idx + 1}, Date chunk {chunk_idx + 1}: No request_id or job_id in response: {response}"
+                errors.append(error_msg)
+                continue
+                
+            # Wait for job completion
+            status = wait_for_job_completion(job_id)
+            if not status or 'error' in status:
+                error_msg = f"Batch {batch_idx + 1}, Date chunk {chunk_idx + 1}: {status.get('error', 'Unknown error during job status polling')}"
+                errors.append(error_msg)
+                continue
+                
+            logger.info(f"[Sync All] Job {job_id} completed for batch {batch_idx + 1}, chunk {chunk_idx + 1}. Starting S3 sync for {len(city_batch)} cities.")
+            
+            # Sync S3 data for each city in this batch
+            chunk_errors = []
+            batch_results = []
+            
+            for city_idx, city in enumerate(city_batch):
+                try:
+                    # Create unique sync_id for each city sync
+                    import uuid
+                    city_sync_id = f"batch_{batch_idx}_chunk_{chunk_idx}_city_{city_idx}_{str(uuid.uuid4())[:8]}"
+                    
+                    sync_result = sync_data_to_bucket_chunked(
+                        city=city, 
+                        date=chunk_start, 
+                        s3_location=status.get('s3_location'), 
+                        s3_bucket=s3_bucket,
+                        sync_id=city_sync_id
+                    )
+                    
+                    if not sync_result.get('success'):
+                        chunk_errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
+                    else:
+                        batch_results.append({
+                            'city': city['city'],
+                            'dest_prefix': sync_result.get('dest_prefix'),
+                            'files_copied': sync_result.get('files_copied', 0)
+                        })
+                        
+                except Exception as e:
+                    chunk_errors.append(f"City {city['city']}: Exception during S3 sync: {str(e)}")
+                    logger.error(f"[Sync All] Exception syncing city {city['city']}: {e}", exc_info=True)
+                    
+            if chunk_errors:
+                errors.extend([f"Batch {batch_idx + 1}, Date chunk {chunk_idx + 1}: {err}" for err in chunk_errors])
+                
+            all_results.append({
+                "success": True,
+                "s3_location": status.get('s3_location'),
+                "date_range": (chunk_start.strftime('%Y-%m-%d'), chunk_end.strftime('%Y-%m-%d')),
+                "batch_info": f"Batch {batch_idx + 1}/{len(city_batches)} ({len(city_batch)} cities)",
+                "cities_results": batch_results,
+                "job_id": job_id
+            })
+            
+            # Brief pause between batches to avoid overwhelming the system
+            if current_batch < total_batches:
+                time.sleep(2)
+    
+    logger.info(f"[Sync All] Completed processing {len(city_batches)} city batches across {len(date_chunks)} date chunks")
+    logger.info(f"[Sync All] Results: {len(all_results)} successful batches, {len(errors)} errors")
+    
     if errors and not all_results:
         return {"success": False, "error": "; ".join(errors)}
-    return {"success": True, "results": all_results, "errors": errors} if errors else {"success": True, "results": all_results} 
+    return {"success": True, "results": all_results, "errors": errors, "total_batches": total_batches} if errors else {"success": True, "results": all_results, "total_batches": total_batches} 

@@ -142,139 +142,416 @@ logging.basicConfig(
     handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler()]
 )
 
-# Apple-inspired global style
-APPLE_STYLE = '''<style>
+# Modern UI style with enhanced colors and better design
+MODERN_STYLE = '''<style>
+:root {
+  --primary-blue: #2563eb;
+  --primary-blue-hover: #1d4ed8;
+  --primary-blue-light: #dbeafe;
+  --success-green: #059669;
+  --success-green-light: #d1fae5;
+  --warning-orange: #d97706;
+  --warning-orange-light: #fed7aa;
+  --error-red: #dc2626;
+  --error-red-light: #fecaca;
+  --purple-accent: #7c3aed;
+  --purple-accent-light: #e9d5ff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: #f8f8fa;
-  color: #222;
+  background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
+  color: var(--gray-800);
   margin: 0;
   padding: 0;
+  min-height: 100vh;
 }
+
 .container {
-  max-width: 1200px;
-  margin: 40px 0 20px 10vw;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  padding: 32px 36px 28px 36px;
+  max-width: 1400px;
+  margin: 20px auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  padding: 40px;
+  border: 1px solid var(--gray-100);
 }
+
 h2 {
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.02em;
   margin-top: 0;
-  color: #111;
+  margin-bottom: 24px;
+  color: var(--gray-900);
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--purple-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
+h3 {
+  color: var(--gray-700);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-color: var(--primary-blue-light);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-success {
+  background: var(--success-green-light);
+  color: var(--success-green);
+}
+
+.status-error {
+  background: var(--error-red-light);
+  color: var(--error-red);
+}
+
+.status-warning {
+  background: var(--warning-orange-light);
+  color: var(--warning-orange);
+}
+
+.status-info {
+  background: var(--primary-blue-light);
+  color: var(--primary-blue);
+}
+
 input, select, button, textarea {
   font-family: inherit;
   font-size: 1rem;
-  border-radius: 10px;
-  border: 1px solid #d1d1d6;
-  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid var(--gray-200);
+  padding: 12px 16px;
   margin: 6px 0 16px 0;
-  background: #f5f5f7;
-  transition: border 0.2s, box-shadow 0.2s;
+  background: #ffffff;
+  transition: all 0.2s;
   outline: none;
 }
+
 input:focus, select:focus, textarea:focus {
-  border: 1.5px solid #007aff;
-  box-shadow: 0 0 0 2px #007aff22;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px var(--primary-blue-light);
+  transform: translateY(-1px);
 }
+
 button {
-  background: linear-gradient(90deg, #007aff 80%, #0051a8 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--purple-accent) 100%);
+  color: #ffffff;
   border: none;
   font-weight: 600;
-  padding: 10px 24px;
+  padding: 12px 24px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,122,255,0.07);
-  margin-right: 8px;
-  margin-bottom: 8px;
-  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  margin-right: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
 }
+
 button:hover {
-  background: #0051a8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
 }
+
+button:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 100%);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-green) 0%, #047857 100%);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning-orange) 0%, #b45309 100%);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--error-red) 0%, #b91c1c 100%);
+}
+
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: #fff;
-  border-radius: 14px;
+  background: #ffffff;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  margin-bottom: 32px;
+  border: 1px solid var(--gray-200);
 }
+
 th, td {
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
 }
+
 th {
-  background: #f5f5f7;
-  font-weight: 600;
-  color: #444;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
 }
+
+tr:nth-child(even) td {
+  background: var(--gray-50);
+}
+
+tr:hover td {
+  background: var(--primary-blue-light);
+}
+
 tr:not(:last-child) td {
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--gray-200);
 }
+
 a {
-  color: #007aff;
+  color: var(--primary-blue);
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
+  font-weight: 600;
+  transition: all 0.2s;
 }
+
 a:hover {
-  color: #0051a8;
+  color: var(--primary-blue-hover);
   text-decoration: underline;
+  transform: translateY(-1px);
 }
+
 pre#logbox {
-  background: #111;
-  color: #eee;
-  border-radius: 12px;
-  padding: 1.2em;
+  background: var(--gray-900);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
   font-size: 14px;
-  max-height: 1000px;
+  max-height: 600px;
   width: 100%;
-  min-width: 1800px;
-  max-width: 2800px;
   overflow: auto;
-  margin-bottom: 24px;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+  margin-bottom: 32px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  border: 1px solid var(--gray-700);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
+
 #progress-bar {
   width: 100%;
-  background: #e5e5ea;
-  border-radius: 12px;
-  border: 1px solid #d1d1d6;
-  height: 32px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  background: var(--gray-200);
+  border-radius: 16px;
+  height: 40px;
+  margin-bottom: 20px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  overflow: hidden;
 }
+
 #bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #007aff 80%, #0051a8 100%);
-  border-radius: 12px;
+  background: linear-gradient(90deg, var(--success-green) 0%, var(--primary-blue) 50%, var(--purple-accent) 100%);
+  border-radius: 16px;
   text-align: center;
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.1em;
-  transition: width 0.4s;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: width 0.6s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
+
+.progress-info {
+  background: var(--primary-blue-light);
+  border: 1px solid var(--primary-blue);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  color: var(--primary-blue);
+}
+
 #error, .error, #errors {
-  color: #c00;
-  font-weight: 500;
-  margin-top: 1em;
+  background: var(--error-red-light);
+  border: 1px solid var(--error-red);
+  color: var(--error-red);
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 16px;
 }
-::-webkit-input-placeholder { color: #aaa; }
-::-moz-placeholder { color: #aaa; }
-:-ms-input-placeholder { color: #aaa; }
-::placeholder { color: #aaa; }
+
+.success {
+  background: var(--success-green-light);
+  border: 1px solid var(--success-green);
+  color: var(--success-green);
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.warning {
+  background: var(--warning-orange-light);
+  border: 1px solid var(--warning-orange);
+  color: var(--warning-orange);
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
+  border: 2px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  margin: 16px 0;
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  border-color: var(--primary-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-bottom: 8px;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.nav-links {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--gray-200);
+}
+
+.nav-links a {
+  margin-right: 24px;
+  font-weight: 600;
+}
+
+fieldset {
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+legend {
+  font-weight: 600;
+  color: var(--gray-700);
+  padding: 0 12px;
+}
+
+::-webkit-input-placeholder { color: var(--gray-400); }
+::-moz-placeholder { color: var(--gray-400); }
+:-ms-input-placeholder { color: var(--gray-400); }
+::placeholder { color: var(--gray-400); }
+
+@media (max-width: 768px) {
+  .container {
+    margin: 10px;
+    padding: 20px;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th, td {
+    padding: 12px 8px;
+  }
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--gray-300);
+  border-radius: 50%;
+  border-top-color: var(--primary-blue);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulse animation for status indicators */
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
 </style>'''
 
 SYNC_TIME_ENV_KEY = 'SYNC_TIME'
@@ -397,25 +674,51 @@ def get_table():
 def is_logged_in():
     return session.get('logged_in')
 
-def threaded_sync(city, dates, sync_id):
+def threaded_sync(city, dates, sync_id, schema_type="FULL", api_endpoint="movement/job/pings", s3_bucket=None):
+    """Enhanced threaded sync with better error handling and progress tracking"""
     total = len(dates)
     errors = []
-    logging.info(f"Starting sync for {city['city']} ({city['country']}) for {total} days: {dates[0]} to {dates[-1]}")
+    logging.info(f"Starting enhanced sync for {city['city']} ({city['country']}) for {total} days: {dates[0]} to {dates[-1]}")
+    
+    # Enhanced progress initialization
+    data_sync_progress[sync_id].update({
+        'total_files_copied': 0,
+        'aws_credential_refreshes': 0,
+        'api_calls_made': 0,
+        'batches_processed': 0
+    })
+    
     quota_error_flag = False
+    files_copied_total = 0
+    
     for i, date in enumerate(dates):
-        logging.info(f"Syncing {city['city']} on {date}")
+        logging.info(f"Syncing {city['city']} on {date} (batch {i+1}/{total})")
         error_msg = None
-        veraset_status = {'status': 'pending'}
+        
         def status_callback(status, attempt):
             if status and 'data' in status and 'status' in status['data']:
-                data_sync_progress[sync_id]['veraset_status'] = f"Veraset job status: {status['data']['status']} (attempt {attempt+1})"
+                data_sync_progress[sync_id]['veraset_status'] = f"🔗 Veraset: {status['data']['status']} (poll #{attempt+1})"
             else:
-                data_sync_progress[sync_id]['veraset_status'] = f"Polling Veraset job status... (attempt {attempt+1})"
+                data_sync_progress[sync_id]['veraset_status'] = f"🔗 Veraset: Polling status... (attempt {attempt+1})"
+        
         try:
             from datetime import datetime as dt
             date_obj = dt.strptime(date, "%Y-%m-%d")
-            payload = build_sync_payload(city, date_obj, date_obj)
-            response = make_api_request("movement/job/pings", data=payload)
+            
+            # Update progress
+            data_sync_progress[sync_id].update({
+                'current': i + 1,
+                'total': total,
+                'date': date,
+                'status': 'api_request',
+                'veraset_status': '🔗 Veraset: Submitting job...'
+            })
+            
+            # Make API request
+            payload = build_sync_payload(city, date_obj, date_obj, schema_type=schema_type)
+            response = make_api_request(api_endpoint, data=payload)
+            data_sync_progress[sync_id]['api_calls_made'] += 1
+            
             # Check for quota exceeded error
             if response and isinstance(response, dict):
                 error_message = response.get('error_message') or response.get('error', '')
@@ -433,11 +736,8 @@ def threaded_sync(city, dates, sync_id):
                         'done': i + 1 == total,
                         'errors': errors.copy()
                     })
-                    # Show in GUI via flash if possible
-                    from flask import has_request_context, flash
-                    if has_request_context():
-                        flash("Monthly Job Quota exceeded. Please contact support for inquiry.", 'error')
                     break
+            
             if not response or 'error' in response:
                 status = 'failed'
                 error_msg = response.get('error', 'No response from API')
@@ -449,45 +749,85 @@ def threaded_sync(city, dates, sync_id):
                     error_msg = f"No job_id received from Veraset API"
                     logging.error(f"Sync failed for {city['city']} on {date}: {error_msg}")
                 else:
-                    data_sync_progress[sync_id]['veraset_status'] = 'Polling Veraset job status...'
+                    # Update progress for job polling
+                    data_sync_progress[sync_id]['status'] = 'job_polling'
+                    data_sync_progress[sync_id]['veraset_status'] = '🔗 Veraset: Job submitted, waiting for completion...'
+                    
                     status_result = wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_callback=status_callback)
                     if not status_result or 'error' in status_result:
                         status = 'failed'
                         error_msg = status_result.get('error', 'Unknown error during job status polling')
                         logging.error(f"Sync failed for {city['city']} on {date}: {error_msg}")
                     else:
-                        sync_result = sync_city_for_date(city, date)
+                        # Update progress for S3 sync
+                        data_sync_progress[sync_id]['status'] = 's3_syncing'
+                        data_sync_progress[sync_id]['s3_sync'] = f"☁️ S3: Starting data transfer for {date}..."
+                        
+                        # Generate unique sync ID for resume capability
+                        import uuid
+                        city_sync_id = f"threaded_{sync_id}_{i}_{str(uuid.uuid4())[:8]}"
+                        
+                        sync_result = sync_city_for_date(
+                            city=city, 
+                            from_date=date, 
+                            schema_type=schema_type, 
+                            api_endpoint=api_endpoint, 
+                            s3_bucket=s3_bucket
+                        )
+                        
                         if not sync_result.get('success'):
                             status = 'failed'
                             error_msg = sync_result.get('error', 'Unknown error during S3 sync')
+                            if sync_result.get('can_resume'):
+                                error_msg += " (Resume capability available)"
                             logging.error(f"Sync failed for {city['city']} on {date}: {error_msg}")
                         else:
                             status = 'success'
-                            logging.info(f"Sync result for {city['city']} on {date}: success")
-                            data_sync_progress[sync_id]['status'] = 's3_syncing'
-                            data_sync_progress[sync_id]['s3_sync'] = f"S3 sync complete for {date}."
-            time.sleep(0.5)
+                            # Track files copied
+                            files_copied = 0
+                            if 'results' in sync_result:
+                                for result in sync_result['results']:
+                                    files_copied += result.get('files_copied', 0)
+                            files_copied_total += files_copied
+                            
+                            logging.info(f"Sync result for {city['city']} on {date}: success ({files_copied} files)")
+                            data_sync_progress[sync_id]['s3_sync'] = f"☁️ S3: Transfer complete for {date} ({files_copied} files)"
+                            data_sync_progress[sync_id]['total_files_copied'] = files_copied_total
+            
+            time.sleep(1)  # Brief pause between operations
+            
         except Exception as e:
             status = 'error'
             error_msg = str(e)
             logging.error(f"Exception during sync for {city['city']} on {date}: {e}", exc_info=True)
+        
         if error_msg:
             errors.append(f"{date}: {error_msg}")
+        
+        # Update progress with enhanced tracking
         data_sync_progress[sync_id].update({
             'current': i + 1,
             'total': total,
             'date': date,
             'status': status if error_msg else 'success',
             'done': i + 1 == total,
-            'errors': errors.copy()
+            'errors': errors.copy(),
+            'batches_processed': i + 1
         })
+    
     # After loop, ensure quota error is present if detected
     if quota_error_flag and not any('Monthly Job Quota exceeded' in e for e in errors):
         errors.append("Monthly Job Quota exceeded. Please contact support for inquiry.")
         data_sync_progress[sync_id]['errors'] = errors.copy()
         data_sync_progress[sync_id]['status'] = 'quota_exceeded'
+    
+    # Final status update
     data_sync_progress[sync_id]['done'] = True
-    logging.info(f"Sync complete for {city['city']} ({city['country']})")
+    if not errors:
+        data_sync_progress[sync_id]['status'] = 'completed_successfully'
+        data_sync_progress[sync_id]['s3_sync'] = f"🎉 All operations completed! {files_copied_total} total files transferred."
+    
+    logging.info(f"Enhanced sync complete for {city['city']} ({city['country']}) - {files_copied_total} files total")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -502,14 +842,16 @@ def login():
         else:
             logging.warning(f"Login failed for user: {user}")
             flash('Invalid credentials')
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Login</h2>
-        <form method="post">
-            <input name="username" placeholder="Username"><br>
-            <input name="password" type="password" placeholder="Password"><br>
-            <input type="submit" value="Login">
-        </form>
+        <h2>🔐 Login</h2>
+        <div class="card">
+            <form method="post">
+                <input name="username" placeholder="Username"><br>
+                <input name="password" type="password" placeholder="Password"><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
         </div>
     ''')
 
@@ -575,9 +917,9 @@ def daily_sync_config():
     # Get current cities backup bucket
     cities_backup_bucket = os.getenv('CITIES_BACKUP_BUCKET', '')
 
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>S3 Buckets and Daily Sync Configuration</h2>
+        <h2>🔧 S3 Buckets and Daily Sync Configuration</h2>
         
         <!-- Sync Time Configuration -->
         <div style="margin-bottom:2em;padding:1em;background:#f5f5f7;border-radius:8px;">
@@ -811,72 +1153,135 @@ def index():
             return redirect(url_for('index'))
     cities = load_cities()
     
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Mobility Cities</h2>
+        <h2>🌍 Mobility Data Manager</h2>
         
-        <!-- Daily Sync Configuration Button -->
-        <div style="margin-bottom:2em;">
-            <a href="{{ url_for('daily_sync_config') }}" class="button" style="display:inline-block;padding:10px 20px;background:#007AFF;color:white;text-decoration:none;border-radius:6px;margin-bottom:20px;">
-                Configure S3 Buckets and Daily Sync
+        <!-- Daily Sync Configuration Card -->
+        <div class="card">
+            <h3>📊 System Configuration</h3>
+            <a href="{{ url_for('daily_sync_config') }}" class="btn-success" style="text-decoration:none;color:white;">
+                Configure S3 Buckets & Daily Sync
             </a>
         </div>
         
-        <!-- Rest of the existing template -->
-        <div style="margin-bottom:1em;color:#555;font-size:0.98em;">
-            <b>Note:</b> Each daily sync downloads data for <b>one day, 7 days prior</b> to the current UTC date.
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="{{ url_for('add_city') }}">➕ Add City</a>
+            <a href="{{ url_for('view_logs') }}">📋 View Logs</a>
+            <a href="{{ url_for('job_status') }}">🔍 Check Job Status</a>
+            <a href="{{ url_for('sync_jobs') }}">📈 Sync Jobs History</a>
         </div>
-        <form action="{{ url_for('sync_all') }}" method="post" style="margin-bottom:1em;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <label>Start Date: <input name="start_date" type="date" required></label>
-            <label>End Date: <input name="end_date" type="date" required></label>
-            <label>Schema Type:
-                <select name="schema_type">
-                    <option value="FULL" selected>FULL</option>
-                    <option value="TRIPS">TRIPS</option>
-                    <option value="BASIC">BASIC</option>
-                </select>
-            </label>
-            <fieldset style="border:none;margin:0;padding:0;">
-                <legend style="font-weight:500;">API Endpoints:</legend>
-                {% for val, label in api_endpoints %}
-                    <label style="margin-right:12px;">
-                        <input type="checkbox" name="api_endpoints" value="{{val}}" {% if val == 'movement/job/pings' %}checked{% endif %}> {{label}}
-                    </label>
-                {% endfor %}
-            </fieldset>
-            <button type="submit">Sync All Cities</button>
-        </form>
-        <!-- Move Add City and View Logs links here -->
-        <div style="margin-bottom:1em;">
-            <a href="{{ url_for('add_city') }}">Add City</a>
-            &nbsp;|&nbsp;
-            <a href="{{ url_for('view_logs') }}">View Logs</a>
-            &nbsp;|&nbsp;
-            <a href="{{ url_for('job_status') }}">Check Job Status</a>
+        
+        <!-- Metrics Grid -->
+        <div class="grid">
+            <div class="metric-card">
+                <div class="metric-value">{{ cities|length }}</div>
+                <div class="metric-label">Total Cities</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{% set countries = cities|map(attribute='country')|unique|list %}{{ countries|length }}</div>
+                <div class="metric-label">Countries</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ (cities|selectattr('radius_meters', 'defined')|list)|length }}</div>
+                <div class="metric-label">Radius AOIs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ (cities|selectattr('polygon_geojson', 'defined')|list)|length }}</div>
+                <div class="metric-label">Polygon AOIs</div>
+            </div>
         </div>
-        <div style="overflow-x:auto;">
-          <table border=1 cellpadding=5>
-              <tr><th>Country</th><th>State/Province</th><th>City</th><th>Latitude</th><th>Longitude</th><th>Email</th><th>Radius (m)</th><th>Actions</th></tr>
-              {% for city in cities %}
-              <tr>
-                  <td>{{city['country']}}</td>
-                  <td>{{city.get('state_province','')}}</td>
-                  <td>{{city['city']}}</td>
-                  <td>{{city['latitude']}}</td>
-                  <td>{{city['longitude']}}</td>
-                  <td>{{city.get('notification_email','')}}</td>
-                  <td>{{city.get('radius_meters', 50000)}}</td>
-                  <td>
-                      <a href="{{ url_for('edit_city', city_id=city['city_id']) }}">Edit</a> |
-                      <a href="{{ url_for('delete_city', city_id=city['city_id']) }}" onclick="return confirm('Delete this city?')">Delete</a> |
-                      <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">Sync</a> |
-                      <a href="{{ url_for('job_status') }}" title="Check Veraset Job Status">Check Status</a>
-                  </td>
-              </tr>
-              {% endfor %}
-          </table>
+        
+        <!-- Sync All Cities Card -->
+        <div class="card">
+            <h3>🚀 Batch Sync Operations</h3>
+            <div class="warning">
+                <strong>Note:</strong> For 200+ cities, requests are automatically batched. Large date ranges are split into 31-day chunks. Each daily sync downloads data for <strong>one day, 7 days prior</strong> to the current UTC date.
+            </div>
+            
+            <form action="{{ url_for('sync_all') }}" method="post" style="margin-top:20px;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:20px;">
+                    <div>
+                        <label>Start Date:</label>
+                        <input name="start_date" type="date" required>
+                    </div>
+                    <div>
+                        <label>End Date:</label>
+                        <input name="end_date" type="date" required>
+                    </div>
+                    <div>
+                        <label>Schema Type:</label>
+                        <select name="schema_type">
+                            <option value="FULL" selected>FULL</option>
+                            <option value="TRIPS">TRIPS</option>
+                            <option value="BASIC">BASIC</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <fieldset>
+                    <legend>🔌 API Endpoints</legend>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px;">
+                        {% for val, label in api_endpoints %}
+                            <label style="display:flex;align-items:center;gap:8px;">
+                                <input type="checkbox" name="api_endpoints" value="{{val}}" {% if val == 'movement/job/pings' %}checked{% endif %}>
+                                <span>{{label}}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                
+                <button type="submit" class="btn-success">🚀 Sync All Cities</button>
+            </form>
         </div>
-        <!-- Remove the old links below the table -->
+        
+        <!-- Cities Table -->
+        <div class="card">
+            <h3>🏙️ Configured Cities ({{ cities|length }})</h3>
+            <div style="overflow-x:auto;">
+              <table>
+                  <thead>
+                      <tr>
+                          <th>🌍 Country</th>
+                          <th>📍 State/Province</th>
+                          <th>🏙️ City</th>
+                          <th>📐 Latitude</th>
+                          <th>📐 Longitude</th>
+                          <th>📧 Email</th>
+                          <th>📏 AOI Type</th>
+                          <th>⚙️ Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for city in cities %}
+                      <tr>
+                          <td>{{city['country']}}</td>
+                          <td>{{city.get('state_province','')}}</td>
+                          <td><strong>{{city['city']}}</strong></td>
+                          <td>{{city['latitude']}}</td>
+                          <td>{{city['longitude']}}</td>
+                          <td>{{city.get('notification_email','')}}</td>
+                          <td>
+                              {% if city.get('radius_meters') %}
+                                  <span class="status-badge status-info">Radius: {{city['radius_meters']}}m</span>
+                              {% elif city.get('polygon_geojson') %}
+                                  <span class="status-badge status-success">Polygon</span>
+                              {% else %}
+                                  <span class="status-badge status-warning">No AOI</span>
+                              {% endif %}
+                          </td>
+                          <td>
+                              <a href="{{ url_for('edit_city', city_id=city['city_id']) }}">✏️ Edit</a> |
+                              <a href="{{ url_for('delete_city', city_id=city['city_id']) }}" onclick="return confirm('Delete this city?')" style="color:var(--error-red);">🗑️ Delete</a> |
+                              <a href="{{ url_for('sync_city', city_id=city['city_id']) }}">🔄 Sync</a>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+            </div>
+        </div>
     </div>
     ''', cities=cities, api_endpoints=api_endpoints)
 
@@ -914,9 +1319,9 @@ def add_city():
         cities.append(data)
         save_cities(cities)
         return redirect(url_for('index'))
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Add City</h2>
+        <h2>🏙️ Add City</h2>
         <form method="post" id="cityForm" onsubmit="return prepareAOI()">
             Country: <select name="country" id="country" required></select><br>
             State/Province: <select name="state_province" id="state_province"></select><br>
@@ -1249,9 +1654,9 @@ def edit_city(city_id):
     aoi_type = 'polygon' if 'polygon_geojson' in city else 'radius'
     radius_val = city.get('radius_meters', 10000)
     polygon_geojson = city.get('polygon_geojson', None)
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Edit City</h2>
+        <h2>✏️ Edit City</h2>
         <form method="post" id="cityForm" onsubmit="return prepareAOI()">
             Country: <select name="country" id="country" required></select><br>
             State/Province: <select name="state_province" id="state_province"></select><br>
@@ -1616,9 +2021,9 @@ def sync_city(city_id):
                 # Update progress/errors as before (omitted for brevity)
         threading.Thread(target=sync_and_check, daemon=True).start()
         return redirect(url_for('sync_all_progress', sync_id=sync_id))
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Sync City: {{city['city']}}</h2>
+        <h2>🔄 Sync City: {{city['city']}}</h2>
         <form method="post">
             Start Date: <input name="start_date" type="date" required><br>
             End Date: <input name="end_date" type="date" required><br>
@@ -1685,9 +2090,9 @@ def view_logs():
     # If AJAX, just return logs as plain text
     if request.args.get('ajax') == '1':
         return ''.join(lines), 200, {'Content-Type': 'text/plain'}
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Application Logs (last 10000 lines)</h2>
+        <h2>📋 Application Logs (last 10000 lines)</h2>
         <button id="pauseBtn" onclick="togglePause()">Pause</button>
         <button onclick="refreshLogs()">Refresh</button>
         <pre id="logbox" style="background:#111;color:#eee;padding:1em;max-height:1000px;max-width:1400px;overflow:auto;font-size:13px;">{{logs}}</pre>
@@ -1738,9 +2143,9 @@ def sync_jobs():
             jobs.append({'sync_id': k, 'job_date': job_date, 'quota_error': quota_error, **v})
     # Sort by job_date descending
     jobs.sort(key=lambda j: j['job_date'], reverse=True)
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>All Sync Jobs Progress (Last 30 Days)</h2>
+        <h2>📈 All Sync Jobs Progress (Last 30 Days)</h2>
         <table border=1 cellpadding=5>
             <tr><th>Sync ID</th><th>City</th><th>Date Range</th><th>Date</th><th>Status</th><th>Current</th><th>Total</th><th>Veraset Status</th><th>Done</th><th>Errors</th><th>Quota Exceeded</th><th>View</th></tr>
             {% for job in jobs %}
@@ -1769,70 +2174,151 @@ def sync_progress_page(sync_id):
     # Show the progress page for a given sync_id (GET)
     prog = data_sync_progress.get(sync_id)
     if not prog:
-        return render_template_string(APPLE_STYLE + """
-            <div class='container'><h2>Sync Not Found</h2><a href='{{ url_for('index') }}'>Back</a></div>
+        return render_template_string(MODERN_STYLE + """
+            <div class='container'>
+                <h2>❌ Sync Not Found</h2>
+                <div class="error">The requested sync ID was not found.</div>
+                <a href='{{ url_for('index') }}' class="btn-secondary" style="text-decoration:none;color:white;">🏠 Back to Home</a>
+            </div>
         """)
     # Check for quota error in errors
     quota_error = any('Monthly Job Quota exceeded' in e for e in prog.get('errors', []))
-    # Reuse the progress bar UI
-    return render_template_string(APPLE_STYLE + '''
+    # Enhanced progress tracking UI
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Sync Progress (ID: {{sync_id}})</h2>
+        <h2>🔄 Sync Progress Monitor</h2>
+        
         {% if quota_error %}
-        <div style="color:#c00;font-weight:bold;margin-bottom:1em;">Monthly Job Quota exceeded. Please contact support for inquiry.</div>
-        {% endif %}
-        <div><b>City:</b> {{prog.city}}<br>
-        <b>Country:</b> {{prog.country}}<br>
-        <b>State/Province:</b> {{prog.state_province}}<br>
-        <b>Date Range:</b> {{prog.date_range}}</div>
-        <div id="progress-bar" style="width: 100%; background: #eee; border: 1px solid #ccc; height: 30px; margin-top: 1em;">
-          <div id="bar" style="height: 100%; width: 0; background: #4caf50; text-align: center; color: white;"></div>
+        <div class="error">
+            ⚠️ <strong>Monthly Job Quota Exceeded</strong><br>
+            Please contact support for inquiry about increasing your API limits.
         </div>
-        <div id="status"></div>
-        <div id="veraset_status" style="color:#007aff;margin-top:1em;"></div>
-        <div id="errors" style="color: #c00; margin-top: 1em;"></div>
-        <a href="{{ url_for('sync_jobs') }}">Back to Sync Jobs</a>
+        {% endif %}
+        
+        <!-- Sync Details Card -->
+        <div class="card">
+            <h3>📋 Sync Details</h3>
+            <div class="grid">
+                <div>
+                    <strong>🏙️ City:</strong> {{prog.city}}<br>
+                    <strong>🌍 Country:</strong> {{prog.country}}<br>
+                    {% if prog.state_province %}
+                    <strong>📍 State/Province:</strong> {{prog.state_province}}<br>
+                    {% endif %}
+                </div>
+                <div>
+                    <strong>📅 Date Range:</strong> {{prog.date_range}}<br>
+                    <strong>🔗 Sync ID:</strong> <code>{{sync_id}}</code><br>
+                    {% if prog.get('schema_type') %}
+                    <strong>📊 Schema:</strong> {{prog.schema_type}}<br>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Visualization -->
+        <div class="card">
+            <h3>📈 Progress Status</h3>
+            <div id="progress-bar">
+              <div id="bar">0%</div>
+            </div>
+            
+            <div class="progress-info">
+                <div id="status"><span class="loading"></span> Initializing sync...</div>
+                <div id="veraset_status" style="margin-top:12px;font-style:italic;"></div>
+                <div id="s3_status" style="margin-top:12px;"></div>
+            </div>
+        </div>
+        
+        <!-- Error Display -->
+        <div id="errors"></div>
+        
+        <!-- Navigation -->
+        <div style="margin-top:24px;">
+            <a href="{{ url_for('sync_jobs') }}" class="btn-secondary" style="text-decoration:none;color:white;">← Back to Sync Jobs</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary" style="text-decoration:none;color:white;">🏠 Home</a>
+        </div>
+        
         <script>
+        let pollInterval;
+        let isComplete = false;
+        
         function poll() {
-          fetch('/sync_progress/{{sync_id}}').then(r => r.json()).then(data => {
-            let percent = Math.round(100 * data.current / data.total);
-            document.getElementById('bar').style.width = percent + '%';
-            document.getElementById('bar').textContent = percent + '%';
-            document.getElementById('status').textContent = `Syncing date: ${data.date} (${data.current}/${data.total}) Status: ${data.status}`;
-            if (data.veraset_status) {
-              document.getElementById('veraset_status').textContent = data.veraset_status;
-            } else {
-              document.getElementById('veraset_status').textContent = '';
-            }
-            // Always update quota error at top if present
-            let quotaError = data.errors && data.errors.some(e => e.includes('Monthly Job Quota exceeded'));
-            let quotaDiv = document.getElementById('quota_error');
-            if (quotaDiv) {
-              quotaDiv.remove(); // Always remove before possibly adding
-            }
-            if (quotaError) {
-              quotaDiv = document.createElement('div');
-              quotaDiv.id = 'quota_error';
-              quotaDiv.style = 'color:#c00;font-weight:bold;margin-bottom:1em;';
-              quotaDiv.textContent = 'Monthly Job Quota exceeded. Please contact support for inquiry.';
-              let container = document.querySelector('.container');
-              if (container) {
+          fetch('/sync_progress/{{sync_id}}')
+            .then(r => r.json())
+            .then(data => {
+              // Update progress bar
+              let percent = Math.round(100 * data.current / data.total);
+              document.getElementById('bar').style.width = percent + '%';
+              document.getElementById('bar').textContent = percent + '%';
+              
+              // Update status with better formatting
+              let statusText = `Processing: ${data.date} (${data.current}/${data.total})`;
+              if (data.status) {
+                statusText += ` • Status: ${data.status}`;
+              }
+              document.getElementById('status').innerHTML = statusText;
+              
+              // Update Veraset status
+              if (data.veraset_status) {
+                document.getElementById('veraset_status').innerHTML = 
+                  `<strong>🔗 Veraset:</strong> ${data.veraset_status}`;
+              }
+              
+              // Update S3 status
+              if (data.s3_sync) {
+                document.getElementById('s3_status').innerHTML = 
+                  `<strong>☁️ S3:</strong> ${data.s3_sync}`;
+              }
+              
+              // Handle quota errors dynamically
+              let quotaError = data.errors && data.errors.some(e => e.includes('Monthly Job Quota exceeded'));
+              let quotaDiv = document.getElementById('quota_error');
+              if (quotaDiv) quotaDiv.remove();
+              
+              if (quotaError) {
+                quotaDiv = document.createElement('div');
+                quotaDiv.id = 'quota_error';
+                quotaDiv.className = 'error';
+                quotaDiv.innerHTML = '⚠️ <strong>Monthly Job Quota Exceeded</strong><br>Please contact support for inquiry.';
+                let container = document.querySelector('.container');
                 container.insertBefore(quotaDiv, container.children[1]);
               }
-            }
-            if (data.errors && data.errors.length > 0) {
-              document.getElementById('errors').innerHTML = '<b>Errors:</b><br>' + data.errors.map(e => `<div>${e}</div>`).join('');
-            } else {
-              document.getElementById('errors').innerHTML = '';
-            }
-            if (!data.done) setTimeout(poll, 1000);
-            else document.getElementById('status').textContent += ' (Done)';
-            if (data.s3_sync) {
-              document.getElementById('status').textContent += '\n' + data.s3_sync;
-            }
-          });
+              
+              // Display errors
+              if (data.errors && data.errors.length > 0) {
+                document.getElementById('errors').innerHTML = 
+                  '<div class="error"><strong>❌ Errors Encountered:</strong><br>' + 
+                  data.errors.map(e => `<div style="margin:8px 0;padding:8px;background:var(--error-red-light);border-radius:8px;">${e}</div>`).join('') + 
+                  '</div>';
+              } else {
+                document.getElementById('errors').innerHTML = '';
+              }
+              
+              // Handle completion
+              if (data.done && !isComplete) {
+                isComplete = true;
+                clearInterval(pollInterval);
+                document.getElementById('status').innerHTML += ' <span class="status-badge status-success">✅ Complete</span>';
+                
+                // Celebrate completion
+                if (!quotaError && (!data.errors || data.errors.length === 0)) {
+                  document.getElementById('status').innerHTML += 
+                    '<div style="margin-top:16px;" class="success">🎉 <strong>Sync completed successfully!</strong></div>';
+                }
+              }
+            })
+            .catch(err => {
+              console.error('Poll error:', err);
+              document.getElementById('status').innerHTML = 
+                '<span class="status-badge status-error">❌ Connection Error</span> - Retrying...';
+            });
         }
-        document.addEventListener('DOMContentLoaded', poll);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+          poll(); // Initial poll
+          pollInterval = setInterval(poll, 2000); // Poll every 2 seconds
+        });
         </script>
         </div>
     ''', sync_id=sync_id, prog=prog, quota_error=quota_error)
@@ -1843,9 +2329,9 @@ def sync_all():
         return redirect(url_for('login'))
 
     if request.method == 'GET':
-        return render_template_string(APPLE_STYLE + '''
+        return render_template_string(MODERN_STYLE + '''
             <div class="container">
-            <h2>Sync All Cities</h2>
+            <h2>🚀 Sync All Cities</h2>
             <form method="post">
                 Start Date: <input name="start_date" type="date" required><br>
                 End Date: <input name="end_date" type="date" required><br>
@@ -1939,12 +2425,16 @@ def sync_all():
 def sync_all_progress(sync_id):
     prog = data_sync_progress.get(sync_id)
     if not prog:
-        return render_template_string(APPLE_STYLE + """
-            <div class='container'><h2>Sync Not Found</h2><a href='{{ url_for('index') }}'>Back</a></div>
+        return render_template_string(MODERN_STYLE + """
+            <div class='container'>
+                <h2>❌ Sync Not Found</h2>
+                <div class="error">The requested sync ID was not found.</div>
+                <a href='{{ url_for('index') }}' class="btn-secondary" style="text-decoration:none;color:white;">🏠 Back to Home</a>
+            </div>
         """)
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Sync Progress: All Cities</h2>
+        <h2>📊 Sync Progress: All Cities</h2>
         <div><b>Date Range:</b> {{prog.date_range}}</div>
         <div id="progress-bar" style="width: 100%; background: #eee; border: 1px solid #ccc; height: 30px; margin-top: 1em;">
           <div id="bar" style="height: 100%; width: 0; background: #4caf50; text-align: center; color: white;"></div>
@@ -2070,9 +2560,9 @@ def job_status():
                         error = f"API error: {resp.status_code} {resp.text}"
             except Exception as e:
                 error = str(e)
-    return render_template_string(APPLE_STYLE + '''
+    return render_template_string(MODERN_STYLE + '''
         <div class="container">
-        <h2>Check Veraset Job Status</h2>
+        <h2>🔍 Check Veraset Job Status</h2>
         <form method="post">
             <label>Job ID: <input name="job_id" value="{{job_id}}" style="width:400px;" required></label>
             <button type="submit">Check Status</button>

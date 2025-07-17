@@ -6,6 +6,9 @@ from glob import glob
 from dotenv import load_dotenv
 import logging
 import sys
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError, PartialCredentialsError
+import time
 
 # Load environment variables
 load_dotenv()
@@ -40,6 +43,118 @@ def setup_logging():
         ]
     )
     _logging_configured = True
+
+def refresh_aws_session():
+    """Create a new boto3 session with fresh credentials"""
+    return boto3.Session(
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        region_name='us-west-2'
+    )
+
+def get_fresh_s3_client():
+    """Get S3 client with fresh credentials"""
+    session = refresh_aws_session()
+    return session.client('s3')
+
+def check_credentials_validity(s3_client=None, max_age_hours=1):
+    """Check if current credentials will expire soon"""
+    if s3_client is None:
+        s3_client = get_fresh_s3_client()
+    try:
+        # Test with a simple operation
+        s3_client.list_buckets()
+        return True
+    except (ClientError, NoCredentialsError, PartialCredentialsError) as e:
+        # Check if it's an expired token error
+        if isinstance(e, ClientError):
+            error_code = e.response.get('Error', {}).get('Code', '')
+            if error_code in ['ExpiredToken', 'TokenRefreshRequired', 'InvalidToken']:
+                return False
+        return False
+    except Exception as e:
+        logging.warning(f"Credential validity check failed with unexpected error: {e}")
+        return False
+
+def s3_copy_with_retry(source_bucket, source_key, dest_bucket, dest_key, max_retries=3):
+    """S3 copy with automatic credential refresh on token expiration"""
+    s3_client = get_fresh_s3_client()
+    
+    for attempt in range(max_retries):
+        try:
+            copy_source = {'Bucket': source_bucket, 'Key': source_key}
+            s3_client.copy_object(
+                CopySource=copy_source,
+                Bucket=dest_bucket,
+                Key=dest_key
+            )
+            return {'success': True}
+        except (ClientError, NoCredentialsError, PartialCredentialsError) as e:
+            # Check if it's an expired token or credential error
+            is_credential_error = False
+            if isinstance(e, ClientError):
+                error_code = e.response.get('Error', {}).get('Code', '')
+                if error_code in ['ExpiredToken', 'TokenRefreshRequired', 'InvalidToken', 'SignatureDoesNotMatch']:
+                    is_credential_error = True
+            elif isinstance(e, (NoCredentialsError, PartialCredentialsError)):
+                is_credential_error = True
+            
+            if is_credential_error:
+                logging.warning(f"Credentials issue during S3 copy (attempt {attempt+1}). Refreshing...")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                    s3_client = get_fresh_s3_client()  # Get fresh credentials
+                else:
+                    logging.error(f"Failed to copy after {max_retries} attempts: {e}")
+                    return {'success': False, 'error': f'Credential issues after {max_retries} attempts'}
+            else:
+                # Re-raise if it's not a credential error
+                raise
+        except Exception as e:
+            logging.error(f"Non-credential error during S3 copy: {e}")
+            return {'success': False, 'error': str(e)}
+
+def save_sync_progress(sync_id, completed_files, total_files, additional_data=None):
+    """Save progress to allow resuming on failure"""
+    progress_file = f"sync_progress_{sync_id}.json"
+    progress_data = {
+        'completed_files': completed_files,
+        'total_files': total_files,
+        'timestamp': datetime.now(timezone.utc).isoformat(),
+        'sync_id': sync_id
+    }
+    if additional_data:
+        progress_data.update(additional_data)
+    
+    try:
+        with open(progress_file, 'w') as f:
+            json.dump(progress_data, f, indent=2)
+        logging.info(f"Saved sync progress: {completed_files}/{total_files} files completed")
+    except Exception as e:
+        logging.error(f"Failed to save sync progress: {e}")
+
+def load_sync_progress(sync_id):
+    """Load previous progress to resume sync"""
+    progress_file = f"sync_progress_{sync_id}.json"
+    if os.path.exists(progress_file):
+        try:
+            with open(progress_file, 'r') as f:
+                progress = json.load(f)
+            logging.info(f"Loaded sync progress: {progress.get('completed_files', 0)}/{progress.get('total_files', 0)} files completed")
+            return progress
+        except Exception as e:
+            logging.error(f"Failed to load sync progress: {e}")
+    return None
+
+def cleanup_sync_progress(sync_id):
+    """Clean up progress file on completion"""
+    progress_file = f"sync_progress_{sync_id}.json"
+    try:
+        if os.path.exists(progress_file):
+            os.remove(progress_file)
+            logging.info(f"Cleaned up sync progress file for sync {sync_id}")
+    except Exception as e:
+        logging.error(f"Failed to clean up sync progress file: {e}")
 
 def load_cities():
     if not os.path.exists(CITIES_FILE):
