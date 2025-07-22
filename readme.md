@@ -3,14 +3,13 @@
 ## Overview
 This system automates the daily download and sync of Veraset mobility data for a configurable list of cities, using a simple password-protected Flask web UI on a single EC2 instance.
 
+<img width="1154" height="1256" alt="image" src="https://github.com/user-attachments/assets/a75c9375-e99b-4f78-b3b9-fe7caad5d047" />
 
-<img width="641" alt="image" src="https://github.com/user-attachments/assets/28d3d5bf-39b8-4d91-b633-29620a4a1d3d" />
+<img width="1107" height="1257" alt="image" src="https://github.com/user-attachments/assets/6bf5b369-d383-4775-8a68-f6440923812b" />
 
-<img width="520" alt="image" src="https://github.com/user-attachments/assets/0646bbcf-c593-4856-8bd7-d2f74fcd8145" />
+<img width="1133" height="999" alt="image" src="https://github.com/user-attachments/assets/6449778f-2d8d-4504-a188-e8b6c315aefd" />
 
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/7ced6a39-f9c3-49ac-9973-abc4a6c3677a" />
-
-<img width="839" alt="image" src="https://github.com/user-attachments/assets/b7a83cf4-7342-4cf0-a210-735178843f72" />
+<img width="1133" height="447" alt="image" src="https://github.com/user-attachments/assets/ef4da5fd-22bc-491d-be5e-abd7a4b0a518" />
 
 
 ---
