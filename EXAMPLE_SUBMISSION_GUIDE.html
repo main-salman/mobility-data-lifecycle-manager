@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example GIS Data Submission for City Administrators</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            font-size: 1.5em;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 30px;
+            font-size: 1.2em;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 25px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .files-created {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .best-practices {
+            background: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .best-practices ul {
+            margin: 10px 0;
+        }
+        .best-practices li {
+            margin-bottom: 8px;
+        }
+        .checkmark {
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .file-structure {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        .file-structure .comment {
+            color: #95a5a6;
+        }
+        .changes-made {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .usage-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .usage-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .usage-card h4 {
+            color: #495057;
+            margin-top: 0;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .tech-specs {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .quality-checks {
+            background: #f8f9fa;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .quality-checks ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .quality-checks li {
+            margin-bottom: 8px;
+        }
+        .quality-checks li:before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .distribution-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .distribution-card h4 {
+            color: #495057;
+            margin-top: 0;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .validation-checklist {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .validation-checklist input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+        .validation-checklist label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .common-issues {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .issue-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ffeaa7;
+        }
+        .issue-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .issue-problem {
+            color: #856404;
+            font-weight: bold;
+        }
+        .issue-solution {
+            color: #155724;
+            margin-top: 5px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .file-info {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 2px;
+        }
+        .size-info {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        @media (max-width: 768px) {
+            .usage-section {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Example GIS Data Submission for City Administrators</h1>
+        <div class="subtitle">Santiago, Chile - Reference Implementation</div>
+        
+        <p>This document explains the example submission created from Santiago, Chile's GIS data, demonstrating the standardized format all cities should follow.</p>
+
+        <hr>
+
+        <h2>Files Created</h2>
+
+        <div class="files-created">
+            <h3>1. Example Directory: <code>Example_City_Submission/</code></h3>
+            <p>Contains the properly formatted files that demonstrate the standard structure.</p>
+
+            <h3>2. Example ZIP File: <code>Santiago_Chile_Boundaries_EXAMPLE.zip</code></h3>
+            <p>Ready-to-submit ZIP file showing the exact format expected by the system.</p>
+            <div style="margin: 15px 0;">
+                <a href="/download/example-zip" class="btn-success" style="display: inline-block; background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                    📦 Download Example ZIP File
+                </a>
+            </div>
+
+            <h3>3. Documentation: <code>README_FOR_CITY_ADMINISTRATORS.txt</code></h3>
+            <p>Comprehensive guide included in the example folder for city administrators.</p>
+        </div>
+
+        <hr>
+
+        <h2>Why Santiago, Chile Was Chosen</h2>
+
+        <p>Santiago was selected as the example because it demonstrates <strong>best practices</strong>:</p>
+
+        <div class="best-practices">
+            <ul>
+                <li><span class="checkmark">✅</span> <strong>Clean Organization</strong>: Files directly in GIS SHP folder (no confusing nested directories)</li>
+                <li><span class="checkmark">✅</span> <strong>Complete Data</strong>: Both boundary and neighborhood files provided</li>
+                <li><span class="checkmark">✅</span> <strong>Proper Components</strong>: All required shapefile components (.shp, .shx, .dbf, .prj, .cpg)</li>
+                <li><span class="checkmark">✅</span> <strong>Reasonable Size</strong>: Manageable file sizes (boundary: 42KB, neighborhoods: 18KB)</li>
+                <li><span class="checkmark">✅</span> <strong>Standard Geometry</strong>: Clean Polygon geometry types</li>
+                <li><span class="checkmark">✅</span> <strong>Good Naming</strong>: Clear, descriptive file names</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>File Structure Analysis</h2>
+
+        <h3>Original Santiago Files:</h3>
+        <div class="file-structure">
+Santiago, Chile/GIS SHP/
+├── Urban border.shp          <span class="comment">(42,716 bytes, Polygon)</span>
+├── Urban border.shx          <span class="comment">(108 bytes)</span>
+├── Urban border.dbf          <span class="comment">(519 bytes)</span>
+├── Urban border.prj          <span class="comment">(409 bytes)</span>
+├── Urban border.cpg          <span class="comment">(5 bytes)</span>
+├── Neighborhoods.shp         <span class="comment">(18,396 bytes, Polygon)</span>
+├── Neighborhoods.shx         <span class="comment">(316 bytes)</span>
+├── Neighborhoods.dbf         <span class="comment">(24,050 bytes)</span>
+├── Neighborhoods.prj         <span class="comment">(409 bytes)</span>
+└── Neighborhoods.cpg         <span class="comment">(5 bytes)</span>
+        </div>
+
+        <h3>Standardized Example Files:</h3>
+        <div class="file-structure">
+Example_City_Submission/
+├── README_FOR_CITY_ADMINISTRATORS.txt
+├── Santiago_Chile_Urban_Boundary.shp
+├── Santiago_Chile_Urban_Boundary.shx
+├── Santiago_Chile_Urban_Boundary.dbf
+├── Santiago_Chile_Urban_Boundary.prj
+├── Santiago_Chile_Urban_Boundary.cpg
+├── Santiago_Chile_Neighborhoods.shp
+├── Santiago_Chile_Neighborhoods.shx
+├── Santiago_Chile_Neighborhoods.dbf
+├── Santiago_Chile_Neighborhoods.prj
+└── Santiago_Chile_Neighborhoods.cpg
+        </div>
+
+        <hr>
+
+        <h2>Key Changes Made</h2>
+
+        <div class="changes-made">
+            <h3>1. <strong>Naming Standardization</strong></h3>
+            <ul>
+                <li><span class="file-info">Urban border.*</span> → <span class="file-info">Santiago_Chile_Urban_Boundary.*</span></li>
+                <li><span class="file-info">Neighborhoods.*</span> → <span class="file-info">Santiago_Chile_Neighborhoods.*</span></li>
+            </ul>
+
+            <h3>2. <strong>File Cleanup</strong></h3>
+            <ul>
+                <li>Removed optional <span class="file-info">.qmd</span> files (QGIS metadata)</li>
+                <li>Kept essential files: <span class="file-info">.shp</span>, <span class="file-info">.shx</span>, <span class="file-info">.dbf</span>, <span class="file-info">.prj</span>, <span class="file-info">.cpg</span></li>
+            </ul>
+
+            <h3>3. <strong>Documentation Added</strong></h3>
+            <ul>
+                <li>Comprehensive README file with step-by-step instructions</li>
+                <li>Technical requirements and quality checklist</li>
+                <li>Common issues and troubleshooting guide</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>How to Use This Example</h2>
+
+        <div class="usage-section">
+            <div class="usage-card">
+                <h4>For City Administrators:</h4>
+                <ol>
+                    <li><strong>Download</strong> the <code>Santiago_Chile_Boundaries_EXAMPLE.zip</code> file</li>
+                    <li><strong>Extract</strong> and examine the file structure</li>
+                    <li><strong>Read</strong> the <code>README_FOR_CITY_ADMINISTRATORS.txt</code> carefully</li>
+                    <li><strong>Follow</strong> the same naming pattern for your city:
+                        <ul>
+                            <li>Replace "Santiago_Chile" with "[YourCity]_[YourCountry]"</li>
+                            <li>Keep the same file extensions and structure</li>
+                        </ul>
+                    </li>
+                    <li><strong>Create</strong> your own ZIP file following this exact format</li>
+                </ol>
+            </div>
+
+            <div class="usage-card">
+                <h4>For Project Managers:</h4>
+                <ol>
+                    <li><strong>Share</strong> the ZIP file with all participating cities</li>
+                    <li><strong>Reference</strong> this structure in training materials</li>
+                    <li><strong>Use</strong> as validation template for incoming submissions</li>
+                    <li><strong>Point</strong> cities to this example when they have questions</li>
+                </ol>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Technical Specifications</h2>
+
+        <div class="tech-specs">
+            <h3>Coordinate System</h3>
+            <ul>
+                <li><strong>Current</strong>: WGS84 (EPSG:4326) <span class="checkmark">✅</span></li>
+                <li><strong>Verified</strong>: All <code>.prj</code> files contain proper WGS84 definition</li>
+            </ul>
+
+            <h3>Geometry Types</h3>
+            <ul>
+                <li><strong>Boundary</strong>: Polygon (single urban boundary)</li>
+                <li><strong>Neighborhoods</strong>: Polygon (multiple neighborhood polygons)</li>
+            </ul>
+
+            <h3>File Sizes</h3>
+            <ul>
+                <li><strong>Total ZIP size</strong>: ~25KB <span class="size-info">(very manageable)</span></li>
+                <li><strong>Boundary files</strong>: ~44KB total</li>
+                <li><strong>Neighborhood files</strong>: ~43KB total</li>
+            </ul>
+        </div>
+
+        <div class="quality-checks">
+            <h3>Quality Checks Passed</h3>
+            <ul>
+                <li>All required components present</li>
+                <li>Files open correctly in GIS software</li>
+                <li>Proper coordinate system (WGS84)</li>
+                <li>Valid geometry (no errors)</li>
+                <li>Consistent naming convention</li>
+                <li>Clean ZIP structure</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>Distribution Instructions</h2>
+
+        <div class="distribution-grid">
+            <div class="distribution-card">
+                <h4>1. <strong>Email Distribution</strong></h4>
+                <p>Send the ZIP file to city administrators with subject:</p>
+                <p><em>"GIS Data Submission Template - Santiago Chile Example"</em></p>
+            </div>
+
+            <div class="distribution-card">
+                <h4>2. <strong>Training Materials</strong></h4>
+                <p>Include this example in:</p>
+                <ul>
+                    <li>City administrator training sessions</li>
+                    <li>Technical documentation</li>
+                    <li>Help desk resources</li>
+                </ul>
+            </div>
+
+            <div class="distribution-card">
+                <h4>3. <strong>Web Portal</strong></h4>
+                <p>Upload to project website as downloadable template with:</p>
+                <ul>
+                    <li>Link to ZIP file</li>
+                    <li>Link to this documentation</li>
+                    <li>Video tutorial (if available)</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Validation Checklist</h2>
+
+        <p>When cities submit their data, compare against this example:</p>
+
+        <div class="validation-checklist">
+            <h3>File Structure:</h3>
+            <label><input type="checkbox"> ZIP file named: <code>[City]_[Country]_Boundaries.zip</code></label>
+            <label><input type="checkbox"> Contains boundary files: <code>[City]_[Country]_Urban_Boundary.*</code></label>
+            <label><input type="checkbox"> Contains neighborhood files: <code>[City]_[Country]_Neighborhoods.*</code></label>
+
+            <h3>Required Components:</h3>
+            <label><input type="checkbox"> <code>.shp</code> files present (geometry)</label>
+            <label><input type="checkbox"> <code>.shx</code> files present (spatial index)</label>
+            <label><input type="checkbox"> <code>.dbf</code> files present (attributes)</label>
+            <label><input type="checkbox"> <code>.prj</code> files present (coordinate system)</label>
+
+            <h3>Technical Quality:</h3>
+            <label><input type="checkbox"> Files open in GIS software without errors</label>
+            <label><input type="checkbox"> Coordinate system is WGS84 (EPSG:4326)</label>
+            <label><input type="checkbox"> Geometry is valid (no self-intersections)</label>
+            <label><input type="checkbox"> File names follow exact convention</label>
+        </div>
+
+        <hr>
+
+        <h2>Common Deviations and Solutions</h2>
+
+        <div class="common-issues">
+            <div class="issue-item">
+                <h4>Issue: Wrong Naming Convention</h4>
+                <div class="issue-problem"><strong>Problem:</strong> <code>City_Boundary.shp</code> instead of <code>City_Country_Urban_Boundary.shp</code></div>
+                <div class="issue-solution"><strong>Solution:</strong> Point to Santiago example, request resubmission</div>
+            </div>
+
+            <div class="issue-item">
+                <h4>Issue: Missing Files</h4>
+                <div class="issue-problem"><strong>Problem:</strong> Only <code>.shp</code> file provided</div>
+                <div class="issue-solution"><strong>Solution:</strong> Explain shapefile components using Santiago example</div>
+            </div>
+
+            <div class="issue-item">
+                <h4>Issue: Wrong Coordinate System</h4>
+                <div class="issue-problem"><strong>Problem:</strong> Local UTM projection instead of WGS84</div>
+                <div class="issue-solution"><strong>Solution:</strong> Show Santiago <code>.prj</code> file content as reference</div>
+            </div>
+
+            <div class="issue-item">
+                <h4>Issue: Complex Directory Structure</h4>
+                <div class="issue-problem"><strong>Problem:</strong> Multiple nested folders like Baguio example</div>
+                <div class="issue-solution"><strong>Solution:</strong> Show Santiago's clean, flat structure</div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>This example provides a concrete, working reference that eliminates ambiguity about submission requirements and demonstrates exactly what the system expects from all participating cities.</h3>
+        </div>
+    </div>
+</body>
+</html>
