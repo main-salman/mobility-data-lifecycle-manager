@@ -857,12 +857,15 @@ def login():
         <div class="card" style="margin-top: 30px;">
             <h3>📋 Public Resources</h3>
             <p>Access GIS data submission guidelines and examples without logging in:</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 20px;">
                 <a href="{{ url_for('submission_guide') }}" style="display: block; background: #17a2b8; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 6px; font-weight: bold;">
                     📖 View Submission Guide
                 </a>
                 <a href="{{ url_for('download_example_zip') }}" style="display: block; background: #28a745; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 6px; font-weight: bold;">
-                    📦 Download Example ZIP
+                    📦 Download Basic Example
+                </a>
+                <a href="{{ url_for('download_example_zip_with_poi') }}" style="display: block; background: #6f42c1; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 6px; font-weight: bold;">
+                    📍 Download with POI
                 </a>
             </div>
             <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
@@ -896,6 +899,16 @@ def download_example_zip():
                         download_name='Santiago_Chile_Boundaries_EXAMPLE.zip')
     except FileNotFoundError:
         return "Example ZIP file not found", 404
+
+@app.route('/download/example-zip-with-poi')
+def download_example_zip_with_poi():
+    """Serve the example ZIP file with POI data for download"""
+    try:
+        return send_file('Santiago_Chile_Boundaries_WITH_POI_EXAMPLE.zip', 
+                        as_attachment=True,
+                        download_name='Santiago_Chile_Boundaries_WITH_POI_EXAMPLE.zip')
+    except FileNotFoundError:
+        return "Example ZIP file with POI not found", 404
 
 # Add this after the existing API_ENDPOINTS list
 SCHEMA_TYPES = ["FULL", "TRIPS", "BASIC"]

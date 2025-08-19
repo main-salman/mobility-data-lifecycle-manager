@@ -240,7 +240,7 @@
         <h1>Example GIS Data Submission for City Administrators</h1>
         <div class="subtitle">Santiago, Chile - Reference Implementation</div>
         
-        <p>This document explains the example submission created from Santiago, Chile's GIS data, demonstrating the standardized format all cities should follow.</p>
+        <p>This document explains the example submission created from Santiago, Chile's GIS data, demonstrating the standardized format all cities should follow, including boundary, neighborhood, and Point of Interest (POI) data.</p>
 
         <hr>
 
@@ -253,8 +253,11 @@
             <h3>2. Example ZIP File: <code>Santiago_Chile_Boundaries_EXAMPLE.zip</code></h3>
             <p>Ready-to-submit ZIP file showing the exact format expected by the system.</p>
             <div style="margin: 15px 0;">
-                <a href="/download/example-zip" class="btn-success" style="display: inline-block; background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                    📦 Download Example ZIP File
+                <a href="/download/example-zip" class="btn-success" style="display: inline-block; background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px;">
+                    📦 Download Basic Example
+                </a>
+                <a href="/download/example-zip-with-poi" class="btn-success" style="display: inline-block; background: #17a2b8; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                    📍 Download Example with POI
                 </a>
             </div>
 
@@ -271,11 +274,11 @@
         <div class="best-practices">
             <ul>
                 <li><span class="checkmark">✅</span> <strong>Clean Organization</strong>: Files directly in GIS SHP folder (no confusing nested directories)</li>
-                <li><span class="checkmark">✅</span> <strong>Complete Data</strong>: Both boundary and neighborhood files provided</li>
+                <li><span class="checkmark">✅</span> <strong>Complete Data</strong>: Boundary, neighborhood, and POI files provided</li>
                 <li><span class="checkmark">✅</span> <strong>Proper Components</strong>: All required shapefile components (.shp, .shx, .dbf, .prj, .cpg)</li>
-                <li><span class="checkmark">✅</span> <strong>Reasonable Size</strong>: Manageable file sizes (boundary: 42KB, neighborhoods: 18KB)</li>
-                <li><span class="checkmark">✅</span> <strong>Standard Geometry</strong>: Clean Polygon geometry types</li>
-                <li><span class="checkmark">✅</span> <strong>Good Naming</strong>: Clear, descriptive file names</li>
+                <li><span class="checkmark">✅</span> <strong>Reasonable Size</strong>: Manageable file sizes (boundary: 42KB, neighborhoods: 18KB, POI: 85KB)</li>
+                <li><span class="checkmark">✅</span> <strong>Mixed Geometry</strong>: Polygon boundaries + Point POI locations</li>
+                <li><span class="checkmark">✅</span> <strong>Good Naming</strong>: Clear, descriptive file names with category suffixes</li>
             </ul>
         </div>
 
@@ -311,7 +314,12 @@ Example_City_Submission/
 ├── Santiago_Chile_Neighborhoods.shx
 ├── Santiago_Chile_Neighborhoods.dbf
 ├── Santiago_Chile_Neighborhoods.prj
-└── Santiago_Chile_Neighborhoods.cpg
+├── Santiago_Chile_Neighborhoods.cpg
+├── Santiago_Chile_Cultural_POI.shp      <span class="comment">(84,968 bytes, Point)</span>
+├── Santiago_Chile_Cultural_POI.shx      <span class="comment">(24,348 bytes)</span>
+├── Santiago_Chile_Cultural_POI.dbf      <span class="comment">(18,008,165 bytes)</span>
+├── Santiago_Chile_Cultural_POI.prj      <span class="comment">(145 bytes)</span>
+└── Santiago_Chile_Cultural_POI.cpg      <span class="comment">(5 bytes)</span>
         </div>
 
         <hr>
@@ -365,13 +373,15 @@ Example_City_Submission/
             <ul>
                 <li><strong>Boundary</strong>: Polygon (single urban boundary)</li>
                 <li><strong>Neighborhoods</strong>: Polygon (multiple neighborhood polygons)</li>
+                <li><strong>POI</strong>: Point (specific facility locations)</li>
             </ul>
 
             <h3>File Sizes</h3>
             <ul>
-                <li><strong>Total ZIP size</strong>: ~25KB <span class="size-info">(very manageable)</span></li>
+                <li><strong>Total ZIP size (with POI)</strong>: ~430KB <span class="size-info">(manageable)</span></li>
                 <li><strong>Boundary files</strong>: ~44KB total</li>
                 <li><strong>Neighborhood files</strong>: ~43KB total</li>
+                <li><strong>Cultural POI files</strong>: ~18MB total (large attribute table)</li>
             </ul>
         </div>
 

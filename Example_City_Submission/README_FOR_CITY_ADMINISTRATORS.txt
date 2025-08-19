@@ -7,7 +7,7 @@ This folder contains an EXAMPLE of the standardized format for submitting
 GIS boundary data to the UN Mobility Experiment data lifecycle system.
 
 EXAMPLE CITY: Santiago, Chile
-FILES INCLUDED: Urban Boundary + Neighborhoods
+FILES INCLUDED: Urban Boundary + Neighborhoods + Cultural POI
 
 ===============================================================================
                               FILE STRUCTURE
@@ -28,6 +28,13 @@ NEIGHBORHOOD FILES (RECOMMENDED):
 ✓ [CityName]_[Country]_Neighborhoods.dbf     <- Attribute table (REQUIRED)
 ✓ [CityName]_[Country]_Neighborhoods.prj     <- Coordinate system (HIGHLY RECOMMENDED)
 ✓ [CityName]_[Country]_Neighborhoods.cpg     <- Character encoding (optional)
+
+POI (POINT OF INTEREST) FILES (OPTIONAL BUT RECOMMENDED):
+✓ [CityName]_[Country]_Cultural_POI.shp      <- Main geometry file (Point locations)
+✓ [CityName]_[Country]_Cultural_POI.shx      <- Spatial index (REQUIRED)
+✓ [CityName]_[Country]_Cultural_POI.dbf      <- Attribute table (REQUIRED)
+✓ [CityName]_[Country]_Cultural_POI.prj      <- Coordinate system (HIGHLY RECOMMENDED)
+✓ [CityName]_[Country]_Cultural_POI.cpg      <- Character encoding (optional)
 
 ===============================================================================
                               NAMING RULES
@@ -61,10 +68,19 @@ COORDINATE SYSTEM:
 GEOMETRY TYPE:
 - Boundary files: Polygon or PolygonZ
 - Neighborhood files: Polygon or PolygonZ
+- POI files: Point (specific facility locations)
 
 FILE FORMAT:
 - Submit as ZIP file only (no RAR, 7z, or other formats)
 - ZIP filename: [CityName]_[Country]_Boundaries.zip
+
+POI CATEGORIES (use appropriate suffix):
+- Cultural_POI: Museums, theaters, cultural centers, libraries
+- Transport_POI: Bus stops, train stations, airports, taxi stands
+- Health_POI: Hospitals, clinics, pharmacies
+- Education_POI: Schools, universities, training centers
+- Commercial_POI: Markets, shopping centers, restaurants
+- Government_POI: City hall, government offices, embassies
 
 QUALITY CHECKS:
 □ All required files included (.shp, .shx, .dbf)

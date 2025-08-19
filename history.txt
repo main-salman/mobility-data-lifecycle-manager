@@ -362,4 +362,16 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Added send_file import to Flask imports for proper file serving functionality
 - Public resources accessible at http://localhost:5050/login without requiring login credentials
 - City administrators can now access standardized submission guidelines and example files directly
-- Improves accessibility and reduces barriers for city data submission compliance 
+- Improves accessibility and reduces barriers for city data submission compliance
+
+2024-12-30: Enhanced Submission Guide with POI (Point of Interest) Data Support:
+- Added Buenos Aires Cultural POI data (Point geometry) to example submission folder
+- Renamed POI files to standard convention: Santiago_Chile_Cultural_POI.* (84KB shapefile, 18MB attributes)
+- Updated README_FOR_CITY_ADMINISTRATORS.txt to include POI data requirements and categories
+- Enhanced EXAMPLE_SUBMISSION_GUIDE.html with POI categories section and technical specifications
+- Created new ZIP file: Santiago_Chile_Boundaries_WITH_POI_EXAMPLE.zip (484KB) including POI data
+- Added new Flask route /download/example-zip-with-poi for POI example download
+- Updated login page to include three download options: Guide, Basic Example, Example with POI
+- Defined 6 POI categories: Cultural, Transport, Health, Education, Commercial, Government
+- Specified POI requirements: Point geometry, WGS84 coordinate system, minimum attributes (name, category, address)
+- Provides comprehensive example for cities wanting to include facility location data alongside boundaries 
