@@ -316,28 +316,7 @@ Example_City_Submission/
 
         <hr>
 
-        <h2>Key Changes Made</h2>
 
-        <div class="changes-made">
-            <h3>1. <strong>Naming Standardization</strong></h3>
-            <ul>
-                <li><span class="file-info">Urban border.*</span> → <span class="file-info">Santiago_Chile_Urban_Boundary.*</span></li>
-                <li><span class="file-info">Neighborhoods.*</span> → <span class="file-info">Santiago_Chile_Neighborhoods.*</span></li>
-            </ul>
-
-            <h3>2. <strong>File Cleanup</strong></h3>
-            <ul>
-                <li>Removed optional <span class="file-info">.qmd</span> files (QGIS metadata)</li>
-                <li>Kept essential files: <span class="file-info">.shp</span>, <span class="file-info">.shx</span>, <span class="file-info">.dbf</span>, <span class="file-info">.prj</span>, <span class="file-info">.cpg</span></li>
-            </ul>
-
-            <h3>3. <strong>Documentation Added</strong></h3>
-            <ul>
-                <li>Comprehensive README file with step-by-step instructions</li>
-                <li>Technical requirements and quality checklist</li>
-                <li>Common issues and troubleshooting guide</li>
-            </ul>
-        </div>
 
         <hr>
 
@@ -410,94 +389,7 @@ Example_City_Submission/
 
         <hr>
 
-        <h2>Distribution Instructions</h2>
 
-        <div class="distribution-grid">
-            <div class="distribution-card">
-                <h4>1. <strong>Email Distribution</strong></h4>
-                <p>Send the ZIP file to city administrators with subject:</p>
-                <p><em>"GIS Data Submission Template - Santiago Chile Example"</em></p>
-            </div>
-
-            <div class="distribution-card">
-                <h4>2. <strong>Training Materials</strong></h4>
-                <p>Include this example in:</p>
-                <ul>
-                    <li>City administrator training sessions</li>
-                    <li>Technical documentation</li>
-                    <li>Help desk resources</li>
-                </ul>
-            </div>
-
-            <div class="distribution-card">
-                <h4>3. <strong>Web Portal</strong></h4>
-                <p>Upload to project website as downloadable template with:</p>
-                <ul>
-                    <li>Link to ZIP file</li>
-                    <li>Link to this documentation</li>
-                    <li>Video tutorial (if available)</li>
-                </ul>
-            </div>
-        </div>
-
-        <hr>
-
-        <h2>Validation Checklist</h2>
-
-        <p>When cities submit their data, compare against this example:</p>
-
-        <div class="validation-checklist">
-            <h3>File Structure:</h3>
-            <label><input type="checkbox"> ZIP file named: <code>[City]_[Country]_Boundaries.zip</code></label>
-            <label><input type="checkbox"> Contains boundary files: <code>[City]_[Country]_Urban_Boundary.*</code></label>
-            <label><input type="checkbox"> Contains neighborhood files: <code>[City]_[Country]_Neighborhoods.*</code></label>
-
-            <h3>Required Components:</h3>
-            <label><input type="checkbox"> <code>.shp</code> files present (geometry)</label>
-            <label><input type="checkbox"> <code>.shx</code> files present (spatial index)</label>
-            <label><input type="checkbox"> <code>.dbf</code> files present (attributes)</label>
-            <label><input type="checkbox"> <code>.prj</code> files present (coordinate system)</label>
-
-            <h3>Technical Quality:</h3>
-            <label><input type="checkbox"> Files open in GIS software without errors</label>
-            <label><input type="checkbox"> Coordinate system is WGS84 (EPSG:4326)</label>
-            <label><input type="checkbox"> Geometry is valid (no self-intersections)</label>
-            <label><input type="checkbox"> File names follow exact convention</label>
-        </div>
-
-        <hr>
-
-        <h2>Common Deviations and Solutions</h2>
-
-        <div class="common-issues">
-            <div class="issue-item">
-                <h4>Issue: Wrong Naming Convention</h4>
-                <div class="issue-problem"><strong>Problem:</strong> <code>City_Boundary.shp</code> instead of <code>City_Country_Urban_Boundary.shp</code></div>
-                <div class="issue-solution"><strong>Solution:</strong> Point to Santiago example, request resubmission</div>
-            </div>
-
-            <div class="issue-item">
-                <h4>Issue: Missing Files</h4>
-                <div class="issue-problem"><strong>Problem:</strong> Only <code>.shp</code> file provided</div>
-                <div class="issue-solution"><strong>Solution:</strong> Explain shapefile components using Santiago example</div>
-            </div>
-
-            <div class="issue-item">
-                <h4>Issue: Wrong Coordinate System</h4>
-                <div class="issue-problem"><strong>Problem:</strong> Local UTM projection instead of WGS84</div>
-                <div class="issue-solution"><strong>Solution:</strong> Show Santiago <code>.prj</code> file content as reference</div>
-            </div>
-
-            <div class="issue-item">
-                <h4>Issue: Complex Directory Structure</h4>
-                <div class="issue-problem"><strong>Problem:</strong> Multiple nested folders like Baguio example</div>
-                <div class="issue-solution"><strong>Solution:</strong> Show Santiago's clean, flat structure</div>
-            </div>
-        </div>
-
-        <div class="highlight-box">
-            <h3>This example provides a concrete, working reference that eliminates ambiguity about submission requirements and demonstrates exactly what the system expects from all participating cities.</h3>
-        </div>
     </div>
 </body>
 </html>
