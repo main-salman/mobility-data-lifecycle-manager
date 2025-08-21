@@ -29,12 +29,11 @@ NEIGHBORHOOD FILES (RECOMMENDED):
 ✓ [CityName]_[Country]_Neighborhoods.prj     <- Coordinate system (HIGHLY RECOMMENDED)
 ✓ [CityName]_[Country]_Neighborhoods.cpg     <- Character encoding (optional)
 
-POI (POINT OF INTEREST) FILES (OPTIONAL BUT RECOMMENDED):
-✓ [CityName]_[Country]_Cultural_POI.shp      <- Main geometry file (Point locations)
-✓ [CityName]_[Country]_Cultural_POI.shx      <- Spatial index (REQUIRED)
-✓ [CityName]_[Country]_Cultural_POI.dbf      <- Attribute table (REQUIRED)
-✓ [CityName]_[Country]_Cultural_POI.prj      <- Coordinate system (HIGHLY RECOMMENDED)
-✓ [CityName]_[Country]_Cultural_POI.cpg      <- Character encoding (optional)
+ADDITIONAL DATA FILES (OPTIONAL BUT RECOMMENDED):
+✓ [CityName]_[Country]_Public_Spaces.shp     <- Parks and green spaces
+✓ [CityName]_[Country]_Cultural_Sites.shp    <- Museums, heritage sites (Point locations)
+✓ [CityName]_[Country]_Recreation.shp        <- Sports facilities, community venues
+Each category requires: .shp, .shx, .dbf, .prj, .cpg files
 
 ===============================================================================
                               NAMING RULES
@@ -74,13 +73,32 @@ FILE FORMAT:
 - Submit as ZIP file only (no RAR, 7z, or other formats)
 - ZIP filename: [CityName]_[Country]_Boundaries.zip
 
-POI CATEGORIES (use appropriate suffix):
-- Cultural_POI: Museums, theaters, cultural centers, libraries
-- Transport_POI: Bus stops, train stations, airports, taxi stands
-- Health_POI: Hospitals, clinics, pharmacies
-- Education_POI: Schools, universities, training centers
-- Commercial_POI: Markets, shopping centers, restaurants
-- Government_POI: City hall, government offices, embassies
+REQUIRED DATA CATEGORIES FOR COMPREHENSIVE SUBMISSION:
+
+1. ADMIN BOUNDARY (REQUIRED):
+   File: [CityName]_[Country]_Admin_Boundary.shp
+   Description: Official city administrative boundaries that define city limits
+   Geometry: Polygon
+
+2. SUBDIVISION BOUNDARIES (RECOMMENDED):
+   File: [CityName]_[Country]_Subdivisions.shp
+   Description: Zones, districts, neighborhoods for detailed spatial analysis
+   Geometry: Polygon
+
+3. PUBLIC OPEN SPACES (RECOMMENDED):
+   File: [CityName]_[Country]_Public_Spaces.shp
+   Description: Parks, green spaces, recreational areas accessible to public
+   Geometry: Polygon or Point
+
+4. CULTURAL SITES (OPTIONAL):
+   File: [CityName]_[Country]_Cultural_Sites.shp
+   Description: Museums, heritage sites, cultural landmarks within the city
+   Geometry: Point (preferred) or Polygon
+
+5. RECREATIONAL FACILITIES (OPTIONAL):
+   File: [CityName]_[Country]_Recreation.shp
+   Description: Public sports facilities and venues for community use
+   Geometry: Point (preferred) or Polygon
 
 QUALITY CHECKS:
 □ All required files included (.shp, .shx, .dbf)

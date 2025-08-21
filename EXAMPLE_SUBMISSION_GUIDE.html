@@ -315,11 +315,11 @@ Example_City_Submission/
 ├── Santiago_Chile_Neighborhoods.dbf
 ├── Santiago_Chile_Neighborhoods.prj
 ├── Santiago_Chile_Neighborhoods.cpg
-├── Santiago_Chile_Cultural_POI.shp      <span class="comment">(84,968 bytes, Point)</span>
-├── Santiago_Chile_Cultural_POI.shx      <span class="comment">(24,348 bytes)</span>
-├── Santiago_Chile_Cultural_POI.dbf      <span class="comment">(18,008,165 bytes)</span>
-├── Santiago_Chile_Cultural_POI.prj      <span class="comment">(145 bytes)</span>
-└── Santiago_Chile_Cultural_POI.cpg      <span class="comment">(5 bytes)</span>
+├── Santiago_Chile_Cultural_Sites.shp    <span class="comment">(84,968 bytes, Point)</span>
+├── Santiago_Chile_Cultural_Sites.shx    <span class="comment">(24,348 bytes)</span>
+├── Santiago_Chile_Cultural_Sites.dbf    <span class="comment">(18,008,165 bytes)</span>
+├── Santiago_Chile_Cultural_Sites.prj    <span class="comment">(145 bytes)</span>
+└── Santiago_Chile_Cultural_Sites.cpg    <span class="comment">(5 bytes)</span>
         </div>
 
         <hr>
@@ -355,6 +355,50 @@ Example_City_Submission/
                     <li><strong>Use</strong> as validation template for incoming submissions</li>
                     <li><strong>Point</strong> cities to this example when they have questions</li>
                 </ol>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Required Data Categories for Submission</h2>
+
+        <div class="tech-specs">
+            <h3>Complete Data Package Requirements</h3>
+            <p>Cities should provide data for these 5 essential categories to ensure comprehensive spatial analysis:</p>
+            
+            <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff;">
+                <h4>1. Admin Boundary</h4>
+                <p><strong>File:</strong> <code>[CityName]_[Country]_Admin_Boundary.shp</code></p>
+                <p><strong>Description:</strong> Official city administrative boundaries that define the city limits and jurisdictional areas.</p>
+                <p><strong>Geometry:</strong> Polygon | <strong>Priority:</strong> <span style="color: #dc3545; font-weight: bold;">REQUIRED</span></p>
+            </div>
+            
+            <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
+                <h4>2. Subdivision Boundaries</h4>
+                <p><strong>File:</strong> <code>[CityName]_[Country]_Subdivisions.shp</code></p>
+                <p><strong>Description:</strong> Zones, districts, neighborhoods (if available) for detailed spatial analysis.</p>
+                <p><strong>Geometry:</strong> Polygon | <strong>Priority:</strong> <span style="color: #28a745; font-weight: bold;">RECOMMENDED</span></p>
+            </div>
+            
+            <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                <h4>3. Public Open Spaces</h4>
+                <p><strong>File:</strong> <code>[CityName]_[Country]_Public_Spaces.shp</code></p>
+                <p><strong>Description:</strong> Parks, green spaces, and recreational areas accessible to the public.</p>
+                <p><strong>Geometry:</strong> Polygon or Point | <strong>Priority:</strong> <span style="color: #17a2b8; font-weight: bold;">RECOMMENDED</span></p>
+            </div>
+            
+            <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6f42c1;">
+                <h4>4. Cultural Sites</h4>
+                <p><strong>File:</strong> <code>[CityName]_[Country]_Cultural_Sites.shp</code></p>
+                <p><strong>Description:</strong> Museums, heritage sites, and cultural landmarks within the city.</p>
+                <p><strong>Geometry:</strong> Point (preferred) or Polygon | <strong>Priority:</strong> <span style="color: #6f42c1; font-weight: bold;">OPTIONAL</span></p>
+            </div>
+            
+            <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #fd7e14;">
+                <h4>5. Recreational Facilities</h4>
+                <p><strong>File:</strong> <code>[CityName]_[Country]_Recreation.shp</code></p>
+                <p><strong>Description:</strong> Public sports facilities and venues for community use.</p>
+                <p><strong>Geometry:</strong> Point (preferred) or Polygon | <strong>Priority:</strong> <span style="color: #fd7e14; font-weight: bold;">OPTIONAL</span></p>
             </div>
         </div>
 
