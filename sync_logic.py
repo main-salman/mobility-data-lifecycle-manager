@@ -119,26 +119,91 @@ def make_api_request(endpoint, method="POST", data=None):
 def get_job_status(job_id):
     return make_api_request(f"job/{job_id}", method="GET")
 
-def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_callback=None):
+def wait_for_job_completion(job_id, max_attempts=200, poll_interval=60, status_callback=None):
+    """Enhanced job monitoring with better timeout handling for large datasets"""
+    logger.info(f"[JOB MONITOR] Starting to monitor job {job_id} with {max_attempts} max attempts")
+    
     for attempt in range(max_attempts):
-        status = get_job_status(job_id)
-        if status_callback:
-            status_callback(status, attempt)
-        if not status or 'error' in status:
-            return {"error": f"Attempt {attempt+1}: No valid response from job status API. {status.get('error', '') if status else ''}"}
-        if status["data"]["status"] == "SUCCESS":
-            return {"success": True, "s3_location": status["data"]["s3_location"]}
-        elif status["data"]["status"] == "FAILED":
-            return {"error": f"Job failed: {status.get('error_message', 'Unknown error')}"}
-        elif status["data"]["status"] == "CANCELLED":
-            return {"error": "Job was cancelled"}
-        time.sleep(poll_interval)
-    return {"error": "Job timed out"}
+        try:
+            status = get_job_status(job_id)
+            if status_callback:
+                status_callback(status, attempt)
+                
+            if not status or 'error' in status:
+                error_msg = f"Attempt {attempt+1}: No valid response from job status API. {status.get('error', '') if status else ''}"
+                logger.warning(f"[JOB MONITOR] {error_msg}")
+                
+                # Retry logic for API failures
+                if attempt < max_attempts - 1:
+                    logger.info(f"[JOB MONITOR] Retrying job status check in {poll_interval} seconds...")
+                    time.sleep(poll_interval)
+                    continue
+                else:
+                    return {"error": error_msg}
+                    
+            job_status = status["data"]["status"]
+            logger.info(f"[JOB MONITOR] Job {job_id} status: {job_status} (check {attempt + 1}/{max_attempts})")
+            
+            if job_status == "SUCCESS":
+                logger.info(f"[JOB MONITOR] Job {job_id} completed successfully after {attempt + 1} checks")
+                return {"success": True, "s3_location": status["data"]["s3_location"]}
+            elif job_status == "FAILED":
+                error_msg = f"Job failed: {status.get('error_message', 'Unknown error')}"
+                logger.error(f"[JOB MONITOR] {error_msg}")
+                return {"error": error_msg}
+            elif job_status == "CANCELLED":
+                logger.error(f"[JOB MONITOR] Job {job_id} was cancelled")
+                return {"error": "Job was cancelled"}
+            elif job_status in ["RUNNING", "SCHEDULED"]:
+                # Job is still processing, continue monitoring
+                time.sleep(poll_interval)
+            else:
+                logger.warning(f"[JOB MONITOR] Unknown job status: {job_status}")
+                time.sleep(poll_interval)
+                
+        except Exception as e:
+            logger.error(f"[JOB MONITOR] Exception while checking job {job_id} status: {e}")
+            if attempt < max_attempts - 1:
+                time.sleep(poll_interval)
+                continue
+            else:
+                return {"error": f"Exception during job monitoring: {str(e)}"}
+    
+    logger.error(f"[JOB MONITOR] Job {job_id} timed out after {max_attempts} attempts ({max_attempts * poll_interval / 3600:.1f} hours)")
+    return {"error": f"Job timed out after {max_attempts} attempts ({max_attempts * poll_interval / 3600:.1f} hours)"}
+
+def get_fresh_assumed_credentials():
+    """Get fresh AWS credentials by assuming Veraset role with extended session duration"""
+    role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
+    
+    try:
+        assume_role_cmd = [
+            AWS_CLI, "sts", "assume-role",
+            "--role-arn", role_arn,
+            "--role-session-name", f"veraset-sync-session-{int(time.time())}",
+            "--duration-seconds", "14400",  # 4 hours instead of default 1 hour
+            "--output", "json"
+        ]
+        result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
+        credentials = json.loads(result.stdout)["Credentials"]
+        
+        # Calculate expiry time
+        expiry_time = datetime.fromisoformat(credentials["Expiration"].replace('Z', '+00:00'))
+        logger.info(f"[CREDENTIALS] New credentials obtained, expire at: {expiry_time}")
+        
+        return {
+            "AWS_ACCESS_KEY_ID": credentials["AccessKeyId"],
+            "AWS_SECRET_ACCESS_KEY": credentials["SecretAccessKey"],
+            "AWS_SESSION_TOKEN": credentials["SessionToken"],
+            "_expiry": expiry_time
+        }
+    except Exception as e:
+        logger.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role: {str(e)}")
+        raise
 
 def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id=None, chunk_size=50):
-    """Enhanced sync with chunked processing and credential refresh"""
+    """Enhanced sync with chunked processing and automatic credential refresh"""
     source_bucket = "veraset-prd-platform-us-west-2"
-    role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
     if not s3_bucket:
         raise ValueError("No S3 bucket specified. s3_bucket must be provided explicitly to sync_data_to_bucket.")
     
@@ -162,82 +227,85 @@ def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id
     progress = load_sync_progress(sync_id) if sync_id else None
     start_from = progress.get('completed_files', 0) if progress else 0
 
-    try:
-        assume_role_cmd = [
-            AWS_CLI, "sts", "assume-role",
-            "--role-arn", role_arn,
-            "--role-session-name", "veraset-sync-session",
-            "--output", "json"
-        ]
-        result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
-        credentials = json.loads(result.stdout)["Credentials"]
-    except Exception as e:
-        logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}")
-        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}"}
-
-    env = os.environ.copy()
-    env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
-    env["AWS_SECRET_ACCESS_KEY"] = credentials["SecretAccessKey"]
-    env["AWS_SESSION_TOKEN"] = credentials["SessionToken"]
+    max_retries = 3
+    retry_count = 0
     
-    sync_command = [
-        AWS_CLI, "s3", "sync",
-        "--copy-props", "none",
-        "--no-progress",
-        "--no-follow-symlinks",
-        "--exclude", "*",
-        "--include", "*.parquet",
-        src_s3,
-        dst_s3
-    ]
-    logger.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
-    try:
-        sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
-        copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
-        non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
-        total_copies = len(copy_lines)
-        
-        # Save progress if sync_id provided
-        if sync_id:
-            save_sync_progress(sync_id, total_copies, total_copies, {
-                'dest_prefix': dest_prefix,
-                'city': city['city'],
-                'status': 'completed'
-            })
-        
-        summary_lines = []
-        if total_copies > 10:
-            summary_lines.extend(copy_lines[:5])
-            summary_lines.append(f"... ({total_copies-10} copy lines omitted) ...")
-            summary_lines.extend(copy_lines[-5:])
-        else:
-            summary_lines = copy_lines
-        log_output = '\\n'.join(non_copy_lines + summary_lines)
-        logger.info(f"[S3 SYNC] stdout (filtered):\\n{log_output}")
-        logger.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
-        if total_copies == 0:
-            logger.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
-        
+    while retry_count < max_retries:
         try:
-            log_path = os.path.join(os.path.dirname(__file__), 'app.log')
-            with open(log_path, 'r') as f:
-                lines = f.readlines()
-            if len(lines) > 10000:
-                with open(log_path + '.1', 'w') as f:
-                    f.writelines(lines[:-10000])
-                with open(log_path, 'w') as f:
-                    f.writelines(lines[-10000:])
-        except Exception as e:
-            logger.warning(f"[S3 SYNC] Log rotation failed: {e}")
-        
-        # Clean up progress on successful completion
-        if sync_id:
-            cleanup_sync_progress(sync_id)
+            # Get fresh credentials
+            creds = get_fresh_assumed_credentials()
             
-        return {"success": True, "dest_prefix": dest_prefix, "files_copied": total_copies}
-    except subprocess.CalledProcessError as e:
-        logger.error(f"[S3 SYNC] S3 sync failed: {e.stderr or e.stdout or str(e)}")
-        return {"success": False, "error": f"S3 sync failed: {e.stderr or e.stdout or str(e)}", "can_resume": bool(sync_id)}
+            env = os.environ.copy()
+            env.update({k: v for k, v in creds.items() if not k.startswith('_')})
+            
+            sync_command = [
+                AWS_CLI, "s3", "sync",
+                "--copy-props", "none",
+                "--no-progress",
+                "--no-follow-symlinks",
+                "--exclude", "*",
+                "--include", "*.parquet",
+                src_s3,
+                dst_s3
+            ]
+            logger.info(f"[S3 SYNC] Running command (attempt {retry_count + 1}): {' '.join(sync_command)}")
+            
+            sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
+            copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
+            non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
+            total_copies = len(copy_lines)
+            
+            # Save progress if sync_id provided
+            if sync_id:
+                save_sync_progress(sync_id, total_copies, total_copies, {
+                    'dest_prefix': dest_prefix,
+                    'city': city['city'],
+                    'status': 'completed'
+                })
+            
+            summary_lines = []
+            if total_copies > 10:
+                summary_lines.extend(copy_lines[:5])
+                summary_lines.append(f"... ({total_copies-10} copy lines omitted) ...")
+                summary_lines.extend(copy_lines[-5:])
+            else:
+                summary_lines = copy_lines
+            log_output = '\\n'.join(non_copy_lines + summary_lines)
+            logger.info(f"[S3 SYNC] stdout (filtered):\\n{log_output}")
+            logger.info(f"[S3 SYNC] stderr: {sync_result.stderr}")
+            
+            if total_copies == 0:
+                logger.warning(f"[S3 SYNC] No files were copied from {src_s3} to {dst_s3}. Check if the source folder contains .parquet files.")
+            
+            # Clean up progress on successful completion
+            if sync_id:
+                cleanup_sync_progress(sync_id)
+                
+            return {"success": True, "dest_prefix": dest_prefix, "files_copied": total_copies}
+            
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr or e.stdout or str(e)
+            
+            # Check if it's a token expiration error
+            if "ExpiredToken" in error_msg or "TokenRefreshRequired" in error_msg:
+                retry_count += 1
+                logger.warning(f"[S3 SYNC] Token expired during sync (attempt {retry_count}/{max_retries}). Retrying with fresh credentials...")
+                if retry_count < max_retries:
+                    time.sleep(5)  # Brief pause before retry
+                    continue
+            
+            logger.error(f"[S3 SYNC] S3 sync failed after {retry_count + 1} attempts: {error_msg}")
+            return {"success": False, "error": f"S3 sync failed: {error_msg}", "can_resume": bool(sync_id)}
+        
+        except Exception as e:
+            retry_count += 1
+            logger.error(f"[S3 SYNC] Unexpected error during S3 sync (attempt {retry_count}/{max_retries}): {str(e)}")
+            if retry_count < max_retries:
+                time.sleep(5)
+                continue
+            return {"success": False, "error": f"S3 sync failed after {max_retries} attempts: {str(e)}", "can_resume": bool(sync_id)}
+    
+    return {"success": False, "error": f"S3 sync failed after {max_retries} attempts", "can_resume": bool(sync_id)}
 
 # Backward compatibility alias
 def sync_data_to_bucket(city, date, s3_location, s3_bucket=None):
@@ -427,7 +495,7 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
             
             # Brief pause between batches to avoid overwhelming the system
             if current_batch < total_batches:
-                time.sleep(2)
+                time.sleep(5)  # Increased pause to prevent API throttling
     
     logger.info(f"[Sync All] Completed processing {len(city_batches)} city batches across {len(date_chunks)} date chunks")
     logger.info(f"[Sync All] Results: {len(all_results)} successful batches, {len(errors)} errors")
