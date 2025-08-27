@@ -173,33 +173,54 @@ def wait_for_job_completion(job_id, max_attempts=200, poll_interval=60, status_c
     return {"error": f"Job timed out after {max_attempts} attempts ({max_attempts * poll_interval / 3600:.1f} hours)"}
 
 def get_fresh_assumed_credentials():
-    """Get fresh AWS credentials by assuming Veraset role with extended session duration"""
+    """Get fresh AWS credentials by assuming Veraset role with configurable session duration"""
     role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
     
-    try:
-        assume_role_cmd = [
-            AWS_CLI, "sts", "assume-role",
-            "--role-arn", role_arn,
-            "--role-session-name", f"veraset-sync-session-{int(time.time())}",
-            "--duration-seconds", "14400",  # 4 hours instead of default 1 hour
-            "--output", "json"
-        ]
-        result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
-        credentials = json.loads(result.stdout)["Credentials"]
-        
-        # Calculate expiry time
-        expiry_time = datetime.fromisoformat(credentials["Expiration"].replace('Z', '+00:00'))
-        logger.info(f"[CREDENTIALS] New credentials obtained, expire at: {expiry_time}")
-        
-        return {
-            "AWS_ACCESS_KEY_ID": credentials["AccessKeyId"],
-            "AWS_SECRET_ACCESS_KEY": credentials["SecretAccessKey"],
-            "AWS_SESSION_TOKEN": credentials["SessionToken"],
-            "_expiry": expiry_time
-        }
-    except Exception as e:
-        logger.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role: {str(e)}")
-        raise
+    # Try different session durations, starting with the longest and falling back to shorter ones
+    session_durations = [
+        int(os.getenv('AWS_SESSION_DURATION', '14400')),  # From environment or default 4 hours
+        7200,   # 2 hours
+        3600,   # 1 hour (default AWS limit)
+        1800    # 30 minutes
+    ]
+    
+    for duration in session_durations:
+        try:
+            assume_role_cmd = [
+                AWS_CLI, "sts", "assume-role",
+                "--role-arn", role_arn,
+                "--role-session-name", f"veraset-sync-session-{int(time.time())}",
+                "--duration-seconds", str(duration),
+                "--output", "json"
+            ]
+            result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
+            credentials = json.loads(result.stdout)["Credentials"]
+            
+            # Calculate expiry time
+            expiry_time = datetime.fromisoformat(credentials["Expiration"].replace('Z', '+00:00'))
+            logger.info(f"[CREDENTIALS] New credentials obtained with {duration}s duration, expire at: {expiry_time}")
+            
+            return {
+                "AWS_ACCESS_KEY_ID": credentials["AccessKeyId"],
+                "AWS_SECRET_ACCESS_KEY": credentials["SecretAccessKey"],
+                "AWS_SESSION_TOKEN": credentials["SessionToken"],
+                "_expiry": expiry_time
+            }
+        except subprocess.CalledProcessError as e:
+            if "DurationSeconds exceeds the MaxSessionDuration" in e.stderr:
+                logger.warning(f"[CREDENTIALS] Duration {duration}s exceeds MaxSessionDuration, trying shorter duration")
+                continue
+            else:
+                logger.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role with duration {duration}s: {e.stderr}")
+                continue
+        except Exception as e:
+            logger.error(f"[CREDENTIALS] Unexpected error with duration {duration}s: {str(e)}")
+            continue
+    
+    # If we get here, all durations failed
+    error_msg = "Failed to assume Veraset S3 access role with any session duration"
+    logger.error(f"[CREDENTIALS] {error_msg}")
+    raise Exception(error_msg)
 
 def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id=None, chunk_size=50):
     """Enhanced sync with chunked processing and automatic credential refresh"""

@@ -375,3 +375,24 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Defined 6 POI categories: Cultural, Transport, Health, Education, Commercial, Government
 - Specified POI requirements: Point geometry, WGS84 coordinate system, minimum attributes (name, category, address)
 - Provides comprehensive example for cities wanting to include facility location data alongside boundaries 
+
+2025-08-27: Critical AWS IAM Role Session Duration Error:
+- Identified persistent S3 sync failures across all cities during Veraset data processing
+- Error: "The requested DurationSeconds exceeds the MaxSessionDuration set for this role"
+- Root cause: AWS CLI assume-role command requesting 14400 seconds (4 hours) but IAM role has lower MaxSessionDuration
+- Affects all S3 sync operations from Veraset S3 to destination S3 buckets
+- Veraset jobs complete successfully, but data transfer fails at S3 sync stage
+- Error occurs in sync_logic.py when calling aws sts assume-role with --duration-seconds 14400
+- All 51 cities in batch processing fail with same credential assumption error
+- Requires immediate IAM role configuration update or code modification to use shorter session duration
+
+2025-08-27: Fixed AWS IAM Role Session Duration Error:
+- Implemented robust fallback mechanism in get_fresh_assumed_credentials() function
+- Added configurable session duration via AWS_SESSION_DURATION environment variable
+- Implemented automatic fallback sequence: 14400s (4h) → 7200s (2h) → 3600s (1h) → 1800s (30m)
+- Added specific error handling for "DurationSeconds exceeds MaxSessionDuration" errors
+- Updated .env.example to document AWS_SESSION_DURATION configuration option
+- Solution provides graceful degradation without requiring IAM role changes
+- Users can set AWS_SESSION_DURATION to match their IAM role's MaxSessionDuration limit
+- If not set, system automatically finds compatible duration through fallback sequence
+- Fix resolves all S3 sync failures and enables successful data transfer operations 
