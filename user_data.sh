@@ -17,7 +17,13 @@ echo "[user_data] Script started at $(date)"
 
 # System dependencies
 sudo yum update -y
-sudo yum install -y python3 python3-pip git nginx unzip curl
+sudo yum install -y git nginx unzip curl
+# Install Python 3.8 (required for the application)
+sudo amazon-linux-extras install python3.8 -y
+sudo yum install -y python3.8-pip
+# Create symlinks for easier usage
+sudo ln -sf /usr/bin/python3.8 /usr/local/bin/python3
+sudo ln -sf /usr/bin/pip3.8 /usr/local/bin/pip3
 
 # --- CloudWatch Agent Installation and Configuration ---
 echo "[user_data] Installing Amazon CloudWatch Agent..."
@@ -28,12 +34,43 @@ CLOUDWATCH_CONFIG_FILE="/opt/aws/amazon-cloudwatch-agent/bin/config.json"
 sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/bin
 sudo tee $CLOUDWATCH_CONFIG_FILE > /dev/null <<EOF
 {
+  "metrics": {
+    "namespace": "CWAgent",
+    "metrics_collected": {
+      "cpu": {
+        "measurement": ["cpu_usage_idle", "cpu_usage_iowait", "cpu_usage_user", "cpu_usage_system"],
+        "metrics_collection_interval": 60
+      },
+      "disk": {
+        "measurement": ["used_percent", "inodes_free"],
+        "metrics_collection_interval": 60,
+        "resources": ["*"]
+      },
+      "diskio": {
+        "measurement": ["io_time"],
+        "metrics_collection_interval": 60,
+        "resources": ["*"]
+      },
+      "mem": {
+        "measurement": ["mem_used_percent"],
+        "metrics_collection_interval": 60
+      },
+      "netstat": {
+        "measurement": ["tcp_established", "tcp_time_wait"]
+      },
+      "swap": {
+        "measurement": ["swap_used_percent"],
+        "metrics_collection_interval": 60
+      }
+    }
+  },
   "logs": {
     "logs_collected": {
       "files": {
         "collect_list": [
           {"file_path": "/var/log/messages", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-messages"},
-          {"file_path": "/var/log/cloud-init.log", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-cloudinit"}
+          {"file_path": "/var/log/cloud-init.log", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-cloudinit"},
+          {"file_path": "/home/ec2-user/mobility-data-lifecycle-manager/flask_app.log", "log_group_name": "/mobility/manager", "log_stream_name": "$INSTANCE_ID-flask"}
         ]
       }
     }
@@ -43,32 +80,8 @@ EOF
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:$CLOUDWATCH_CONFIG_FILE -s
 
-# Create CloudWatch Agent config for app.log
-cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/bin/app-log-config.json
-{
-  "logs": {
-    "logs_collected": {
-      "files": {
-        "collect_list": [
-          {
-            "file_path": "/home/ec2-user/mobility-data-lifecycle-manager/app.log",
-            "log_group_name": "/mobility/manager",
-            "log_stream_name": "{instance_id}-app",
-            "timestamp_format": "%Y-%m-%d %H:%M:%S"
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
-
-# Start CloudWatch Agent with the new config
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-  -a fetch-config \
-  -m ec2 \
-  -c file:/opt/aws/amazon-cloudwatch-agent/bin/app-log-config.json \
-  -s
+# Enable CloudWatch Agent to start on boot
+sudo systemctl enable amazon-cloudwatch-agent
 
 # AWS CLI v2
 sudo yum remove -y awscli || true
@@ -102,7 +115,7 @@ cd mobility-data-lifecycle-manager
 
 echo "[user_data] Setting up Python virtual environment..."
 if [ ! -d venv ]; then
-  python3 -m venv venv
+  python3.8 -m venv venv
 fi
 
 echo "[user_data] Installing Python requirements..."

@@ -277,7 +277,7 @@ output "ec2_private_ip" {
   value       = aws_instance.mobility_manager.private_ip
 }
 
-# --- CloudWatch Alarm for EC2 Instance Status Check Failure ---
+# --- Basic CloudWatch Alarms for Server Crash Detection ---
 resource "aws_cloudwatch_metric_alarm" "ec2_status_check_failed" {
   alarm_name          = "mobility-ec2-status-check-failed"
   comparison_operator = "GreaterThanThreshold"
@@ -288,6 +288,57 @@ resource "aws_cloudwatch_metric_alarm" "ec2_status_check_failed" {
   statistic           = "Average"
   threshold           = "0"
   alarm_description   = "Alarm if EC2 instance status check fails"
+  alarm_actions       = [aws_sns_topic.notifications.arn]
+
+  dimensions = {
+    InstanceId = aws_instance.mobility_manager.id
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "instance_status_check_failed" {
+  alarm_name          = "mobility-instance-status-check-failed"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "StatusCheckFailed_Instance"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "0"
+  alarm_description   = "EC2 instance has failed instance status checks - indicates OS/software issues"
+  alarm_actions       = [aws_sns_topic.notifications.arn]
+
+  dimensions = {
+    InstanceId = aws_instance.mobility_manager.id
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "system_status_check_failed" {
+  alarm_name          = "mobility-system-status-check-failed"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "StatusCheckFailed_System"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "0"
+  alarm_description   = "EC2 instance has failed system status checks - indicates AWS infrastructure issues"
+  alarm_actions       = [aws_sns_topic.notifications.arn]
+
+  dimensions = {
+    InstanceId = aws_instance.mobility_manager.id
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "high_cpu_basic" {
+  alarm_name          = "mobility-high-cpu-basic"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "4"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "300"
+  statistic           = "Average"
+  threshold           = "90"
+  alarm_description   = "Very high CPU usage on mobility server - may indicate severe performance issues or runaway processes"
   alarm_actions       = [aws_sns_topic.notifications.arn]
 
   dimensions = {
@@ -356,33 +407,8 @@ resource "aws_iam_role_policy" "ec2_cloudwatch_logs_policy" {
   policy = data.aws_iam_policy_document.cloudwatch_logs_access.json
 }
 
-# --- Update user_data.sh template to install and configure CloudWatch agent ---
-# (Assumes you will update user_data.sh to include the following logic:)
-# 1. Install the CloudWatch agent
-# 2. Create /opt/aws/amazon-cloudwatch-agent/bin/config.json with log configuration:
-#    - /var/log/messages
-#    - /var/log/cloud-init.log
-#    - log_group_name: /mobility/manager
-#    - log_stream_name: {instance_id}
-# 3. Start the CloudWatch agent
-#
-# Example snippet to add to user_data.sh:
-#
-# yum install -y amazon-cloudwatch-agent
-# cat <<EOF > /opt/aws/amazon-cloudwatch-agent/bin/config.json
-# {
-#   "logs": {
-#     "logs_collected": {
-#       "files": {
-#         "collect_list": [
-#           {"file_path": "/var/log/messages", "log_group_name": "/mobility/manager", "log_stream_name": "{instance_id}-messages"},
-#           {"file_path": "/var/log/cloud-init.log", "log_group_name": "/mobility/manager", "log_stream_name": "{instance_id}-cloudinit"}
-#         ]
-#       }
-#     }
-#   }
-# }
-# EOF
-# /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s
-#
-# Make sure to substitute {instance_id} with the actual instance ID in user_data.sh.
+# --- Output URLs for monitoring ---
+output "basic_monitoring_url" {
+  description = "CloudWatch alarms URL for basic monitoring"
+  value       = "https://${var.aws_region}.console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#alarmsV2:"
+}
