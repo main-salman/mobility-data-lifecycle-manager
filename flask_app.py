@@ -10,7 +10,7 @@ How to run:
 """
 import os
 import uuid
-from flask import Flask, render_template_string, request, redirect, url_for, session, flash, send_from_directory, jsonify
+from flask import Flask, render_template_string, request, redirect, url_for, session, flash, send_from_directory, jsonify, send_file
 import boto3
 from dotenv import load_dotenv, set_key
 from sync_logic import sync_city_for_date, wait_for_job_completion, sync_data_to_bucket, build_sync_payload, make_api_request, sync_all_cities_for_date_range
@@ -852,8 +852,55 @@ def login():
                 <button type="submit">Login</button>
             </form>
         </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h3>📋 City Administrator Resources</h3>
+            <p>Need help preparing your city's GIS data submission? Check out our comprehensive guide and examples:</p>
+            
+            <div style="margin: 15px 0;">
+                <a href="/example-guide" class="btn-primary" style="display: inline-block; background: #007bff; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px; margin-bottom: 10px;">
+                    📖 View Submission Guide
+                </a>
+                <a href="/download/example-zip" class="btn-success" style="display: inline-block; background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px; margin-bottom: 10px;">
+                    📦 Download Basic Example
+                </a>
+                <a href="/download/example-zip-with-poi" class="btn-info" style="display: inline-block; background: #17a2b8; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-bottom: 10px;">
+                    📍 Download Example with POI
+                </a>
+            </div>
+            
+            <p style="color: #6c757d; font-size: 0.9em; margin-top: 15px;">
+                <strong>🏙️ Example:</strong> Based on Santiago, Chile's submission<br>
+                <strong>📐 Format:</strong> Standardized shapefiles with proper naming<br>
+                <strong>📊 Includes:</strong> Boundaries, neighborhoods, and cultural points of interest
+            </p>
+        </div>
         </div>
     ''')
+
+@app.route('/example-guide')
+def example_guide():
+    """Serve the example submission guide"""
+    try:
+        return send_file('EXAMPLE_SUBMISSION_GUIDE.html')
+    except FileNotFoundError:
+        return "Example guide not found", 404
+
+@app.route('/download/example-zip')
+def download_example_zip():
+    """Download the basic example ZIP file"""
+    try:
+        return send_file('Santiago_Chile_Boundaries_EXAMPLE.zip', as_attachment=True)
+    except FileNotFoundError:
+        return "Example ZIP file not found", 404
+
+@app.route('/download/example-zip-with-poi')
+def download_example_zip_with_poi():
+    """Download the example ZIP file with POI data"""
+    try:
+        return send_file('Santiago_Chile_Boundaries_WITH_POI_EXAMPLE.zip', as_attachment=True)
+    except FileNotFoundError:
+        return "Example ZIP with POI not found", 404
 
 @app.route('/logout')
 def logout():
