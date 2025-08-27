@@ -471,15 +471,18 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
                 
             logger.info(f"[Sync All] Job {job_id} completed for batch {batch_idx + 1}, chunk {chunk_idx + 1}. Starting S3 sync for {len(city_batch)} cities.")
             
-            # Sync S3 data for each city in this batch
+            # Sync S3 data for each city in this batch (parallel processing)
             chunk_errors = []
             batch_results = []
             
-            for city_idx, city in enumerate(city_batch):
+            def sync_single_city(city_info):
+                city_idx, city = city_info
                 try:
                     # Create unique sync_id for each city sync
                     import uuid
                     city_sync_id = f"batch_{batch_idx}_chunk_{chunk_idx}_city_{city_idx}_{str(uuid.uuid4())[:8]}"
+                    
+                    logger.info(f"[Sync All] Starting parallel sync for city {city['city']} ({city_idx + 1}/{len(city_batch)})")
                     
                     sync_result = sync_data_to_bucket_chunked(
                         city=city, 
@@ -490,17 +493,52 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
                     )
                     
                     if not sync_result.get('success'):
-                        chunk_errors.append(f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}")
+                        error_msg = f"City {city['city']}: {sync_result.get('error', 'Unknown error during S3 sync')}"
+                        logger.error(f"[Sync All] {error_msg}")
+                        return {'success': False, 'error': error_msg}
                     else:
-                        batch_results.append({
+                        result = {
+                            'success': True,
                             'city': city['city'],
                             'dest_prefix': sync_result.get('dest_prefix'),
                             'files_copied': sync_result.get('files_copied', 0)
-                        })
+                        }
+                        logger.info(f"[Sync All] Completed sync for city {city['city']}: {sync_result.get('files_copied', 0)} files")
+                        return result
                         
                 except Exception as e:
-                    chunk_errors.append(f"City {city['city']}: Exception during S3 sync: {str(e)}")
+                    error_msg = f"City {city['city']}: Exception during S3 sync: {str(e)}"
                     logger.error(f"[Sync All] Exception syncing city {city['city']}: {e}", exc_info=True)
+                    return {'success': False, 'error': error_msg}
+            
+            # Use ThreadPoolExecutor for parallel processing with 5 workers
+            logger.info(f"[Sync All] Starting parallel S3 sync for {len(city_batch)} cities using 5 workers")
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                # Submit all city sync tasks
+                city_futures = {
+                    executor.submit(sync_single_city, (city_idx, city)): (city_idx, city) 
+                    for city_idx, city in enumerate(city_batch)
+                }
+                
+                # Process completed tasks
+                for future in concurrent.futures.as_completed(city_futures):
+                    city_idx, city = city_futures[future]
+                    try:
+                        result = future.result()
+                        if result['success']:
+                            batch_results.append({
+                                'city': result['city'],
+                                'dest_prefix': result['dest_prefix'],
+                                'files_copied': result['files_copied']
+                            })
+                        else:
+                            chunk_errors.append(result['error'])
+                    except Exception as e:
+                        error_msg = f"City {city['city']}: Unexpected exception in parallel processing: {str(e)}"
+                        chunk_errors.append(error_msg)
+                        logger.error(f"[Sync All] {error_msg}", exc_info=True)
+            
+            logger.info(f"[Sync All] Parallel sync completed: {len(batch_results)} successful, {len(chunk_errors)} errors")
                     
             if chunk_errors:
                 errors.extend([f"Batch {batch_idx + 1}, Date chunk {chunk_idx + 1}: {err}" for err in chunk_errors])
