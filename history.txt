@@ -406,4 +406,12 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Expected performance improvement: 6+ days reduced to ~15-20 hours for 51 cities
 - Each worker handles S3 sync for one city simultaneously, maximizing throughput
 - Enhanced error handling to prevent one city's failure from stopping other city syncs
-- Added progress tracking and detailed logging for debugging parallel operations 
+- Added progress tracking and detailed logging for debugging parallel operations
+
+2025-08-27: EMERGENCY FIX - EC2 System Overload Resolution:
+- EC2 instance became unresponsive at 12:02 PM due to resource exhaustion from 5 parallel workers
+- 5 concurrent AWS CLI processes (each copying ~25,000 files) overwhelmed EC2 memory/CPU
+- Reduced ThreadPoolExecutor max_workers from 5 to 2 to prevent system overload
+- New configuration: 2 workers = ~25-30 hours total sync time (still 5x faster than sequential)
+- Maintains significant performance improvement while ensuring system stability
+- System was successfully processing all 51 cities in parallel before overload occurred 

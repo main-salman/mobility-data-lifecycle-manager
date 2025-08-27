@@ -511,9 +511,9 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
                     logger.error(f"[Sync All] Exception syncing city {city['city']}: {e}", exc_info=True)
                     return {'success': False, 'error': error_msg}
             
-            # Use ThreadPoolExecutor for parallel processing with 5 workers
-            logger.info(f"[Sync All] Starting parallel S3 sync for {len(city_batch)} cities using 5 workers")
-            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            # Use ThreadPoolExecutor for parallel processing with 2 workers
+            logger.info(f"[Sync All] Starting parallel S3 sync for {len(city_batch)} cities using 2 workers")
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
                 # Submit all city sync tasks
                 city_futures = {
                     executor.submit(sync_single_city, (city_idx, city)): (city_idx, city) 
