@@ -219,7 +219,9 @@ resource "aws_iam_role_policy" "ec2_secretsmanager_policy" {
 # --- Single EC2 Instance using Launch Template ---
 resource "aws_instance" "mobility_manager" {
   ami                    = "ami-09f4814ae750baed6" # Latest Amazon Linux 2 AMI for us-east-1
-  instance_type          = "t3.micro"
+#  instance_type          = "t3.micro"
+  instance_type          = "m5.2xlarge"
+
   subnet_id              = data.aws_subnets.default.ids[0]
   vpc_security_group_ids = [aws_security_group.mobility_workers.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_mobility_profile.name
