@@ -610,6 +610,8 @@ def process_boundary_file(file_path, filename):
         
         # Log version information for debugging
         logging.info(f"Processing boundary file: {filename}")
+        logging.info(f"File path: {file_path}")
+        logging.info(f"File size: {os.path.getsize(file_path)} bytes")
         logging.info(f"Geopandas version: {gpd.__version__}")
         logging.info(f"Fiona version: {fiona.__version__}")
         
@@ -629,12 +631,16 @@ def process_boundary_file(file_path, filename):
                 
                 # Look for .shp file (recursive search for nested folders)
                 shp_files = []
+                all_extracted_files = []
                 for root, dirs, files in os.walk(temp_dir):
                     for file in files:
+                        full_path = os.path.join(root, file)
+                        all_extracted_files.append(full_path)
                         if file.lower().endswith('.shp'):
-                            shp_files.append(os.path.join(root, file))
+                            shp_files.append(full_path)
                 
-                logging.info(f"Found {len(shp_files)} shapefile(s): {shp_files}")
+                logging.info(f"All extracted files: {[os.path.basename(f) for f in all_extracted_files]}")
+                logging.info(f"Found {len(shp_files)} shapefile(s): {[os.path.basename(f) for f in shp_files]}")
                 
                 if not shp_files:
                     return {'error': 'No shapefile (.shp) found in ZIP archive'}
