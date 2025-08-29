@@ -42,10 +42,14 @@ ssh_cmd "cd $PROJECT_DIR && git pull"
 echo "Ensuring /db directory exists..."
 ssh_cmd "cd $PROJECT_DIR && mkdir -p db"
 
-# --- OPTIONAL: UPDATE PYTHON DEPENDENCIES ---
+# --- UPDATE PYTHON DEPENDENCIES ---
 echo "Updating Python dependencies..."
-# Try requirements.txt, fallback to explicit install if missing
-ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && (pip install --upgrade pip && pip install -r requirements.txt || pip install flask boto3 python-dotenv requests gunicorn)"
+# Install core dependencies
+ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+
+# --- INSTALL GEOSPATIAL DEPENDENCIES FOR BOUNDARY UPLOAD ---
+echo "Installing/updating geospatial dependencies for boundary upload..."
+ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install numpy>=1.21.0 fiona>=1.8.0 shapely>=1.7.0 pyproj>=3.0.0 geopandas>=0.10.0"
 
 # --- STOP EXISTING FLASK APP (install lsof if needed) ---
 echo "Stopping any running Flask app (installing lsof if needed)..."

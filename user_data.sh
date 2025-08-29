@@ -25,6 +25,12 @@ sudo yum install -y python3.8-pip
 sudo ln -sf /usr/bin/python3.8 /usr/local/bin/python3
 sudo ln -sf /usr/bin/pip3.8 /usr/local/bin/pip3
 
+# Install GeoPandas system dependencies for boundary upload functionality
+echo "[user_data] Installing GeoPandas system dependencies..."
+sudo yum install -y gcc gcc-c++ python38-devel
+sudo yum install -y gdal gdal-devel geos geos-devel proj proj-devel
+sudo yum install -y sqlite-devel
+
 # --- CloudWatch Agent Installation and Configuration ---
 echo "[user_data] Installing Amazon CloudWatch Agent..."
 sudo yum install -y amazon-cloudwatch-agent
@@ -120,9 +126,17 @@ fi
 
 echo "[user_data] Installing Python requirements..."
 source venv/bin/activate
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 pip install flask boto3 python-dotenv requests
 pip install geojson
+
+# Install geospatial packages for boundary upload functionality
+echo "[user_data] Installing geospatial Python packages..."
+pip install numpy>=1.21.0
+pip install fiona>=1.8.0
+pip install shapely>=1.7.0
+pip install pyproj>=3.0.0
+pip install geopandas>=0.10.0
 
 echo "[user_data] Parsing SYNC_TIME and setting up cron..."
 SYNC_TIME=$(grep '^SYNC_TIME' .env | cut -d'=' -f2 | tr -d "'\"")

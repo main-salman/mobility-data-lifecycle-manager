@@ -436,4 +436,16 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
   - Email notifications via SNS
 - Python 3.8 compatibility fixes maintained in user_data.sh
 - Monitoring infrastructure remains active and functional
-- Application restored to known working state while retaining monitoring improvements 
+- Application restored to known working state while retaining monitoring improvements
+
+2025-08-28: EC2 Instance Upgrade and Geospatial Dependencies Integration:
+- Upgraded EC2 instance from t3.micro (944MB RAM) to m5.2xlarge (30GB RAM, 8 vCPUs)
+- Resolved critical out-of-memory crashes that were causing server reboots every few hours
+- Fixed boundary upload functionality compatibility issues between local and deployed versions
+- Added comprehensive geospatial dependencies to both user_data.sh and update_ec2.sh:
+  - System packages: gcc, gcc-c++, python38-devel, gdal, geos, proj, sqlite-devel
+  - Python packages: numpy, fiona, shapely, pyproj, geopandas (specific versions)
+- Enhanced boundary upload function with better error handling and multi-shapefile support
+- Integrated geospatial dependency installation into standard deployment workflow
+- All future deployments via update_ec2.sh will automatically include boundary upload functionality
+- System now has 32x more memory and can handle large-scale parallel processing without crashes 
