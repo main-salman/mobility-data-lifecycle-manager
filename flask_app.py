@@ -620,7 +620,10 @@ def process_boundary_file(file_path, filename):
                 
                 try:
                     with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                        zip_ref.extractall(temp_dir)
+                        # Extract all files, filtering out macOS metadata
+                        for member in zip_ref.infolist():
+                            if not member.filename.startswith('__MACOSX/'):
+                                zip_ref.extract(member, temp_dir)
                 except zipfile.BadZipFile:
                     return {'error': 'Invalid ZIP file. Please ensure the file is a valid ZIP archive.'}
                 
