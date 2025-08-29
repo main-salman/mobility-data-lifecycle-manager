@@ -193,12 +193,15 @@ sudo tee /etc/nginx/conf.d/mobility.conf > /dev/null <<EOF
 server {
     listen 80;
     server_name $APP_DOMAIN;
+    client_max_body_size 50M;  # Allow large file uploads
     location / {
         proxy_pass http://127.0.0.1:5050;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 300;  # 5 minute timeout for large uploads
+        proxy_send_timeout 300;
     }
 }
 EOF
@@ -226,12 +229,15 @@ server {
     server_name $APP_DOMAIN;
     ssl_certificate /etc/letsencrypt/live/$APP_DOMAIN/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/$APP_DOMAIN/privkey.pem;
+    client_max_body_size 50M;  # Allow large file uploads
     location / {
         proxy_pass http://127.0.0.1:5050;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 300;  # 5 minute timeout for large uploads
+        proxy_send_timeout 300;
     }
 }
 EOF
