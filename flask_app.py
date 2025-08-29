@@ -636,7 +636,14 @@ def process_boundary_file(file_path, filename):
                 if not shp_files:
                     return {'error': 'No shapefile (.shp) found in ZIP archive'}
                 
-                shp_file = shp_files[0]
+                # Handle multiple shapefiles - use the largest one (usually the main boundary)
+                if len(shp_files) > 1:
+                    logging.info(f"Multiple shapefiles found: {[os.path.basename(f) for f in shp_files]}")
+                    # Choose the largest shapefile by file size
+                    shp_file = max(shp_files, key=lambda f: os.path.getsize(f))
+                    logging.info(f"Selected largest shapefile: {os.path.basename(shp_file)}")
+                else:
+                    shp_file = shp_files[0]
                 
                 # Check for required shapefile components
                 base_name = os.path.splitext(shp_file)[0]
