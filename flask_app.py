@@ -610,8 +610,13 @@ def process_boundary_file(file_path, filename):
                 with zipfile.ZipFile(file_path, 'r') as zip_ref:
                     zip_ref.extractall(temp_dir)
                 
-                # Look for .shp file
-                shp_files = glob(os.path.join(temp_dir, '*.shp'))
+                # Look for .shp file (recursive search for nested folders)
+                shp_files = []
+                for root, dirs, files in os.walk(temp_dir):
+                    for file in files:
+                        if file.lower().endswith('.shp'):
+                            shp_files.append(os.path.join(root, file))
+                
                 if not shp_files:
                     return {'error': 'No shapefile (.shp) found in ZIP archive'}
                 
@@ -639,8 +644,16 @@ def process_boundary_file(file_path, filename):
             return {'error': 'Unsupported file format. Please upload a ZIP file containing shapefile components.'}
         
         # Convert to WGS84 if needed
-        if gdf.crs and gdf.crs != 'EPSG:4326':
-            gdf = gdf.to_crs('EPSG:4326')
+        try:
+            if gdf.crs and str(gdf.crs) != 'EPSG:4326':
+                gdf = gdf.to_crs('EPSG:4326')
+        except Exception as crs_error:
+            # Fallback for different geopandas/fiona versions
+            logging.warning(f"CRS conversion issue (proceeding anyway): {crs_error}")
+            try:
+                gdf = gdf.to_crs('EPSG:4326')
+            except:
+                pass  # Use original CRS if conversion fails
         
         # Check if we have any geometries
         if len(gdf) == 0:
