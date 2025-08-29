@@ -604,11 +604,25 @@ def process_boundary_file(file_path, filename):
         return {'error': 'Boundary processing not available. GeoPandas dependency not installed on server.'}
     
     try:
+        # Import here to catch version-specific issues
+        import geopandas as gpd
+        import fiona
+        
+        # Log version information for debugging
+        logging.info(f"Processing boundary file: {filename}")
+        logging.info(f"Geopandas version: {gpd.__version__}")
+        logging.info(f"Fiona version: {fiona.__version__}")
+        
         if filename.lower().endswith('.zip'):
             # Extract ZIP file
             with tempfile.TemporaryDirectory() as temp_dir:
-                with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                    zip_ref.extractall(temp_dir)
+                logging.info(f"Extracting ZIP to temporary directory: {temp_dir}")
+                
+                try:
+                    with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                        zip_ref.extractall(temp_dir)
+                except zipfile.BadZipFile:
+                    return {'error': 'Invalid ZIP file. Please ensure the file is a valid ZIP archive.'}
                 
                 # Look for .shp file (recursive search for nested folders)
                 shp_files = []
@@ -616,6 +630,8 @@ def process_boundary_file(file_path, filename):
                     for file in files:
                         if file.lower().endswith('.shp'):
                             shp_files.append(os.path.join(root, file))
+                
+                logging.info(f"Found {len(shp_files)} shapefile(s): {shp_files}")
                 
                 if not shp_files:
                     return {'error': 'No shapefile (.shp) found in ZIP archive'}
@@ -634,7 +650,31 @@ def process_boundary_file(file_path, filename):
                 if missing_files:
                     return {'error': f'Missing required shapefile components: {", ".join(missing_files)}. Please ensure your ZIP contains all shapefile files (.shp, .shx, .dbf, .prj)'}
                 
-                gdf = gpd.read_file(shp_file)
+                logging.info(f"Reading shapefile: {shp_file}")
+                
+                # Try different methods to read the shapefile based on fiona version
+                try:
+                    gdf = gpd.read_file(shp_file)
+                except Exception as read_error:
+                    logging.error(f"Error reading shapefile with geopandas: {read_error}")
+                    # Try alternative approach for older fiona versions
+                    try:
+                        import fiona
+                        with fiona.open(shp_file) as src:
+                            # Read using fiona directly and convert to geopandas
+                            from shapely.geometry import shape
+                            import pandas as pd
+                            
+                            records = []
+                            geometries = []
+                            for record in src:
+                                records.append(record['properties'])
+                                geometries.append(shape(record['geometry']))
+                            
+                            gdf = gpd.GeoDataFrame(records, geometry=geometries, crs=src.crs)
+                    except Exception as fallback_error:
+                        logging.error(f"Fallback reading method also failed: {fallback_error}")
+                        return {'error': f'Unable to read shapefile. Error: {str(read_error)}'}
         
         elif filename.lower().endswith('.shp'):
             # For direct shapefile upload, provide helpful error message
@@ -643,29 +683,41 @@ def process_boundary_file(file_path, filename):
         else:
             return {'error': 'Unsupported file format. Please upload a ZIP file containing shapefile components.'}
         
-        # Convert to WGS84 if needed
+        logging.info(f"Successfully loaded {len(gdf)} geometries")
+        
+        # Convert to WGS84 if needed - with better error handling
         try:
-            if gdf.crs and str(gdf.crs) != 'EPSG:4326':
+            current_crs = None
+            try:
+                current_crs = gdf.crs
+                logging.info(f"Current CRS: {current_crs}")
+            except Exception as crs_check_error:
+                logging.warning(f"Could not determine CRS: {crs_check_error}")
+            
+            if current_crs and str(current_crs) != 'EPSG:4326':
+                logging.info("Converting to WGS84...")
                 gdf = gdf.to_crs('EPSG:4326')
+                logging.info("CRS conversion successful")
         except Exception as crs_error:
             # Fallback for different geopandas/fiona versions
-            logging.warning(f"CRS conversion issue (proceeding anyway): {crs_error}")
-            try:
-                gdf = gdf.to_crs('EPSG:4326')
-            except:
-                pass  # Use original CRS if conversion fails
+            logging.warning(f"CRS conversion issue (proceeding with original CRS): {crs_error}")
         
         # Check if we have any geometries
         if len(gdf) == 0:
             return {'error': 'No geometries found in the shapefile'}
         
-        # Convert to GeoJSON
-        geojson_data = json.loads(gdf.to_json())
+        # Convert to GeoJSON with error handling
+        try:
+            geojson_data = json.loads(gdf.to_json())
+            logging.info("Successfully converted to GeoJSON")
+        except Exception as json_error:
+            logging.error(f"Error converting to GeoJSON: {json_error}")
+            return {'error': f'Error converting to GeoJSON: {str(json_error)}'}
         
         return {'success': True, 'geojson': geojson_data}
     
     except Exception as e:
-        logging.error(f"Error processing boundary file: {str(e)}")
+        logging.error(f"Error processing boundary file: {str(e)}", exc_info=True)
         error_msg = str(e)
         
         # Provide more user-friendly error messages for common issues
@@ -675,6 +727,8 @@ def process_boundary_file(file_path, filename):
             return {'error': 'Required shapefile components are missing. Please upload a ZIP file containing all shapefile files.'}
         elif 'not recognized as a supported file format' in error_msg:
             return {'error': 'File format not supported. Please upload a ZIP file containing shapefile components.'}
+        elif "has no attribute 'path'" in error_msg:
+            return {'error': 'Geopandas/Fiona version compatibility issue. This is a server-side dependency problem that needs to be resolved by the administrator.'}
         else:
             return {'error': f'Error processing file: {error_msg}'}
 
