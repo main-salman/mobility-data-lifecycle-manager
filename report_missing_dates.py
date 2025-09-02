@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, csv, json, argparse
+import os, sys, csv, json, argparse, subprocess
 from datetime import datetime, timedelta
 import concurrent.futures
 import boto3
@@ -51,6 +51,34 @@ def load_cities_csv(path):
             if country and city: out.append({"country": country, "state_province": state, "city": city})
     return out
 
+def get_s3_client_with_assumed_role():
+    """Get S3 client using the same role assumption as sync_logic.py"""
+    role_arn = "arn:aws:iam::651706782157:role/VerasetS3AccessRole"
+    AWS_CLI = '/usr/local/bin/aws'
+    
+    try:
+        assume_role_cmd = [
+            AWS_CLI, "sts", "assume-role",
+            "--role-arn", role_arn,
+            "--role-session-name", "veraset-report-session",
+            "--output", "json"
+        ]
+        result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
+        credentials = json.loads(result.stdout)["Credentials"]
+        
+        # Create S3 client with assumed role credentials
+        s3 = boto3.client('s3',
+            aws_access_key_id=credentials["AccessKeyId"],
+            aws_secret_access_key=credentials["SecretAccessKey"],
+            aws_session_token=credentials["SessionToken"],
+            region_name='us-west-2'
+        )
+        return s3
+    except Exception as e:
+        print(f"Failed to assume Veraset S3 access role: {e}", file=sys.stderr)
+        # Fallback to default S3 client
+        return boto3.client('s3', region_name='us-west-2')
+
 def load_cities_json(path):
     with open(path, "r", encoding="utf-8") as f: data = json.load(f)
     out = []
@@ -85,7 +113,8 @@ def main():
         cities = load_cities_json(jp)
     if not cities: print("No cities loaded.", file=sys.stderr); sys.exit(2)
 
-    s3 = boto3.client("s3")
+    # Use same credential mechanism as sync_logic.py
+    s3 = get_s3_client_with_assumed_role()
     os.makedirs("reports", exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
     out_csv = args.out_csv or os.path.join("reports", f"missing_dates_{ts}.csv")
