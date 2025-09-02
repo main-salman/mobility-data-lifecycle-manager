@@ -449,3 +449,15 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Integrated geospatial dependency installation into standard deployment workflow
 - All future deployments via update_ec2.sh will automatically include boundary upload functionality
 - System now has 32x more memory and can handle large-scale parallel processing without crashes 
+
+2025-09-02: Added comprehensive missing dates analysis capability for S3 data verification:
+- Created report_missing_dates.py script to analyze S3 bucket for missing date partitions per city
+- Generated cities_to_check.csv with all 51 cities from the user's list for batch checking
+- Script checks S3 prefix structure: data/{country}/{state}/{city}/date=YYYY-MM-DD/ for date ranges
+- Implemented parallel processing with ThreadPoolExecutor for efficient S3 scanning across multiple cities
+- Groups consecutive missing dates into ranges for readable output (e.g., "2024-06-01→2024-07-31")
+- Outputs both console summary and detailed CSV report under reports/ folder
+- Usage: python3 report_missing_dates.py --bucket qoli-mobile-movement-ping-trips-dev --from 2024-06-01 --to 2025-07-31 --cities-file cities_to_check.csv
+- Analysis Results: 12 cities complete (no missing dates), 39 cities with missing data ranging from 1 day to 417 days
+- Major gaps identified: Jordan/Irbid (417 days), Thailand/Udon Thani (380 days), India/Bhubaneswar (379 days)
+- Many cities missing entire 2024-06-01 to 2024-07-31 period, indicating systematic sync failures for that timeframe
