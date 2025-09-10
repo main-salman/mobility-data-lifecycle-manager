@@ -1369,8 +1369,15 @@ def index():
         <!-- Cities Table -->
         <div class="card">
             <h3>🏙️ Configured Cities ({{ cities|length }})</h3>
+            
+            <!-- Search Box -->
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="citySearch" placeholder="🔍 Search cities, countries, states..." 
+                       style="width: 100%; max-width: 400px; padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 12px; background: #ffffff; font-size: 1rem;">
+            </div>
+            
             <div style="overflow-x:auto;">
-              <table>
+              <table id="citiesTable" class="display">
                   <thead>
                       <tr>
                           <th>🌍 Country</th>
@@ -1412,6 +1419,154 @@ def index():
               </table>
             </div>
         </div>
+        
+        <!-- DataTables CSS and JS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+        
+        <!-- Custom DataTables Styling -->
+        <style>
+        /* Custom DataTables styling to match existing theme */
+        #citiesTable_wrapper {
+            margin-top: 20px;
+        }
+        
+        #citiesTable_filter {
+            display: none; /* Hide default search - using our custom one */
+        }
+        
+        #citiesTable_length select {
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: #ffffff;
+            color: var(--gray-800);
+        }
+        
+        #citiesTable_info {
+            color: var(--gray-600);
+            font-weight: 500;
+            margin-top: 16px;
+        }
+        
+        #citiesTable_paginate {
+            margin-top: 20px;
+        }
+        
+        #citiesTable_paginate .paginate_button {
+            border: 2px solid var(--gray-200) !important;
+            border-radius: 8px !important;
+            background: #ffffff !important;
+            color: var(--primary-blue) !important;
+            padding: 8px 16px !important;
+            margin: 0 4px !important;
+            font-weight: 600 !important;
+            transition: all 0.2s !important;
+        }
+        
+        #citiesTable_paginate .paginate_button:hover {
+            background: var(--primary-blue-light) !important;
+            border-color: var(--primary-blue) !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        #citiesTable_paginate .paginate_button.current {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--purple-accent) 100%) !important;
+            color: #ffffff !important;
+            border-color: var(--primary-blue) !important;
+        }
+        
+        #citiesTable th {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        #citiesTable th:hover {
+            background: linear-gradient(135deg, var(--primary-blue-light) 0%, var(--purple-accent-light) 100%) !important;
+        }
+        
+        #citiesTable th.sorting:after,
+        #citiesTable th.sorting_asc:after,
+        #citiesTable th.sorting_desc:after {
+            font-family: 'Font Awesome 5 Free', sans-serif;
+            font-weight: 900;
+            font-size: 12px;
+            color: var(--primary-blue);
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        #citiesTable th.sorting:after {
+            content: '↕️';
+            opacity: 0.5;
+        }
+        
+        #citiesTable th.sorting_asc:after {
+            content: '↑';
+            color: var(--success-green);
+        }
+        
+        #citiesTable th.sorting_desc:after {
+            content: '↓';
+            color: var(--success-green);
+        }
+        
+        /* Custom search box styling */
+        #citySearch:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px var(--primary-blue-light);
+            transform: translateY(-1px);
+        }
+        </style>
+        
+        <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            const table = $('#citiesTable').DataTable({
+                pageLength: 25,
+                responsive: true,
+                order: [[0, 'asc']], // Sort by Country by default
+                columnDefs: [
+                    { "orderable": true, "targets": [0,1,2,3,4,5,6] }, // All columns sortable except Actions
+                    { "orderable": false, "targets": [7] } // Actions column not sortable
+                ],
+                language: {
+                    info: "Showing _START_ to _END_ of _TOTAL_ cities",
+                    infoEmpty: "No cities found",
+                    infoFiltered: "(filtered from _MAX_ total cities)",
+                    lengthMenu: "Show _MENU_ cities per page",
+                    search: "Search:",
+                    paginate: {
+                        first: "First",
+                        last: "Last", 
+                        next: "Next",
+                        previous: "Previous"
+                    },
+                    emptyTable: "No cities configured yet"
+                },
+                dom: 'lrtip' // Remove default search box (l=length, r=processing, t=table, i=info, p=pagination)
+            });
+            
+            // Connect custom search box
+            $('#citySearch').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+            
+            // Add visual feedback for search
+            $('#citySearch').on('input', function() {
+                if (this.value.length > 0) {
+                    $(this).css('border-color', 'var(--success-green)');
+                } else {
+                    $(this).css('border-color', 'var(--gray-200)');
+                }
+            });
+        });
+        </script>
     </div>
     ''', cities=cities, api_endpoints=api_endpoints)
 
