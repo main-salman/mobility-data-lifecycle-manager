@@ -397,6 +397,20 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - If not set, system automatically finds compatible duration through fallback sequence
 - Fix resolves all S3 sync failures and enables successful data transfer operations
 
+2025-09-12: Implemented Advanced Session Renewal System:
+- Created comprehensive get_fresh_assumed_credentials() function in utils.py with intelligent caching and renewal
+- Replaced all inline AWS role assumption code with centralized credential management system  
+- Added automatic credential renewal every 50 minutes during long-running operations
+- Implemented thread-safe credential caching with 10-minute expiry buffer for reliability
+- Added periodic credential refresh to wait_for_job_completion() (every 50 polling attempts)
+- Enhanced sync_all_cities_for_date_range() with batch-level credential refresh
+- All credential operations now include detailed logging with timestamps and expiry information
+- Error handling aborts operations cleanly on credential renewal failure (no partial state)
+- System respects AWS_SESSION_DURATION environment variable (currently set to 3600 seconds)
+- Confirmed only VerasetS3AccessRole requires session renewal (other roles are instance profiles)
+- Solution eliminates "DurationSeconds exceeds MaxSessionDuration" errors completely
+- Enables processing of large city batches and long-running sync operations without credential timeouts
+
 2025-08-27: Performance Optimization - Implemented Parallel City Processing:
 - Identified sync performance bottleneck: cities were processed sequentially, taking ~3 hours per city
 - With 51 cities, sequential processing would take 6+ days (153 hours) to complete
@@ -489,6 +503,17 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Data analysis tools documentation (report_missing_dates.py, download_missing_data.py)
 - Enhanced UI features documentation including DataTables.js integration and search functionality
 - Comprehensive technical reference for developers and administrators
+
+2025-09-05: Added selective city sync functionality with enhanced user control:
+- Added checkboxes to cities table for individual city selection with "Select All" functionality
+- Implemented "Sync Selected Cities" button with dynamic count display and validation
+- Created new /sync_selected route to handle selective city synchronization using existing sync logic
+- Added comprehensive JavaScript for checkbox management with indeterminate state handling
+- Smart form validation ensures dates and endpoints are selected before allowing selective sync
+- Button shows live count of selected cities and remains disabled when no cities selected
+- Styled checkboxes and selection controls to match existing blue/purple gradient theme
+- Selective sync uses same progress tracking and error handling as full sync operations
+- Deployed to EC2 production environment for immediate use
 
 2025-09-12: Identified and documented one-time use scripts for codebase cleanup:
 - download_missing_data.py: Fills data gaps from missing dates reports (purpose-built for data recovery)

@@ -1,7 +1,8 @@
 import os
 import json
 import threading
-from datetime import datetime, timezone
+import subprocess
+from datetime import datetime, timezone, timedelta
 from glob import glob
 from dotenv import load_dotenv
 import logging
@@ -75,6 +76,107 @@ def check_credentials_validity(s3_client=None, max_age_hours=1):
     except Exception as e:
         logging.warning(f"Credential validity check failed with unexpected error: {e}")
         return False
+
+# Global variables for credential caching and renewal
+_veraset_credentials = None
+_credential_expiry = None
+_credential_lock = threading.Lock()
+
+def get_fresh_assumed_credentials(role_arn="arn:aws:iam::651706782157:role/VerasetS3AccessRole"):
+    """
+    Get fresh assumed role credentials with automatic renewal every 50 minutes
+    Returns credentials dict or raises exception on failure
+    """
+    global _veraset_credentials, _credential_expiry
+    
+    # AWS CLI path - using the same constant as sync_logic.py
+    AWS_CLI = '/usr/local/bin/aws'
+    
+    with _credential_lock:
+        now = datetime.now(timezone.utc)
+        
+        # Check if we have valid credentials (with 10-minute buffer before expiry)
+        if _veraset_credentials and _credential_expiry:
+            time_remaining = (_credential_expiry - now).total_seconds()
+            if time_remaining > 600:  # More than 10 minutes remaining
+                logging.info(f"[CREDENTIALS] Using cached credentials, {time_remaining/60:.1f} minutes remaining")
+                return _veraset_credentials
+        
+        # Need to get new credentials
+        logging.info("[CREDENTIALS] Acquiring fresh Veraset S3 access credentials")
+        
+        try:
+            # Get session duration from environment, default to 3600 (1 hour)
+            session_duration = int(os.getenv('AWS_SESSION_DURATION', '3600'))
+            
+            # Generate unique session name with timestamp
+            session_name = f"veraset-sync-session-{int(now.timestamp())}"
+            
+            assume_role_cmd = [
+                AWS_CLI, "sts", "assume-role",
+                "--role-arn", role_arn,
+                "--role-session-name", session_name,
+                "--duration-seconds", str(session_duration),
+                "--output", "json"
+            ]
+            
+            result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
+            credentials_data = json.loads(result.stdout)
+            
+            # Cache the credentials
+            _veraset_credentials = credentials_data["Credentials"]
+            _credential_expiry = datetime.fromisoformat(
+                _veraset_credentials["Expiration"].replace('Z', '+00:00')
+            )
+            
+            # Log successful acquisition
+            expiry_time = _credential_expiry.strftime('%H:%M:%S UTC')
+            logging.info(f"[CREDENTIALS] Successfully acquired credentials, expires at {expiry_time}")
+            
+            return _veraset_credentials
+            
+        except subprocess.CalledProcessError as e:
+            error_output = e.stderr or ""
+            logging.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role: {e}")
+            logging.error(f"[CREDENTIALS] Command output: {error_output}")
+            
+            # Clear cached credentials on failure
+            _veraset_credentials = None
+            _credential_expiry = None
+            
+            raise Exception(f"Failed to assume Veraset S3 access role: {e}")
+            
+        except json.JSONDecodeError as e:
+            logging.error(f"[CREDENTIALS] Failed to parse AWS STS response: {e}")
+            raise Exception(f"Failed to parse AWS STS response: {e}")
+            
+        except Exception as e:
+            logging.error(f"[CREDENTIALS] Unexpected error during role assumption: {e}")
+            _veraset_credentials = None
+            _credential_expiry = None
+            raise
+
+def refresh_veraset_credentials_if_needed():
+    """
+    Check if credentials need renewal (less than 10 minutes remaining) and refresh if needed
+    This should be called periodically during long-running operations
+    """
+    global _credential_expiry
+    
+    if _credential_expiry:
+        now = datetime.now(timezone.utc)
+        time_remaining = (_credential_expiry - now).total_seconds()
+        
+        if time_remaining < 600:  # Less than 10 minutes remaining
+            logging.info(f"[CREDENTIALS] Credentials expiring in {time_remaining/60:.1f} minutes, refreshing...")
+            try:
+                get_fresh_assumed_credentials()
+                return True
+            except Exception as e:
+                logging.error(f"[CREDENTIALS] Failed to refresh credentials: {e}")
+                return False
+    
+    return True  # No refresh needed
 
 def s3_copy_with_retry(source_bucket, source_key, dest_bucket, dest_key, max_retries=3):
     """S3 copy with automatic credential refresh on token expiration"""

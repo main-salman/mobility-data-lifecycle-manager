@@ -11,7 +11,8 @@ from requests.exceptions import RequestException
 import concurrent.futures
 from utils import (
     get_fresh_s3_client, s3_copy_with_retry, check_credentials_validity,
-    save_sync_progress, load_sync_progress, cleanup_sync_progress
+    save_sync_progress, load_sync_progress, cleanup_sync_progress,
+    get_fresh_assumed_credentials, refresh_veraset_credentials_if_needed
 )
 
 load_dotenv()
@@ -119,8 +120,14 @@ def make_api_request(endpoint, method="POST", data=None):
 def get_job_status(job_id):
     return make_api_request(f"job/{job_id}", method="GET")
 
-def wait_for_job_completion(job_id, max_attempts=100, poll_interval=60, status_callback=None):
+def wait_for_job_completion(job_id, max_attempts=200, poll_interval=60, status_callback=None):
     for attempt in range(max_attempts):
+        # Refresh credentials periodically (every 50 minutes = ~50 attempts)
+        if attempt > 0 and attempt % 50 == 0:
+            logger.info(f"[JOB POLLING] After {attempt} attempts ({attempt} minutes), refreshing credentials...")
+            if not refresh_veraset_credentials_if_needed():
+                return {"error": f"Failed to refresh credentials during job polling (attempt {attempt+1})"}
+        
         status = get_job_status(job_id)
         if status_callback:
             status_callback(status, attempt)
@@ -163,17 +170,11 @@ def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id
     start_from = progress.get('completed_files', 0) if progress else 0
 
     try:
-        assume_role_cmd = [
-            AWS_CLI, "sts", "assume-role",
-            "--role-arn", role_arn,
-            "--role-session-name", "veraset-sync-session",
-            "--output", "json"
-        ]
-        result = subprocess.run(assume_role_cmd, capture_output=True, text=True, check=True)
-        credentials = json.loads(result.stdout)["Credentials"]
+        # Get fresh assumed role credentials with automatic renewal
+        credentials = get_fresh_assumed_credentials(role_arn)
     except Exception as e:
-        logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}")
-        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}\\n{getattr(e, 'stderr', '')}"}
+        logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}")
+        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}"}
 
     env = os.environ.copy()
     env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
@@ -347,6 +348,15 @@ def sync_all_cities_for_date_range(cities, from_date, to_date, schema_type, endp
 
     for batch_idx, city_batch in enumerate(city_batches):
         logger.info(f"[Sync All] Processing city batch {batch_idx + 1}/{len(city_batches)} ({len(city_batch)} cities)")
+        
+        # Refresh credentials before processing each batch to ensure we have valid credentials
+        if batch_idx > 0:  # Don't refresh on first batch, credentials should be fresh
+            logger.info(f"[Sync All] Before processing batch {batch_idx + 1}, refreshing credentials...")
+            if not refresh_veraset_credentials_if_needed():
+                error_msg = f"Failed to refresh credentials before processing batch {batch_idx + 1}"
+                logger.error(f"[Sync All] {error_msg}")
+                errors.append(error_msg)
+                continue  # Skip this batch but continue with others
         
         for chunk_idx, (chunk_start, chunk_end) in enumerate(date_chunks):
             current_batch += 1

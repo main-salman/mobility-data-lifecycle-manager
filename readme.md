@@ -70,7 +70,7 @@ Body: [payload from Step 1]
 
 **Step 3: Job Polling** (`wait_for_job_completion()`)
 ```python
-for attempt in range(100):  # 100 minutes max
+for attempt in range(200):  # 200 minutes max
     status = requests.get(f"https://platform.prd.veraset.tech/v1/job/{job_id}")
     
     if status["data"]["status"] == "SUCCESS":
