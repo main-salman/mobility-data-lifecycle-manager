@@ -389,8 +389,10 @@ python3 download_missing_data.py
 
 ## Using the App
 - **Enhanced Cities Table:** Real-time search and sorting across all columns with DataTables.js
+- **City Selection:** Checkboxes for selecting specific cities with "Select All" functionality
 - **Add/Edit/Delete Cities:** Interactive maps with polygon/radius AOI selection
-- **Manual Sync:** Trigger sync for any city and date range with progress monitoring
+- **Manual Sync:** Trigger sync for any individual city and date range with progress monitoring
+- **Selective Sync:** Sync only selected cities using checkbox selection with live count display
 - **Batch Operations:** Sync all cities simultaneously with detailed progress tracking
 - **Missing Data Recovery:** Automated gap detection and targeted recovery tools
 - **Boundary Upload:** Shapefile processing for custom city boundaries
