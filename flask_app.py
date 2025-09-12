@@ -1560,6 +1560,81 @@ def index():
         </style>
         
         <script>
+        // Global functions that need to be accessible to inline event handlers
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.city-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateSelectedCount();
+        }
+        
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('.city-checkbox:checked');
+            const count = checked.length;
+            document.getElementById('selectedCount').textContent = count;
+            const syncBtn = document.getElementById('syncSelectedBtn');
+            if (syncBtn) {
+                syncBtn.disabled = count === 0;
+            }
+            
+            // Update select all checkbox state
+            const total = document.querySelectorAll('.city-checkbox').length;
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                if (count === 0) {
+                    selectAll.indeterminate = false;
+                    selectAll.checked = false;
+                } else if (count === total) {
+                    selectAll.indeterminate = false;
+                    selectAll.checked = true;
+                } else {
+                    selectAll.indeterminate = true;
+                }
+            }
+        }
+        
+        function syncSelectedCities() {
+            const checked = document.querySelectorAll('.city-checkbox:checked');
+            if (checked.length === 0) {
+                alert('Please select at least one city to sync.');
+                return;
+            }
+            
+            // Get sync parameters from the main form
+            const startDate = document.querySelector('input[name="start_date"]').value;
+            const endDate = document.querySelector('input[name="end_date"]').value;
+            const schemaType = document.querySelector('select[name="schema_type"]').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please set start and end dates for the sync.');
+                return;
+            }
+            
+            // Get selected API endpoints
+            const selectedEndpoints = Array.from(document.querySelectorAll('input[name="api_endpoints"]:checked'))
+                .map(cb => cb.value);
+            
+            if (selectedEndpoints.length === 0) {
+                alert('Please select at least one API endpoint.');
+                return;
+            }
+            
+            // Collect selected city IDs
+            const selectedCityIds = Array.from(checked).map(cb => cb.value);
+            
+            // Set hidden form values
+            document.getElementById('selectedCitiesInput').value = JSON.stringify(selectedCityIds);
+            document.getElementById('selectedStartDate').value = startDate;
+            document.getElementById('selectedEndDate').value = endDate;
+            document.getElementById('selectedSchemaType').value = schemaType;
+            document.getElementById('selectedApiEndpoints').value = JSON.stringify(selectedEndpoints);
+            
+            // Submit the form
+            document.getElementById('syncSelectedForm').submit();
+        }
+        
         $(document).ready(function() {
             // Initialize DataTable
             const table = $('#citiesTable').DataTable({
@@ -1602,75 +1677,8 @@ def index():
                 }
             });
             
-            // Checkbox management functions
-            function toggleSelectAll() {
-                const selectAll = document.getElementById('selectAll');
-                const checkboxes = document.querySelectorAll('.city-checkbox');
-                checkboxes.forEach(cb => {
-                    cb.checked = selectAll.checked;
-                });
-                updateSelectedCount();
-            }
-            
-            function updateSelectedCount() {
-                const checked = document.querySelectorAll('.city-checkbox:checked');
-                const count = checked.length;
-                document.getElementById('selectedCount').textContent = count;
-                document.getElementById('syncSelectedBtn').disabled = count === 0;
-                
-                // Update select all checkbox state
-                const total = document.querySelectorAll('.city-checkbox').length;
-                const selectAll = document.getElementById('selectAll');
-                if (count === 0) {
-                    selectAll.indeterminate = false;
-                    selectAll.checked = false;
-                } else if (count === total) {
-                    selectAll.indeterminate = false;
-                    selectAll.checked = true;
-                } else {
-                    selectAll.indeterminate = true;
-                }
-            }
-            
-            function syncSelectedCities() {
-                const checked = document.querySelectorAll('.city-checkbox:checked');
-                if (checked.length === 0) {
-                    alert('Please select at least one city to sync.');
-                    return;
-                }
-                
-                // Get sync parameters from the main form
-                const startDate = document.querySelector('input[name="start_date"]').value;
-                const endDate = document.querySelector('input[name="end_date"]').value;
-                const schemaType = document.querySelector('select[name="schema_type"]').value;
-                
-                if (!startDate || !endDate) {
-                    alert('Please set start and end dates for the sync.');
-                    return;
-                }
-                
-                // Get selected API endpoints
-                const selectedEndpoints = Array.from(document.querySelectorAll('input[name="api_endpoints"]:checked'))
-                    .map(cb => cb.value);
-                
-                if (selectedEndpoints.length === 0) {
-                    alert('Please select at least one API endpoint.');
-                    return;
-                }
-                
-                // Collect selected city IDs
-                const selectedCityIds = Array.from(checked).map(cb => cb.value);
-                
-                // Set hidden form values
-                document.getElementById('selectedCitiesInput').value = JSON.stringify(selectedCityIds);
-                document.getElementById('selectedStartDate').value = startDate;
-                document.getElementById('selectedEndDate').value = endDate;
-                document.getElementById('selectedSchemaType').value = schemaType;
-                document.getElementById('selectedApiEndpoints').value = JSON.stringify(selectedEndpoints);
-                
-                // Submit the form
-                document.getElementById('syncSelectedForm').submit();
-            }
+            // Initialize selected count on page load
+            updateSelectedCount();
         });
         </script>
     </div>
