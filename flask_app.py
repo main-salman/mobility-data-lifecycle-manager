@@ -1364,6 +1364,18 @@ def index():
                 
                 <button type="submit" class="btn-success">🚀 Sync All Cities</button>
             </form>
+            
+            <!-- Sync Selected Cities Form -->
+            <form action="{{ url_for('sync_selected') }}" method="post" id="syncSelectedForm" style="margin-top:20px;">
+                <input type="hidden" name="selected_cities" id="selectedCitiesInput">
+                <input type="hidden" name="start_date" id="selectedStartDate">
+                <input type="hidden" name="end_date" id="selectedEndDate">
+                <input type="hidden" name="schema_type" id="selectedSchemaType">
+                <input type="hidden" name="api_endpoints" id="selectedApiEndpoints">
+                <button type="button" class="btn-warning" onclick="syncSelectedCities()" id="syncSelectedBtn" disabled>
+                    🎯 Sync Selected Cities (<span id="selectedCount">0</span>)
+                </button>
+            </form>
         </div>
         
         <!-- Cities Table -->
@@ -1380,6 +1392,7 @@ def index():
               <table id="citiesTable" class="display">
                   <thead>
                       <tr>
+                          <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"> Select</th>
                           <th>🌍 Country</th>
                           <th>📍 State/Province</th>
                           <th>🏙️ City</th>
@@ -1393,6 +1406,7 @@ def index():
                   <tbody>
                       {% for city in cities %}
                       <tr>
+                          <td><input type="checkbox" class="city-checkbox" value="{{city['city_id']}}" onchange="updateSelectedCount()"></td>
                           <td>{{city['country']}}</td>
                           <td>{{city.get('state_province','')}}</td>
                           <td><strong>{{city['city']}}</strong></td>
@@ -1522,6 +1536,27 @@ def index():
             box-shadow: 0 0 0 3px var(--primary-blue-light);
             transform: translateY(-1px);
         }
+        
+        /* Checkbox styling */
+        .city-checkbox, #selectAll {
+            transform: scale(1.2);
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .city-checkbox:checked, #selectAll:checked {
+            accent-color: var(--primary-blue);
+        }
+        
+        /* Select All header styling */
+        #citiesTable thead th:first-child {
+            text-align: center;
+            width: 80px;
+        }
+        
+        #citiesTable tbody td:first-child {
+            text-align: center;
+        }
         </style>
         
         <script>
@@ -1530,10 +1565,11 @@ def index():
             const table = $('#citiesTable').DataTable({
                 pageLength: 25,
                 responsive: true,
-                order: [[0, 'asc']], // Sort by Country by default
+                order: [[1, 'asc']], // Sort by Country by default (column 1, since column 0 is now checkboxes)
                 columnDefs: [
-                    { "orderable": true, "targets": [0,1,2,3,4,5,6] }, // All columns sortable except Actions
-                    { "orderable": false, "targets": [7] } // Actions column not sortable
+                    { "orderable": false, "targets": [0] }, // Checkbox column not sortable
+                    { "orderable": true, "targets": [1,2,3,4,5,6,7] }, // All data columns sortable except Actions
+                    { "orderable": false, "targets": [8] } // Actions column not sortable
                 ],
                 language: {
                     info: "Showing _START_ to _END_ of _TOTAL_ cities",
@@ -1565,6 +1601,76 @@ def index():
                     $(this).css('border-color', 'var(--gray-200)');
                 }
             });
+            
+            // Checkbox management functions
+            function toggleSelectAll() {
+                const selectAll = document.getElementById('selectAll');
+                const checkboxes = document.querySelectorAll('.city-checkbox');
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+                updateSelectedCount();
+            }
+            
+            function updateSelectedCount() {
+                const checked = document.querySelectorAll('.city-checkbox:checked');
+                const count = checked.length;
+                document.getElementById('selectedCount').textContent = count;
+                document.getElementById('syncSelectedBtn').disabled = count === 0;
+                
+                // Update select all checkbox state
+                const total = document.querySelectorAll('.city-checkbox').length;
+                const selectAll = document.getElementById('selectAll');
+                if (count === 0) {
+                    selectAll.indeterminate = false;
+                    selectAll.checked = false;
+                } else if (count === total) {
+                    selectAll.indeterminate = false;
+                    selectAll.checked = true;
+                } else {
+                    selectAll.indeterminate = true;
+                }
+            }
+            
+            function syncSelectedCities() {
+                const checked = document.querySelectorAll('.city-checkbox:checked');
+                if (checked.length === 0) {
+                    alert('Please select at least one city to sync.');
+                    return;
+                }
+                
+                // Get sync parameters from the main form
+                const startDate = document.querySelector('input[name="start_date"]').value;
+                const endDate = document.querySelector('input[name="end_date"]').value;
+                const schemaType = document.querySelector('select[name="schema_type"]').value;
+                
+                if (!startDate || !endDate) {
+                    alert('Please set start and end dates for the sync.');
+                    return;
+                }
+                
+                // Get selected API endpoints
+                const selectedEndpoints = Array.from(document.querySelectorAll('input[name="api_endpoints"]:checked'))
+                    .map(cb => cb.value);
+                
+                if (selectedEndpoints.length === 0) {
+                    alert('Please select at least one API endpoint.');
+                    return;
+                }
+                
+                // Collect selected city IDs
+                const selectedCityIds = Array.from(checked).map(cb => cb.value);
+                
+                // Set hidden form values
+                document.getElementById('selectedCitiesInput').value = JSON.stringify(selectedCityIds);
+                document.getElementById('selectedStartDate').value = startDate;
+                document.getElementById('selectedEndDate').value = endDate;
+                document.getElementById('selectedSchemaType').value = schemaType;
+                document.getElementById('selectedApiEndpoints').value = JSON.stringify(selectedEndpoints);
+                
+                // Submit the form
+                document.getElementById('syncSelectedForm').submit();
+            }
         });
         </script>
     </div>
@@ -2607,6 +2713,97 @@ def sync_progress_page(sync_id):
         </script>
         </div>
     ''', sync_id=sync_id, prog=prog, quota_error=quota_error)
+
+@app.route('/sync_selected', methods=['POST'])
+def sync_selected():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+
+    try:
+        # Parse form data
+        selected_cities_json = request.form.get('selected_cities')
+        selected_city_ids = json.loads(selected_cities_json) if selected_cities_json else []
+        
+        if not selected_city_ids:
+            flash('No cities selected for sync')
+            return redirect(url_for('index'))
+
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date', start_date)
+        schema_type = request.form.get('schema_type', 'FULL')
+        api_endpoints_json = request.form.get('api_endpoints')
+        api_endpoints_selected = json.loads(api_endpoints_json) if api_endpoints_json else ['movement/job/pings']
+
+        # Load all cities and filter to selected ones
+        all_cities = load_cities()
+        selected_cities = [city for city in all_cities if city['city_id'] in selected_city_ids]
+        
+        if not selected_cities:
+            flash('Selected cities not found in database')
+            return redirect(url_for('index'))
+
+        sync_id = str(uuid.uuid4())
+        data_sync_progress[sync_id] = {
+            'current': 0,
+            'total': len(api_endpoints_selected),
+            'date': f"SELECTED ({len(selected_cities)} cities)",
+            'status': 'pending',
+            'done': False,
+            'city': f"Multiple ({len(selected_cities)} cities)",
+            'country': 'Multiple',
+            'state_province': 'Multiple',
+            'date_range': f"{start_date} to {end_date}",
+            'schema_type': schema_type,
+            'selected_cities': [f"{c['city']}, {c['country']}" for c in selected_cities]
+        }
+
+        def sync_selected_thread():
+            errors = []
+            logging.info(f"[Sync Selected] Starting sync for {len(selected_cities)} selected cities from {start_date} to {end_date}")
+            data_sync_progress[sync_id]['status'] = f"syncing {len(selected_cities)} selected cities"
+            
+            try:
+                for api_endpoint in api_endpoints_selected:
+                    key = f"{api_endpoint}#{schema_type}"
+                    bucket_env_var = S3_BUCKET_MAPPING.get(key)
+                    s3_bucket = os.getenv(bucket_env_var) if bucket_env_var else os.getenv('S3_BUCKET')
+                    
+                    logging.info(f"[Sync Selected] Using S3 bucket '{s3_bucket}' for endpoint {api_endpoint} with schema {schema_type}")
+                    
+                    endpoint = api_endpoint.lstrip('/')
+                    if endpoint.startswith('v1/'):
+                        endpoint = endpoint[3:]
+                    
+                    result = sync_all_cities_for_date_range(
+                        cities=selected_cities,
+                        from_date=start_date,
+                        to_date=end_date,
+                        schema_type=schema_type,
+                        endpoint=endpoint,
+                        s3_bucket=s3_bucket
+                    )
+
+                    if not result.get('success'):
+                        error_msg = result.get('error', 'Unknown error')
+                        if result.get('details'):
+                            error_msg += f" Details: {'; '.join(result['details'])}"
+                        errors.append(error_msg)
+                
+            except Exception as e:
+                errors.append(str(e))
+                logging.error(f"[Sync Selected] Exception: {e}", exc_info=True)
+            
+            data_sync_progress[sync_id]['done'] = True
+            data_sync_progress[sync_id]['errors'] = errors
+            
+        threading.Thread(target=sync_selected_thread, daemon=True).start()
+        flash(f'Started sync for {len(selected_cities)} selected cities')
+        return redirect(url_for('sync_all_progress', sync_id=sync_id))
+        
+    except Exception as e:
+        logging.error(f"Error in sync_selected: {e}")
+        flash(f'Error starting selected city sync: {str(e)}', 'error')
+        return redirect(url_for('index'))
 
 @app.route('/sync_all', methods=['GET', 'POST'])
 def sync_all():

@@ -477,6 +477,19 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Deployed to EC2 production environment via update_ec2.sh
 - Greatly improved usability for managing 50+ cities with instant search and sorting capabilities
 
+2025-09-05: Comprehensive README.md documentation overhaul with complete technical specifications:
+- Added detailed system architecture overview with all core components (flask_app.py, sync_logic.py, daily_sync.py, utils.py, orchestrator.py)
+- Documented complete data flow workflow from city configuration through S3 storage
+- Detailed step-by-step API integration process including payload construction, job submission, polling, and S3 transfer
+- AWS permissions setup with example IAM policies and trust relationships using generic account numbers
+- Complete AWS CLI usage examples for role assumption and S3 sync operations
+- Environment variables configuration guide with all bucket mappings and sync settings
+- Advanced features documentation including credential management, progress tracking, and error recovery
+- Troubleshooting guide with common issues and diagnostic commands
+- Data analysis tools documentation (report_missing_dates.py, download_missing_data.py)
+- Enhanced UI features documentation including DataTables.js integration and search functionality
+- Comprehensive technical reference for developers and administrators
+
 2025-09-12: Identified and documented one-time use scripts for codebase cleanup:
 - download_missing_data.py: Fills data gaps from missing dates reports (purpose-built for data recovery)
 - report_missing_dates.py: Generates diagnostic CSV reports for S3 data verification
