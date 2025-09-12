@@ -464,3 +464,25 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - SUCCESS UPDATE 2025-09-04: Executed download_missing_data.py on EC2 with 100% success rate (35/35 date ranges)
 - FINAL RESULTS: 98% recovery success - 49 cities now complete, only 1 city (Thailand/Udon Thani) still missing data
 - Notable recoveries: All major cities with 300+ missing days were successfully completed including Australia/Logan, Ecuador/Quito, India/Bhubaneswar, Mexico/Querétaro, Serbia/Nis, Saudi Arabia/Madinah
+
+2025-09-05: Enhanced Flask app cities table with advanced sorting and search functionality:
+- Added DataTables.js integration for client-side table enhancement with responsive design
+- Implemented sortable columns for all data fields (Country, State/Province, City, Latitude, Longitude, Email, AOI Type)
+- Added custom global search box with real-time filtering across all columns
+- Styled DataTables components to match existing blue/purple gradient design theme
+- Custom search box with visual feedback (green border when active, blue focus states)
+- Pagination controls styled with gradient backgrounds and hover effects  
+- Sort indicators with custom arrows (↕️ unsorted, ↑ ascending, ↓ descending)
+- Table headers with gradient hover effects matching site theme
+- Deployed to EC2 production environment via update_ec2.sh
+- Greatly improved usability for managing 50+ cities with instant search and sorting capabilities
+
+2025-09-12: Identified and documented one-time use scripts for codebase cleanup:
+- download_missing_data.py: Fills data gaps from missing dates reports (purpose-built for data recovery)
+- report_missing_dates.py: Generates diagnostic CSV reports for S3 data verification
+- resume_failed_sync.py: Recovers from failed sync operations and cleans up progress files
+- setup_ec2.sh: Initial EC2 instance setup and configuration (infrastructure setup only)
+- install_geopandas_deps.sh: One-time GeoPandas system dependency installation for boundary uploads
+- assume_and_list_veraset_s3.sh: Debug/testing script for S3 access role assumption verification
+- Previous one-time scripts already deleted: get-logan-australia-data.py, get_toronto_mobility.py, Archive.zip files
+- Recommended moving these to scripts/one-time/ directory or adding clear documentation about their temporary nature
