@@ -178,6 +178,18 @@ def refresh_veraset_credentials_if_needed():
     
     return True  # No refresh needed
 
+def clear_cached_credentials():
+    """
+    Force clear cached credentials, forcing next call to get_fresh_assumed_credentials() to get new ones
+    Use this when we detect expired token errors during operations
+    """
+    global _veraset_credentials, _credential_expiry
+    
+    with _credential_lock:
+        _veraset_credentials = None
+        _credential_expiry = None
+        logging.info("[CREDENTIALS] Cleared cached credentials due to expiry detection")
+
 def s3_copy_with_retry(source_bucket, source_key, dest_bucket, dest_key, max_retries=3):
     """S3 copy with automatic credential refresh on token expiration"""
     s3_client = get_fresh_s3_client()

@@ -411,6 +411,18 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Solution eliminates "DurationSeconds exceeds MaxSessionDuration" errors completely
 - Enables processing of large city batches and long-running sync operations without credential timeouts
 
+2025-09-12: Fixed ExpiredToken Errors During S3 Sync Operations:
+- Identified new issue: individual S3 sync operations taking 18-21 minutes, causing ExpiredToken errors
+- Problem occurred when processing multiple cities sequentially with 1-hour credential sessions
+- Logs showed successful job completion and initial credential acquisition, but failures during 3rd city S3 sync
+- Added intelligent retry logic with automatic credential refresh to sync_data_to_bucket_chunked() function
+- Implemented ExpiredToken error detection in subprocess stderr output parsing  
+- Added clear_cached_credentials() function to force fresh credential acquisition on expiry detection
+- Each S3 sync operation now retries up to 3 times with fresh credentials on ExpiredToken errors
+- Enhanced logging shows retry attempts and credential refresh operations during S3 sync
+- Fixes issue where credentials expire mid-operation during long sequential city processing
+- Ensures robust handling of credential timeouts during the most resource-intensive operations
+
 2025-08-27: Performance Optimization - Implemented Parallel City Processing:
 - Identified sync performance bottleneck: cities were processed sequentially, taking ~3 hours per city
 - With 51 cities, sequential processing would take 6+ days (153 hours) to complete

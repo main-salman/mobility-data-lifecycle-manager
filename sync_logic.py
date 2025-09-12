@@ -12,7 +12,8 @@ import concurrent.futures
 from utils import (
     get_fresh_s3_client, s3_copy_with_retry, check_credentials_validity,
     save_sync_progress, load_sync_progress, cleanup_sync_progress,
-    get_fresh_assumed_credentials, refresh_veraset_credentials_if_needed
+    get_fresh_assumed_credentials, refresh_veraset_credentials_if_needed,
+    clear_cached_credentials
 )
 
 load_dotenv()
@@ -169,31 +170,56 @@ def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id
     progress = load_sync_progress(sync_id) if sync_id else None
     start_from = progress.get('completed_files', 0) if progress else 0
 
-    try:
-        # Get fresh assumed role credentials with automatic renewal
-        credentials = get_fresh_assumed_credentials(role_arn)
-    except Exception as e:
-        logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}")
-        return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}"}
+    # Retry logic for expired credentials during S3 sync
+    max_retries = 3
+    for retry_attempt in range(max_retries):
+        try:
+            # Get fresh assumed role credentials with automatic renewal
+            credentials = get_fresh_assumed_credentials(role_arn)
+        except Exception as e:
+            logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}")
+            return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}"}
 
-    env = os.environ.copy()
-    env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
-    env["AWS_SECRET_ACCESS_KEY"] = credentials["SecretAccessKey"]
-    env["AWS_SESSION_TOKEN"] = credentials["SessionToken"]
+        env = os.environ.copy()
+        env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
+        env["AWS_SECRET_ACCESS_KEY"] = credentials["SecretAccessKey"]
+        env["AWS_SESSION_TOKEN"] = credentials["SessionToken"]
+        
+        sync_command = [
+            AWS_CLI, "s3", "sync",
+            "--copy-props", "none",
+            "--no-progress",
+            "--no-follow-symlinks",
+            "--exclude", "*",
+            "--include", "*.parquet",
+            src_s3,
+            dst_s3
+        ]
+        logger.info(f"[S3 SYNC] Running command: {' '.join(sync_command)} (attempt {retry_attempt + 1}/{max_retries})")
+        
+        try:
+            sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
+            # If we get here, sync succeeded - break out of retry loop
+            break
+            
+        except subprocess.CalledProcessError as e:
+            # Check if it's an expired token error
+            error_output = e.stderr or ""
+            if "ExpiredToken" in error_output or "The provided token has expired" in error_output:
+                logger.warning(f"[S3 SYNC] Credentials expired during sync (attempt {retry_attempt + 1}/{max_retries}), clearing cache and retrying...")
+                clear_cached_credentials()  # Force fresh credentials on next attempt
+                if retry_attempt == max_retries - 1:
+                    logger.error(f"[S3 SYNC] Failed after {max_retries} attempts due to credential expiry")
+                    return {"success": False, "error": f"S3 sync failed after {max_retries} attempts due to credential expiry"}
+                continue  # Retry with fresh credentials
+            else:
+                # Non-credential error, don't retry
+                logger.error(f"[S3 SYNC] Non-credential error: {e}")
+                logger.error(f"[S3 SYNC] Command output: {error_output}")
+                return {"success": False, "error": f"S3 sync failed: {error_output}"}
     
-    sync_command = [
-        AWS_CLI, "s3", "sync",
-        "--copy-props", "none",
-        "--no-progress",
-        "--no-follow-symlinks",
-        "--exclude", "*",
-        "--include", "*.parquet",
-        src_s3,
-        dst_s3
-    ]
-    logger.info(f"[S3 SYNC] Running command: {' '.join(sync_command)}")
+    # Process results (this code only runs if sync succeeded)
     try:
-        sync_result = subprocess.run(sync_command, env=env, capture_output=True, text=True, check=True)
         copy_lines = [l for l in sync_result.stdout.splitlines() if l.startswith('copy:')]
         non_copy_lines = [l for l in sync_result.stdout.splitlines() if not l.startswith('copy:')]
         total_copies = len(copy_lines)
