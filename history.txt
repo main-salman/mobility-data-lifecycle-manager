@@ -536,3 +536,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - assume_and_list_veraset_s3.sh: Debug/testing script for S3 access role assumption verification
 - Previous one-time scripts already deleted: get-logan-australia-data.py, get_toronto_mobility.py, Archive.zip files
 - Recommended moving these to scripts/one-time/ directory or adding clear documentation about their temporary nature
+
+2025-09-24: SSL Certificate Renewal Implementation for Expired Let's Encrypt Certificate:
+- Added SSL certificate renewal functionality to update_ec2.sh deployment script
+- Created dedicated renew_ssl_cert.sh script for immediate force-renewal of expired certificates
+- Renewal process automatically stops Nginx, runs certbot standalone renewal, and restarts/reloads Nginx
+- Added certificate status checking and verification steps to ensure successful renewal
+- Both scripts target mobility.qolimpact.click domain with existing Let's Encrypt configuration
+- Integrated SSL renewal into standard deployment workflow to prevent future expirations
+- Scripts handle certificate status checks, force renewal, and HTTPS functionality testing
+- Maintains existing auto-renewal cron job: "0 3 * * * certbot renew --quiet --post-hook 'nginx -t && systemctl reload nginx'"

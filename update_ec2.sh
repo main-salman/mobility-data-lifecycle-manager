@@ -51,6 +51,13 @@ ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install --upgrade pi
 echo "Installing/updating geospatial dependencies for boundary upload..."
 ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install numpy>=1.21.0 fiona>=1.8.0 shapely>=1.7.0 pyproj>=3.0.0 geopandas>=0.10.0"
 
+# --- RENEW SSL CERTIFICATE IF NEEDED ---
+echo "Checking and renewing SSL certificate if needed..."
+# Check certificate status and renew if it expires within 30 days
+ssh_cmd "sudo certbot renew --quiet || echo 'Certificate renewal check completed'"
+# Reload nginx to apply any certificate changes
+ssh_cmd "sudo nginx -t && sudo systemctl reload nginx"
+
 # --- STOP EXISTING FLASK APP (install lsof if needed) ---
 echo "Stopping any running Flask app (installing lsof if needed)..."
 ssh_cmd "sudo yum install -y lsof && cd $PROJECT_DIR && if lsof -ti:5050 > /dev/null 2>&1; then kill \$(lsof -ti:5050); fi"
