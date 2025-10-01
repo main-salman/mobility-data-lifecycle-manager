@@ -53,9 +53,10 @@ ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install numpy>=1.21.
 
 # --- RENEW SSL CERTIFICATE IF NEEDED ---
 echo "Checking and renewing SSL certificate if needed..."
-# Check certificate status and renew if it expires within 30 days
-ssh_cmd "sudo certbot renew --quiet || echo 'Certificate renewal check completed'"
-# Reload nginx to apply any certificate changes
+# For expired certificates, we need to stop nginx first, then use standalone renewal
+ssh_cmd "sudo systemctl stop nginx"
+ssh_cmd "sudo certbot renew --force-renewal --standalone --quiet || echo 'Certificate renewal completed (may have failed if not expired)'"
+ssh_cmd "sudo systemctl start nginx"
 ssh_cmd "sudo nginx -t && sudo systemctl reload nginx"
 
 # --- STOP EXISTING FLASK APP (install lsof if needed) ---

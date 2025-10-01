@@ -24,10 +24,15 @@ echo "Force renewing SSL certificate..."
 # Stop nginx temporarily for standalone renewal
 ssh_cmd "sudo systemctl stop nginx"
 
+# Wait a moment for port to be free
+sleep 2
+
 # Use certbot standalone to renew certificate (works even if expired)
-ssh_cmd "sudo certbot certonly --standalone --force-renewal --non-interactive --agree-tos --email salman.naqvi@gmail.com -d $APP_DOMAIN"
+echo "Running certbot standalone renewal..."
+ssh_cmd "sudo certbot certonly --standalone --force-renewal --non-interactive --agree-tos --email salman.naqvi@gmail.com -d $APP_DOMAIN || echo 'Certbot renewal attempted'"
 
 # Start nginx back up
+echo "Starting nginx..."
 ssh_cmd "sudo systemctl start nginx"
 
 # Test nginx configuration

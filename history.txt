@@ -546,3 +546,7 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Integrated SSL renewal into standard deployment workflow to prevent future expirations
 - Scripts handle certificate status checks, force renewal, and HTTPS functionality testing
 - Maintains existing auto-renewal cron job: "0 3 * * * certbot renew --quiet --post-hook 'nginx -t && systemctl reload nginx'"
+- RESOLUTION: Successfully renewed expired certificate (2025-09-18) to new valid certificate (expires 2025-12-23)
+- Fixed initial renewal failure caused by Nginx blocking port 80 during standalone verification
+- Updated scripts to properly handle expired certificates by stopping/starting Nginx around renewal process
+- Verified HTTPS functionality restored at https://mobility.qolimpact.click with valid SSL certificate
