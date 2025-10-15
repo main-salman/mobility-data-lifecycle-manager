@@ -6,7 +6,7 @@
 This folder contains an EXAMPLE of the standardized format for submitting 
 GIS boundary data to the UN Mobility Experiment data lifecycle system.
 
-EXAMPLE CITY: Santiago, Chile
+EXAMPLE CITY: [CityName], [CountryName]
 FILES INCLUDED: Urban Boundary + Neighborhoods + Cultural POI
 
 ===============================================================================
@@ -40,8 +40,8 @@ Each category requires: .shp, .shx, .dbf, .prj, .cpg files
 ===============================================================================
 
 1. CITY NAME: Use official English name, no abbreviations
-   ✓ Good: Santiago_Chile, Buenos_Aires_Argentina
-   ✗ Bad: Stgo_Chile, BA_Argentina
+   ✓ Good: London_UK, Buenos_Aires_Argentina
+   ✗ Bad: Lon_UK, BA_Argentina
 
 2. COUNTRY: Use common English country name or ISO code
    ✓ Good: Chile, Argentina, KSA, Turkey
@@ -150,7 +150,7 @@ COMMON ISSUES:
 
 ===============================================================================
 
-This example demonstrates the correct format. Replace "Santiago_Chile" with 
-your city's name and country, following the same pattern.
+This example demonstrates the correct format. Replace "[CityName]_[CountryName]" with 
+your actual city's name and country, following the same pattern.
 
 Last updated: December 2024

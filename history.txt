@@ -550,3 +550,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Fixed initial renewal failure caused by Nginx blocking port 80 during standalone verification
 - Updated scripts to properly handle expired certificates by stopping/starting Nginx around renewal process
 - Verified HTTPS functionality restored at https://mobility.qolimpact.click with valid SSL certificate
+
+2025-10-15: Updated example submission templates to use generic placeholders:
+- Removed all specific Santiago Chile references from EXAMPLE_SUBMISSION_GUIDE.html and replaced with [CityName]/[CountryName] placeholders
+- Updated README_FOR_CITY_ADMINISTRATORS.txt to use generic city examples instead of Santiago Chile specifically  
+- Renamed all shapefile examples from Santiago_Chile_* to [CityName]_[CountryName]_* format in Example_City_Submission folder
+- Created new ZIP files: CityName_CountryName_Boundaries_EXAMPLE.zip (46KB) and CityName_CountryName_Boundaries_WITH_POI_EXAMPLE.zip (484KB)  
+- Updated HTML guide to reference generic template files instead of Santiago-specific examples
+- Changed download button text from "Download Basic Example" to "Download Basic Template" for clarity
+- All example files now serve as universal templates that cities can adapt with their own names rather than Santiago-specific references
+- Maintains same technical standards and file structure while being applicable to all participating cities

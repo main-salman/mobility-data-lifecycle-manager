@@ -238,9 +238,9 @@
 <body>
     <div class="container">
         <h1>Example GIS Data Submission for City Administrators</h1>
-        <div class="subtitle">Santiago, Chile - Reference Implementation</div>
+        <div class="subtitle">Generic Template for All Cities</div>
         
-        <p>This document explains the example submission created from Santiago, Chile's GIS data, demonstrating the standardized format all cities should follow, including boundary, neighborhood, and Point of Interest (POI) data.</p>
+        <p>This document explains the example submission template demonstrating the standardized format all cities should follow, including boundary, neighborhood, and Point of Interest (POI) data.</p>
 
         <hr>
 
@@ -250,14 +250,14 @@
             <h3>1. Example Directory: <code>Example_City_Submission/</code></h3>
             <p>Contains the properly formatted files that demonstrate the standard structure.</p>
 
-            <h3>2. Example ZIP File: <code>Santiago_Chile_Boundaries_EXAMPLE.zip</code></h3>
+            <h3>2. Example ZIP File: <code>[CityName]_[CountryName]_Boundaries_EXAMPLE.zip</code></h3>
             <p>Ready-to-submit ZIP file showing the exact format expected by the system.</p>
             <div style="margin: 15px 0;">
                 <a href="/download/example-zip" class="btn-success" style="display: inline-block; background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-right: 10px;">
-                    📦 Download Basic Example
+                    📦 Download Basic Template
                 </a>
                 <a href="/download/example-zip-with-poi" class="btn-success" style="display: inline-block; background: #17a2b8; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                    📍 Download Example with POI
+                    📍 Download Template with POI
                 </a>
             </div>
 
@@ -267,9 +267,9 @@
 
         <hr>
 
-        <h2>Why Santiago, Chile Was Chosen</h2>
+        <h2>Example Template Features</h2>
 
-        <p>Santiago was selected as the example because it demonstrates <strong>best practices</strong>:</p>
+        <p>This example template demonstrates <strong>best practices</strong>:</p>
 
         <div class="best-practices">
             <ul>
@@ -286,40 +286,26 @@
 
         <h2>File Structure Analysis</h2>
 
-        <h3>Original Santiago Files:</h3>
-        <div class="file-structure">
-Santiago, Chile/GIS SHP/
-├── Urban border.shp          <span class="comment">(42,716 bytes, Polygon)</span>
-├── Urban border.shx          <span class="comment">(108 bytes)</span>
-├── Urban border.dbf          <span class="comment">(519 bytes)</span>
-├── Urban border.prj          <span class="comment">(409 bytes)</span>
-├── Urban border.cpg          <span class="comment">(5 bytes)</span>
-├── Neighborhoods.shp         <span class="comment">(18,396 bytes, Polygon)</span>
-├── Neighborhoods.shx         <span class="comment">(316 bytes)</span>
-├── Neighborhoods.dbf         <span class="comment">(24,050 bytes)</span>
-├── Neighborhoods.prj         <span class="comment">(409 bytes)</span>
-└── Neighborhoods.cpg         <span class="comment">(5 bytes)</span>
-        </div>
-
+       
         <h3>Standardized Example Files:</h3>
         <div class="file-structure">
 Example_City_Submission/
 ├── README_FOR_CITY_ADMINISTRATORS.txt
-├── Santiago_Chile_Urban_Boundary.shp
-├── Santiago_Chile_Urban_Boundary.shx
-├── Santiago_Chile_Urban_Boundary.dbf
-├── Santiago_Chile_Urban_Boundary.prj
-├── Santiago_Chile_Urban_Boundary.cpg
-├── Santiago_Chile_Neighborhoods.shp
-├── Santiago_Chile_Neighborhoods.shx
-├── Santiago_Chile_Neighborhoods.dbf
-├── Santiago_Chile_Neighborhoods.prj
-├── Santiago_Chile_Neighborhoods.cpg
-├── Santiago_Chile_Cultural_Sites.shp    <span class="comment">(84,968 bytes, Point)</span>
-├── Santiago_Chile_Cultural_Sites.shx    <span class="comment">(24,348 bytes)</span>
-├── Santiago_Chile_Cultural_Sites.dbf    <span class="comment">(18,008,165 bytes)</span>
-├── Santiago_Chile_Cultural_Sites.prj    <span class="comment">(145 bytes)</span>
-└── Santiago_Chile_Cultural_Sites.cpg    <span class="comment">(5 bytes)</span>
+├── [CityName]_[CountryName]_Urban_Boundary.shp
+├── [CityName]_[CountryName]_Urban_Boundary.shx
+├── [CityName]_[CountryName]_Urban_Boundary.dbf
+├── [CityName]_[CountryName]_Urban_Boundary.prj
+├── [CityName]_[CountryName]_Urban_Boundary.cpg
+├── [CityName]_[CountryName]_Neighborhoods.shp
+├── [CityName]_[CountryName]_Neighborhoods.shx
+├── [CityName]_[CountryName]_Neighborhoods.dbf
+├── [CityName]_[CountryName]_Neighborhoods.prj
+├── [CityName]_[CountryName]_Neighborhoods.cpg
+├── [CityName]_[CountryName]_Cultural_Sites.shp    <span class="comment">(Point data)</span>
+├── [CityName]_[CountryName]_Cultural_Sites.shx    <span class="comment">(Spatial index)</span>
+├── [CityName]_[CountryName]_Cultural_Sites.dbf    <span class="comment">(Attributes)</span>
+├── [CityName]_[CountryName]_Cultural_Sites.prj    <span class="comment">(Coordinate system)</span>
+└── [CityName]_[CountryName]_Cultural_Sites.cpg    <span class="comment">(Character encoding)</span>
         </div>
 
         <hr>
@@ -334,12 +320,12 @@ Example_City_Submission/
             <div class="usage-card">
                 <h4>For City Administrators:</h4>
                 <ol>
-                    <li><strong>Download</strong> the <code>Santiago_Chile_Boundaries_EXAMPLE.zip</code> file</li>
+                    <li><strong>Download</strong> the <code>[CityName]_[CountryName]_Boundaries_EXAMPLE.zip</code> file</li>
                     <li><strong>Extract</strong> and examine the file structure</li>
                     <li><strong>Read</strong> the <code>README_FOR_CITY_ADMINISTRATORS.txt</code> carefully</li>
                     <li><strong>Follow</strong> the same naming pattern for your city:
                         <ul>
-                            <li>Replace "Santiago_Chile" with "[YourCity]_[YourCountry]"</li>
+                            <li>Replace "[CityName]_[CountryName]" with your actual city and country names</li>
                             <li>Keep the same file extensions and structure</li>
                         </ul>
                     </li>
@@ -376,29 +362,29 @@ Example_City_Submission/
             <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
                 <h4>2. Subdivision Boundaries</h4>
                 <p><strong>File:</strong> <code>[CityName]_[Country]_Subdivisions.shp</code></p>
-                <p><strong>Description:</strong> Zones, districts, neighborhoods (if available) for detailed spatial analysis.</p>
+                <p><strong>Description:</strong> Add the most commonly-used subdivision boundary. This should be the subdivision used in question 3 of your survey (i.e. zones, districts or neighborhoods).</p>
                 <p><strong>Geometry:</strong> Polygon | <strong>Priority:</strong> <span style="color: #28a745; font-weight: bold;">RECOMMENDED</span></p>
             </div>
             
             <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
                 <h4>3. Public Open Spaces</h4>
                 <p><strong>File:</strong> <code>[CityName]_[Country]_Public_Spaces.shp</code></p>
-                <p><strong>Description:</strong> Parks, green spaces, and recreational areas accessible to the public.</p>
-                <p><strong>Geometry:</strong> Polygon or Point | <strong>Priority:</strong> <span style="color: #17a2b8; font-weight: bold;">RECOMMENDED</span></p>
+                <p><strong>Description:</strong> Description: Such as parks, green spaces, town squares, public gathering places, etc.</p>
+                <p><strong>Geometry:</strong> Polygon | <strong>Priority:</strong> <span style="color: #17a2b8; font-weight: bold;">REQUIRED</span></p>
             </div>
             
             <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6f42c1;">
-                <h4>4. Cultural Sites</h4>
+                <h4>4. Public Sport Facilities</h4>
                 <p><strong>File:</strong> <code>[CityName]_[Country]_Cultural_Sites.shp</code></p>
-                <p><strong>Description:</strong> Museums, heritage sites, and cultural landmarks within the city.</p>
-                <p><strong>Geometry:</strong> Point (preferred) or Polygon | <strong>Priority:</strong> <span style="color: #6f42c1; font-weight: bold;">OPTIONAL</span></p>
+                <p><strong>Description:</strong> Description: Such as sports fields, sporting clubs, playgrounds, walking and jogging tracks, cycling paths, etc.</p>
+                <p><strong>Geometry:</strong> Polygon | <strong>Priority:</strong> <span style="color: #6f42c1; font-weight: bold;">REQUIRED</span></p>
             </div>
             
             <div style="margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #fd7e14;">
                 <h4>5. Recreational Facilities</h4>
                 <p><strong>File:</strong> <code>[CityName]_[Country]_Recreation.shp</code></p>
-                <p><strong>Description:</strong> Public sports facilities and venues for community use.</p>
-                <p><strong>Geometry:</strong> Point (preferred) or Polygon | <strong>Priority:</strong> <span style="color: #fd7e14; font-weight: bold;">OPTIONAL</span></p>
+                <p><strong>Description:</strong> Such as art galleries, community centers, amusement parks, waterfront promenades, picnic areas, public beaches, theaters, museums, zoological gardens, theme parks, music venues, community centres, libraries etc.</p>
+                <p><strong>Geometry:</strong> Point (preferred) or Polygon | <strong>Priority:</strong> <span style="color: #fd7e14; font-weight: bold;">REQUIRED</span></p>
             </div>
         </div>
 
@@ -429,17 +415,6 @@ Example_City_Submission/
             </ul>
         </div>
 
-        <div class="quality-checks">
-            <h3>Quality Checks Passed</h3>
-            <ul>
-                <li>All required components present</li>
-                <li>Files open correctly in GIS software</li>
-                <li>Proper coordinate system (WGS84)</li>
-                <li>Valid geometry (no errors)</li>
-                <li>Consistent naming convention</li>
-                <li>Clean ZIP structure</li>
-            </ul>
-        </div>
 
         <hr>
 
