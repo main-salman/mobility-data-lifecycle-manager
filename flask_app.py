@@ -973,7 +973,7 @@ def example_guide():
 def download_example_zip():
     """Download the basic example ZIP file"""
     try:
-        return send_file('Santiago_Chile_Boundaries_EXAMPLE.zip', as_attachment=True)
+        return send_file('CityName_CountryName_Boundaries_EXAMPLE.zip', as_attachment=True)
     except FileNotFoundError:
         return "Example ZIP file not found", 404
 
@@ -981,7 +981,7 @@ def download_example_zip():
 def download_example_zip_with_poi():
     """Download the example ZIP file with POI data"""
     try:
-        return send_file('Santiago_Chile_Boundaries_WITH_POI_EXAMPLE.zip', as_attachment=True)
+        return send_file('CityName_CountryName_Boundaries_WITH_POI_EXAMPLE.zip', as_attachment=True)
     except FileNotFoundError:
         return "Example ZIP with POI not found", 404
 

@@ -560,3 +560,4 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Changed download button text from "Download Basic Example" to "Download Basic Template" for clarity
 - All example files now serve as universal templates that cities can adapt with their own names rather than Santiago-specific references
 - Maintains same technical standards and file structure while being applicable to all participating cities
+- Fixed Flask download routes to use new generic file names (CityName_CountryName_Boundaries_EXAMPLE.zip instead of Santiago_Chile_Boundaries_EXAMPLE.zip)
