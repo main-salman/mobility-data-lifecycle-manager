@@ -561,3 +561,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - All example files now serve as universal templates that cities can adapt with their own names rather than Santiago-specific references
 - Maintains same technical standards and file structure while being applicable to all participating cities
 - Fixed Flask download routes to use new generic file names (CityName_CountryName_Boundaries_EXAMPLE.zip instead of Santiago_Chile_Boundaries_EXAMPLE.zip)
+
+2025-01-XX: Streamlined submission guides based on platform requirements:
+- Removed all sections except "Required Data Categories for Submission" from both HTML and Markdown guides
+- Added missing Cultural Sites layer (6th required layer) with proper specifications
+- Fixed Public Sport Facilities file name from Cultural_Sites.shp to Sport_Facilities.shp
+- Updated Recreational Facilities geometry from "Point (preferred) or Polygon" to "Polygon" only
+- Updated all layer descriptions to match platform GIS page exactly (Public Open Spaces, Public Sport Facilities, Recreational Facilities, Cultural Sites)
+- Added important note about illustrative examples and public accessibility requirements
+- Updated Best Practices section to reflect "Polygon boundaries only" requirement
+- Both guides now focus exclusively on the 6 required data categories matching platform specifications
