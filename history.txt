@@ -571,3 +571,12 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Added important note about illustrative examples and public accessibility requirements
 - Updated Best Practices section to reflect "Polygon boundaries only" requirement
 - Both guides now focus exclusively on the 6 required data categories matching platform specifications
+
+2025-11-26: Enhanced AWS credential error messages for better troubleshooting:
+- Improved error detection in utils.py to identify specific AWS credential errors (InvalidClientTokenId, SignatureDoesNotMatch, AccessDenied)
+- Added clear error messages explaining that AWS credentials in .env file are invalid/expired when InvalidClientTokenId occurs
+- Enhanced error messages to guide users to check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env file
+- Updated sync_logic.py to preserve and display improved credential error messages
+- Error messages now explicitly state "AWS CREDENTIALS ERROR" prefix for easy identification
+- Provides actionable guidance: "Please check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your .env file and ensure they are correct and active"
+- Resolves issue where credential errors were unclear, making it difficult to diagnose authentication failures

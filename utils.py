@@ -136,15 +136,47 @@ def get_fresh_assumed_credentials(role_arn="arn:aws:iam::651706782157:role/Veras
             return _veraset_credentials
             
         except subprocess.CalledProcessError as e:
-            error_output = e.stderr or ""
-            logging.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role: {e}")
-            logging.error(f"[CREDENTIALS] Command output: {error_output}")
+            error_output = e.stderr or e.stdout or ""
+            
+            # Check for specific AWS credential errors
+            is_credential_error = False
+            credential_error_msg = ""
+            
+            if "InvalidClientTokenId" in error_output:
+                is_credential_error = True
+                credential_error_msg = (
+                    "AWS CREDENTIALS ERROR: The AWS credentials configured in the .env file are invalid or expired. "
+                    "The security token included in the request is invalid. "
+                    "Please check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your .env file and ensure they are correct and active."
+                )
+            elif "SignatureDoesNotMatch" in error_output:
+                is_credential_error = True
+                credential_error_msg = (
+                    "AWS CREDENTIALS ERROR: The AWS secret access key in the .env file is incorrect. "
+                    "The request signature does not match. Please verify AWS_SECRET_ACCESS_KEY in your .env file."
+                )
+            elif "AccessDenied" in error_output or "UnauthorizedOperation" in error_output:
+                is_credential_error = True
+                credential_error_msg = (
+                    "AWS CREDENTIALS ERROR: The AWS credentials in the .env file do not have permission to assume the Veraset S3 access role. "
+                    "Please verify that AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY have the necessary IAM permissions."
+                )
+            
+            if is_credential_error:
+                logging.error(f"[CREDENTIALS] {credential_error_msg}")
+                logging.error(f"[CREDENTIALS] AWS CLI error details: {error_output.strip()}")
+            else:
+                logging.error(f"[CREDENTIALS] Failed to assume Veraset S3 access role: {e}")
+                logging.error(f"[CREDENTIALS] Command output: {error_output}")
             
             # Clear cached credentials on failure
             _veraset_credentials = None
             _credential_expiry = None
             
-            raise Exception(f"Failed to assume Veraset S3 access role: {e}")
+            if is_credential_error:
+                raise Exception(credential_error_msg)
+            else:
+                raise Exception(f"Failed to assume Veraset S3 access role: {e}")
             
         except json.JSONDecodeError as e:
             logging.error(f"[CREDENTIALS] Failed to parse AWS STS response: {e}")

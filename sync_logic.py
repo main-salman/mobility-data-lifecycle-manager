@@ -177,8 +177,15 @@ def sync_data_to_bucket_chunked(city, date, s3_location, s3_bucket=None, sync_id
             # Get fresh assumed role credentials with automatic renewal
             credentials = get_fresh_assumed_credentials(role_arn)
         except Exception as e:
-            logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {str(e)}")
-            return {"success": False, "error": f"Failed to assume Veraset S3 access role: {str(e)}"}
+            error_msg = str(e)
+            # Check if this is an AWS credential error (already formatted in utils.py)
+            if "AWS CREDENTIALS ERROR" in error_msg:
+                logger.error(f"[S3 SYNC] {error_msg}")
+                return {"success": False, "error": error_msg}
+            else:
+                logger.error(f"[S3 SYNC] Failed to assume Veraset S3 access role: {error_msg}")
+                logger.error(f"[S3 SYNC] This may be due to invalid AWS credentials. Please check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your .env file.")
+                return {"success": False, "error": f"Failed to assume Veraset S3 access role: {error_msg}"}
 
         env = os.environ.copy()
         env["AWS_ACCESS_KEY_ID"] = credentials["AccessKeyId"]
