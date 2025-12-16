@@ -587,3 +587,13 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Using venv's Python directly avoids PEP 668 externally-managed-environment restrictions
 - Updated both pip install commands and Flask app startup to use venv/bin/python explicitly
 - Ensures all operations use the virtual environment's Python, not the system Python
+
+2025-12-16: Added stop_local.sh script for clean application shutdown:
+- Created stop_local.sh script to gracefully stop Flask application
+- Kills processes on port 5050 (Flask app port)
+- Kills any flask_app.py Python processes
+- Kills any gunicorn processes if running
+- Waits for port to be free and verifies successful shutdown
+- Provides clear feedback about what processes were stopped
+- Includes warning if port is still in use after kill attempts
+- Complements run_local.sh for complete local development workflow
