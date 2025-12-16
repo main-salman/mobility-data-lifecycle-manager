@@ -580,3 +580,10 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Error messages now explicitly state "AWS CREDENTIALS ERROR" prefix for easy identification
 - Provides actionable guidance: "Please check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your .env file and ensure they are correct and active"
 - Resolves issue where credential errors were unclear, making it difficult to diagnose authentication failures
+
+2025-12-16: Fixed run_local.sh "pip: command not found" and "externally-managed-environment" errors:
+- Changed to use `venv/bin/python -m pip` instead of `python -m pip` to explicitly use venv's Python
+- macOS Python installations are externally-managed and prevent system-wide pip installs
+- Using venv's Python directly avoids PEP 668 externally-managed-environment restrictions
+- Updated both pip install commands and Flask app startup to use venv/bin/python explicitly
+- Ensures all operations use the virtual environment's Python, not the system Python

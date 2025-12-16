@@ -22,8 +22,9 @@ fi
 source venv/bin/activate
 
 # 3. Install Python requirements
-pip install --upgrade pip
-pip install flask boto3 python-dotenv requests gunicorn
+# Use venv's Python explicitly to avoid externally-managed-environment errors
+venv/bin/python -m pip install --upgrade pip
+venv/bin/python -m pip install flask boto3 python-dotenv requests gunicorn
 
 # 4. Check for .env, or create a template
 if [ ! -f ".env" ]; then
@@ -55,7 +56,7 @@ for i in {1..10}; do
 done
 
 # 7. Start Flask app
-nohup python flask_app.py > flask_app.log 2>&1 &
+nohup venv/bin/python flask_app.py > flask_app.log 2>&1 &
 sleep 2
 if ! lsof -i:5050 > /dev/null; then
   echo "ERROR: Flask app did not start successfully. Check flask_app.log for details."
