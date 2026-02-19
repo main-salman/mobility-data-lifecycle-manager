@@ -55,7 +55,8 @@ ssh_cmd "cd $PROJECT_DIR && source venv/bin/activate && pip install numpy>=1.21.
 echo "Checking and renewing SSL certificate if needed..."
 # For expired certificates, we need to stop nginx first, then use standalone renewal
 ssh_cmd "sudo systemctl stop nginx"
-ssh_cmd "sudo certbot renew --force-renewal --standalone --quiet || echo 'Certificate renewal completed (may have failed if not expired)'"
+# Use --non-interactive to prevent hanging on prompts, and only renew if actually needed
+ssh_cmd "sudo certbot renew --standalone --non-interactive --quiet --no-self-upgrade || echo 'Certificate renewal completed (may have failed if not expired)'"
 ssh_cmd "sudo systemctl start nginx"
 ssh_cmd "sudo nginx -t && sudo systemctl reload nginx"
 

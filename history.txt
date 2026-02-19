@@ -597,3 +597,12 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Provides clear feedback about what processes were stopped
 - Includes warning if port is still in use after kill attempts
 - Complements run_local.sh for complete local development workflow
+
+2025-02-19: Fixed update_ec2.sh SSL certificate renewal hanging issue:
+- Identified that certbot renew command was hanging due to interactive prompts waiting for user input
+- Removed --force-renewal flag which was causing unnecessary prompts and delays
+- Added --non-interactive flag to certbot to prevent any prompts that cause the script to hang
+- Added --no-self-upgrade flag to prevent certbot from attempting to update itself during renewal
+- Script now only renews certificates if they're actually close to expiring (standard certbot behavior)
+- Resolves issue where update_ec2.sh would get stuck at "Checking and renewing SSL certificate if needed..." step
+- SSL renewal now completes quickly without blocking the deployment script
