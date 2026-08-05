@@ -598,6 +598,11 @@ Required dependencies: geopandas, zipfile (built-in), tempfile (built-in), werkz
 - Includes warning if port is still in use after kill attempts
 - Complements run_local.sh for complete local development workflow
 
+2025-08-05: Server redeploy workflow and update_ec2 Terraform integration:
+- update_ec2.sh now reads ec2_public_ip from `terraform output` when main.tf is present (fallback to hardcoded EC2_HOST)
+- Added redeploy_server.sh: terraform apply → update_ec2.sh → HTTPS login health check
+- Blocked local redeploy attempt: AWS credentials invalid (STS InvalidClientTokenId); EC2 3.224.127.136 SSH timeout and mobility.qolimpact.click unreachable
+
 2025-02-19: Fixed update_ec2.sh SSL certificate renewal hanging issue:
 - Identified that certbot renew command was hanging due to interactive prompts waiting for user input
 - Removed --force-renewal flag which was causing unnecessary prompts and delays

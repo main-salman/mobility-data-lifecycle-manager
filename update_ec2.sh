@@ -27,6 +27,16 @@ EC2_HOST=3.224.127.136
 EC2_KEY=salman-dev.pem
 PROJECT_DIR=/home/ec2-user/mobility-data-lifecycle-manager/   # Change if your project is in a different location
 
+# Prefer Terraform output after infrastructure redeploy (falls back to EC2_HOST above)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if command -v terraform >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/main.tf" ]; then
+  TF_IP="$(cd "$SCRIPT_DIR" && terraform output -raw ec2_public_ip 2>/dev/null || true)"
+  if [ -n "$TF_IP" ] && [ "$TF_IP" != "null" ]; then
+    EC2_HOST="$TF_IP"
+    echo "Using EC2 host from Terraform output: $EC2_HOST"
+  fi
+fi
+
 # --- SSH COMMAND WRAPPER ---
 ssh_cmd() {
   ssh -n -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "$@"
